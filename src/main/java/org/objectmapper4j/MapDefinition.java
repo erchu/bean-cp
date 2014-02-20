@@ -36,19 +36,22 @@ public abstract class MapDefinition<S, D> {
 
     protected <T> MapDefinition<S, D> bindFromMember(
             final Function<S, T> source,
-            final BiConsumer<D, T> destination) {
+            final BiConsumer<D, T> destination,
+            BindingOption... options) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     protected <T> MapDefinition<S, D> bindFromFunction(
             final Function<S, T> source,
-            final BiConsumer<D, T> destination) {
+            final BiConsumer<D, T> destination,
+            BindingOption... options) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     protected <T> MapDefinition<S, D> bindFromConstant(
             final T constantValue,
-            final BiConsumer<D, T> destination) {
+            final BiConsumer<D, T> destination,
+            BindingOption... options) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
