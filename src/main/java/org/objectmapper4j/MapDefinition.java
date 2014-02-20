@@ -18,6 +18,7 @@
 package org.objectmapper4j;
 
 import java.util.function.BiConsumer;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -30,33 +31,41 @@ import java.util.function.Supplier;
  */
 public abstract class MapDefinition<S, D> {
 
-    protected MapDefinition<S, D> bindUsingConvention(final MappingConvention mappingConvention) {
+    protected MapDefinition<S, D> useConvention(final MappingConvention mappingConvention) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     protected <T> MapDefinition<S, D> bindFromMember(
             final Function<S, T> source,
             final BiConsumer<D, T> destination,
-            BindingOption... options) {
+            final BindingOption... options) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     protected <T> MapDefinition<S, D> bindFromFunction(
             final Function<S, T> source,
             final BiConsumer<D, T> destination,
-            BindingOption... options) {
+            final BindingOption... options) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     protected <T> MapDefinition<S, D> bindFromConstant(
             final T constantValue,
             final BiConsumer<D, T> destination,
-            BindingOption... options) {
+            final BindingOption... options) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    protected <T> MapDefinition<S, D> ignore(
-            final BiConsumer<D, T> destination) {
+    protected <T> MapDefinition<S, D> bindByConvention(
+            final BiConsumer<D, T> destination,
+            final MappingConvention convention,
+            final BindingOption... options) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    protected <T> MapDefinition<S, D> setOption(
+            final BiConsumer<D, T> destination,
+            final BindingOption... options) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
