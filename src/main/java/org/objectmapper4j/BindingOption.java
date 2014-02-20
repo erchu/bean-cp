@@ -17,18 +17,21 @@
  */
 package org.objectmapper4j;
 
+import java.util.function.Function;
 
 /**
  *
  * @author Rafal Chojnacki
  */
-public class MapperBuilder {
+public class BindingOption {
 
-    public <S, D> MapDefinition<S, D> addMap(final Class<S> source, final Class<D> destination) {
+    private BindingOption() {}
+    
+    public static <S> BindingOption mapWhen(final Function<S, Boolean> condition) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
-
-    public Mapper buildMapper() {
+    
+    public static <S, T> BindingOption withNullSubstitution(final Function<S, T> nullSubstitution) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 }

@@ -22,13 +22,8 @@ package org.objectmapper4j;
  *
  * @author Rafal Chojnacki
  */
-public class MapperBuilder {
+@FunctionalInterface
+public interface TriConsumer<T0, T1, T2> {
 
-    public <S, D> MapDefinition<S, D> addMap(final Class<S> source, final Class<D> destination) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    public Mapper buildMapper() {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
+    public void accept(T0 t0, T1 t1, T2 t2);
 }

@@ -22,13 +22,9 @@ package org.objectmapper4j;
  *
  * @author Rafal Chojnacki
  */
-public class MapperBuilder {
+public enum ReverseMapOption {
 
-    public <S, D> MapDefinition<S, D> addMap(final Class<S> source, final Class<D> destination) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    public Mapper buildMapper() {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
+    START_WITH_EMPTY,
+    
+    ADD_REVERSE_MEMBER_BINDINGS
 }
