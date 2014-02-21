@@ -39,7 +39,7 @@ public class DefaultMappingConvention extends MappingConvention {
         throw new UnsupportedOperationException("Not supported yet.");
     }
     
-    public DefaultMappingConvention forOnlyPrimitiveTypeMembers() {
+    public DefaultMappingConvention forPrimitiveTypeMembersOnly() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 }
