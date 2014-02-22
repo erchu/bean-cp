@@ -103,22 +103,6 @@ public abstract class MapDefinition<S, D> {
     protected MapDefinition<S, D> constructUsing(final Function<S, D> action) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
-    
-    protected MapDefinition<S, D> includingSourceSupperClasses(Class... clazz) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-    
-    protected MapDefinition<S, D> includingAllSourceSupperClasses() {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-    
-    protected MapDefinition<S, D> includingDestinationSupperClasses(Class... clazz) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-    
-    protected MapDefinition<S, D> includingAllDestinationSupperClasses() {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
 
     protected <T> MapDefinition<D, S> reverseMap(final ReverseMapOption reverseMapOption) {
         throw new UnsupportedOperationException("Not supported yet.");
