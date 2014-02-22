@@ -99,6 +99,10 @@ public abstract class MapDefinition<S, D> {
     protected MapDefinition<S, D> constructUsing(final Supplier<D> action) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
+
+    protected MapDefinition<S, D> constructUsing(final Function<S, D> action) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
     
     protected MapDefinition<S, D> includingSourceSupperClasses(Class... clazz) {
         throw new UnsupportedOperationException("Not supported yet.");
