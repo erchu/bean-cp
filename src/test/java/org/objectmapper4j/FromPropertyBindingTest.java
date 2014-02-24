@@ -107,7 +107,7 @@ public class FromPropertyBindingTest {
         assertEquals("Invalid binding type for 'a' property binding.", FromPropertyBinding.class, aBiding.getClass());
         assertEquals("Invalid source for 'a' property binding.", xProperty, ((FromPropertyBinding) aBiding).getGetter());
 
-        // 'a' property binding
+        // 'b' property binding
         Method yProperty = SimpleSource.class.getMethod("getY");
         Method bProperty = SimpleDestination.class.getMethod("setB", String.class);
 
