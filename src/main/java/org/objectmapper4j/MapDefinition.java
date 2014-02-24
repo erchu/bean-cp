@@ -172,7 +172,7 @@ public final class MapDefinition<S, D> {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    protected <T> MapDefinition<S, D> verifyAllDestinationPropertiesMapped() {
+    protected <T> MapDefinition<S, D> verifyAllDestinationPropertiesConfigured() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
@@ -184,12 +184,24 @@ public final class MapDefinition<S, D> {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    protected MapDefinition<S, D> beforeMapMember(
+    protected <T> MapDefinition<S, D> beforeMemberMap(
+            final BiConsumer<D, T> member,
+            final BiConsumer<S, D> action) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    protected <T> MapDefinition<S, D> afterMemberMap(
+            final BiConsumer<D, T> member,
+            final BiConsumer<S, D> action) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    protected MapDefinition<S, D> beforeMemberMap(
             final TriConsumer<S, D, String> action) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    protected MapDefinition<S, D> afterMapMember(
+    protected MapDefinition<S, D> afterMemberMap(
             final TriConsumer<S, D, String> action) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
@@ -198,15 +210,15 @@ public final class MapDefinition<S, D> {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    protected MapDefinition<S, D> constructUsing(final Supplier<D> action) {
+    protected MapDefinition<S, D> constructDestinationObjectUsing(final Supplier<D> action) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    protected MapDefinition<S, D> constructUsing(final Function<S, D> action) {
+    protected MapDefinition<S, D> constructDestinationObjectUsing(final Function<S, D> action) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    protected <T> MapDefinition<D, S> reverseMap(final ReverseMapOption reverseMapOption) {
+    protected <T> MapDefinition<D, S> withReverseMap(final ReverseMapOption reverseMapOption) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 }
