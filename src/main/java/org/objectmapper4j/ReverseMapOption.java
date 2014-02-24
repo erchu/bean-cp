@@ -25,6 +25,6 @@ package org.objectmapper4j;
 public enum ReverseMapOption {
 
     START_WITH_EMPTY,
-    
+
     ADD_REVERSE_MEMBER_BINDINGS
 }

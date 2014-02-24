@@ -6,7 +6,7 @@
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 3.0 of the License, or (at your option) any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
@@ -19,18 +19,20 @@ package org.objectmapper4j;
 
 import java.util.function.Function;
 
+
 /**
  *
  * @author Rafal Chojnacki
  */
-public class BindingOption {
+public final class BindingOption {
 
-    private BindingOption() {}
-    
+    private BindingOption() {
+    }
+
     public static <S> BindingOption mapWhen(final Function<S, Boolean> condition) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
-    
+
     public static <S, T> BindingOption withNullSubstitution(final Function<S, T> nullSubstitution) {
         throw new UnsupportedOperationException("Not supported yet.");
     }

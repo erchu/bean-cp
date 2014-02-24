@@ -23,10 +23,9 @@ package org.objectmapper4j;
  * @author Rafal Chojnacki
  */
 public class DefaultMappingConvention extends MappingConvention {
-    
-    protected DefaultMappingConvention() {
-    }
-    
+
+    protected DefaultMappingConvention() {}
+
     public static DefaultMappingConvention get() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
@@ -34,11 +33,11 @@ public class DefaultMappingConvention extends MappingConvention {
     public DefaultMappingConvention ignoreCase() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
-    
+
     public DefaultMappingConvention enableFlattening() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
-    
+
     public DefaultMappingConvention forPrimitiveTypeMembersOnly() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
