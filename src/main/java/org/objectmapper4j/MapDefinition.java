@@ -94,6 +94,14 @@ public final class MapDefinition<S, D> {
         return bindings;
     }
 
+    Class<S> getSourceClass() {
+        return sourceClass;
+    }
+
+    Class<D> getDestinationClass() {
+        return destinationClass;
+    }
+
     protected MapDefinition<S, D> useConvention(final MappingConvention mappingConvention) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
@@ -113,9 +121,7 @@ public final class MapDefinition<S, D> {
             final Function<S, T> from,
             final BiConsumer<D, T> to,
             final BindingOption... options) {
-        //TODO: Error checking
-        //TODO: Options parameter processing
-        //TODO: Fields processing (right now only bean getter are supported)
+        //TODO: Input parameter error checking
 
         sourceProxyMethodHandler.reset();
         destinationProxyMethodHandler.reset();
@@ -125,6 +131,15 @@ public final class MapDefinition<S, D> {
         Method getter = sourceProxyMethodHandler.getExecuted().iterator().next();
         Method setter = destinationProxyMethodHandler.getExecuted().iterator().next();
 
+        //TODO: Fields processing (right now only bean getter are supported)
+        //TODO: Check if getter is really getter method
+        //TODO: Check if setter is really setter method
+        //TODO: Check if only one method was called on source proxy
+        //TODO: Check if only one method was called on destination proxy
+        //TODO: Check if proxies aren't modified during execution
+        //TODO: Proxy reset
+
+        //TODO: Options parameter processing
         bindings.add(new FromPropertyBinding(getter, setter));
 
         return this;
