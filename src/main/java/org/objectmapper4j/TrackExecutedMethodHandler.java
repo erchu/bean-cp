@@ -17,26 +17,32 @@
  */
 package org.objectmapper4j;
 
+import java.lang.reflect.Method;
+import java.util.Collection;
+import java.util.LinkedList;
+import javassist.util.proxy.MethodHandler;
+
 
 /**
- *
  * @author Rafal Chojnacki
  */
-public class MapperBuilder {
+public class TrackExecutedMethodHandler implements MethodHandler {
 
-    public <S, D> MapDefinition<S, D> addMap(final Class<S> source, final Class<D> destination) {
-        if (source == null) {
-            throw new NullPointerException("Null not allowed for 'source' parameter.");
-        }
+    private final Collection<Method> extecuted = new LinkedList<>();
 
-        if (destination == null) {
-            throw new NullPointerException("Null not allowed for 'destination' parameter.");
-        }
+    @Override
+    public Object invoke(final Object self, final Method thisMethod,
+            final Method proceed, final Object[] args) throws Throwable {
+        extecuted.add(thisMethod);
 
-        return new MapDefinition<>(source, destination);
+        return proceed.invoke(self, args);
     }
 
-    public Mapper buildMapper() {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public void reset() {
+        extecuted.clear();
+    }
+
+    public Iterable<Method> getExecuted() {
+        return extecuted;
     }
 }

@@ -17,26 +17,25 @@
  */
 package org.objectmapper4j;
 
+import java.lang.reflect.Method;
+
 
 /**
- *
  * @author Rafal Chojnacki
  */
-public class MapperBuilder {
+abstract class Binding {
 
-    public <S, D> MapDefinition<S, D> addMap(final Class<S> source, final Class<D> destination) {
-        if (source == null) {
-            throw new NullPointerException("Null not allowed for 'source' parameter.");
+    private final Method setter;
+
+    Binding(Method setter) {
+        if (setter == null) {
+            throw new NullPointerException("Null not allowed for 'setter' parameter.");
         }
 
-        if (destination == null) {
-            throw new NullPointerException("Null not allowed for 'destination' parameter.");
-        }
-
-        return new MapDefinition<>(source, destination);
+        this.setter = setter;
     }
 
-    public Mapper buildMapper() {
-        throw new UnsupportedOperationException("Not supported yet.");
+    Method getSetter() {
+        return setter;
     }
 }
