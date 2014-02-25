@@ -17,12 +17,17 @@
  */
 package org.objectmapper4j;
 
+import java.util.LinkedList;
+import java.util.List;
+
 
 /**
  *
  * @author Rafal Chojnacki
  */
 public class MapperBuilder {
+
+    private List<MapDefinition<?, ?>> mapDefinitions = new LinkedList<>();
 
     public <S, D> MapDefinition<S, D> addMap(final Class<S> source, final Class<D> destination) {
         if (source == null) {
@@ -33,10 +38,15 @@ public class MapperBuilder {
             throw new NullPointerException("Null not allowed for 'destination' parameter.");
         }
 
-        return new MapDefinition<>(source, destination);
+        //TODO: Temporary solution
+        MapDefinition<S, D> newMapDefinition = new MapDefinition<>(source, destination);
+        mapDefinitions.add(newMapDefinition);
+
+        return newMapDefinition;
     }
 
     public Mapper buildMapper() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        //TODO: Temporary solution
+        return new MapperImpl(mapDefinitions);
     }
 }

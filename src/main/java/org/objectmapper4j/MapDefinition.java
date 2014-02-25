@@ -17,7 +17,9 @@
  */
 package org.objectmapper4j;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.function.BiConsumer;
@@ -27,12 +29,11 @@ import javassist.util.proxy.MethodHandler;
 import javassist.util.proxy.ProxyFactory;
 import javassist.util.proxy.ProxyObject;
 
-
 /**
  * Defines mapping between source and destination class. Class is not thread safe.
  *
  * @param <S> source class
- * @param <D> destination Class
+ * @param <D> destination class
  *
  * @author Rafal Chojnacki
  */
@@ -64,21 +65,43 @@ public final class MapDefinition<S, D> {
         this.sourceClass = sourceClass;
         this.destinationClass = destinationClass;
 
+        //TODO: Meta-model mapping
+        /*
         this.sourceProxyMethodHandler = new TrackExecutedMethodHandler();
         this.sourceProxy = (S) buildProxy(sourceClass, this.sourceProxyMethodHandler);
 
         this.destinationProxyMethodHandler = new TrackExecutedMethodHandler();
         this.destinationProxy = (D) buildProxy(
                 destinationClass, this.destinationProxyMethodHandler);
+         */
     }
 
     private <T> T buildProxy(final Class<T> proxiedClass, final MethodHandler methodHandler) {
+        if ((proxiedClass.getModifiers() & Modifier.FINAL) == Modifier.FINAL) {
+            throw new MapDefinitionException(String.format(
+                    "Final classes mapping not supported, but %s is final class.", proxiedClass));
+        }
+
+        try {
+            Constructor<T> defaultConstructor = proxiedClass.getDeclaredConstructor();
+
+            if ((defaultConstructor.getModifiers() & Modifier.PRIVATE) == Modifier.PRIVATE) {
+                throw new MapDefinitionException(String.format(
+                        "Classes with no default public or protected constructor are not supported, "
+                        + "but %s's default constructor is private.", proxiedClass));
+            }
+        } catch (NoSuchMethodException ex) {
+            throw new MapDefinitionException(String.format(
+                    "Classes with no default public or protected constructor are not supported, "
+                    + "but %s has no such constructor.", proxiedClass));
+        }
+
         ProxyFactory proxyFactory = new ProxyFactory();
         proxyFactory.setSuperclass(proxiedClass);
 
-        Class proxyClass = proxyFactory.createClass();
-
         try {
+            Class proxyClass = proxyFactory.createClass();
+
             T proxy = (T) proxyClass.newInstance();
             ((ProxyObject) proxy).setHandler(methodHandler);
 
@@ -121,27 +144,23 @@ public final class MapDefinition<S, D> {
             final Function<S, T> from,
             final BiConsumer<D, T> to,
             final BindingOption... options) {
+        //TODO: What with final classes and classes with no public no argument constructor?
         //TODO: Input parameter error checking
 
-        sourceProxyMethodHandler.reset();
-        destinationProxyMethodHandler.reset();
+        BiConsumer<S, D> bindingExecutor =
+                (S source, D destination) -> to.accept(destination, from.apply(source));
+        bindings.add(new Binding(bindingExecutor));
 
-        to.accept(destinationProxy, from.apply(sourceProxy));
-
-        Method getter = sourceProxyMethodHandler.getExecuted().iterator().next();
-        Method setter = destinationProxyMethodHandler.getExecuted().iterator().next();
-
-        //TODO: Fields processing (right now only bean getter are supported)
-        //TODO: Check if getter is really getter method
-        //TODO: Check if setter is really setter method
-        //TODO: Check if only one method was called on source proxy
-        //TODO: Check if only one method was called on destination proxy
-        //TODO: Check if proxies aren't modified during execution
-        //TODO: Proxy reset
-
+        //TODO: Applys only to biding with meta data
+        //TODO: - Fields processing (right now only bean getter are supported)
+        //TODO: - Check if getter is really getter method
+        //TODO: - Check if setter is really setter method
+        //TODO: - Check if only one method was called on source/destination proxy
+        //TODO: - Check if method is static?
+        //TODO: - What if method is final?
+        //TODO: - Check if proxies aren't modified during execution
+        //TODO: - Proxy reset
         //TODO: Options parameter processing
-        bindings.add(new FromPropertyBinding(getter, setter));
-
         return this;
     }
 

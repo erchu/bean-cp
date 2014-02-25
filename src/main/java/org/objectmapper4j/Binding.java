@@ -17,25 +17,20 @@
  */
 package org.objectmapper4j;
 
-import java.lang.reflect.Method;
-
+import java.util.function.BiConsumer;
 
 /**
  * @author Rafal Chojnacki
  */
-abstract class Binding {
+final class Binding<S, D> {
 
-    private final Method setter;
+    private final BiConsumer<S, D> implementation;
 
-    Binding(Method setter) {
-        if (setter == null) {
-            throw new NullPointerException("Null not allowed for 'setter' parameter.");
-        }
-
-        this.setter = setter;
+    Binding(final BiConsumer<S, D> implementation) {
+        this.implementation = implementation;
     }
 
-    Method getSetter() {
-        return setter;
+    void map(S source, D destination) {
+        implementation.accept(source, destination);
     }
 }
