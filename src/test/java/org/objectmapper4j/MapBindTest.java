@@ -138,8 +138,7 @@ public class MapBindTest {
                 })
                 .buildMapper();
 
-        DestinationWithProperties destination
-                = mapper.map(source, DestinationWithProperties.class);
+        DestinationWithProperties destination = mapper.map(source, DestinationWithProperties.class);
 
         // THEN
         assertEquals("Property 'x' is not mapped correctly.", "xval", destination.getA());
@@ -167,11 +166,38 @@ public class MapBindTest {
                 })
                 .buildMapper();
 
-        DestinationWithFields destination
-                = mapper.map(source, DestinationWithFields.class);
+        DestinationWithFields destination = mapper.map(source, DestinationWithFields.class);
 
         // THEN
         assertEquals("Property 'x' is not mapped correctly.", "xval", destination.a);
         assertEquals("Property 'y' is not mapped correctly.", "yval", destination.b);
+    }
+
+    @Test
+    public void mapper_should_bind_calculated_values() {
+        // GIVEN
+        SourceWithProperties source = new SourceWithProperties();
+        source.setX("xval");
+        source.setY("yval");
+
+        // WHEN
+        Mapper mapper = new MapperBuilder()
+                .addMap(new Map<SourceWithProperties, DestinationWithProperties>() {
+
+                    @Override
+                    public void configure(
+                            final SourceWithProperties source,
+                            final DestinationWithProperties destination) {
+                                this.<String>bind(() -> source.getX() + source.getY(), destination::setA);
+                                this.<String>bind(() -> source.getY() + "2", destination::setB);
+                            }
+                })
+                .buildMapper();
+
+        DestinationWithProperties destination = mapper.map(source, DestinationWithProperties.class);
+
+        // THEN
+        assertEquals("Property 'x' is not mapped correctly.", "xvalyval", destination.getA());
+        assertEquals("Property 'y' is not mapped correctly.", "yval2", destination.getB());
     }
 }
