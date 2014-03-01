@@ -17,17 +17,11 @@
  */
 package org.objectmapper4j;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
-import javassist.util.proxy.MethodHandler;
-import javassist.util.proxy.ProxyFactory;
-import javassist.util.proxy.ProxyObject;
 
 /**
  * Defines mapping between source and destination class. Class is not thread safe.
@@ -45,14 +39,6 @@ public final class MapDefinition<S, D> {
 
     private Class<D> destinationClass;
 
-    private S sourceProxy;
-
-    private D destinationProxy;
-
-    private TrackExecutedMethodHandler sourceProxyMethodHandler;
-
-    private TrackExecutedMethodHandler destinationProxyMethodHandler;
-
     public MapDefinition(final Class<S> sourceClass, final Class<D> destinationClass) {
         if (sourceClass == null) {
             throw new NullPointerException("Null not allowed for 'source' parameter.");
@@ -64,53 +50,6 @@ public final class MapDefinition<S, D> {
 
         this.sourceClass = sourceClass;
         this.destinationClass = destinationClass;
-
-        //TODO: Meta-model mapping
-        /*
-        this.sourceProxyMethodHandler = new TrackExecutedMethodHandler();
-        this.sourceProxy = (S) buildProxy(sourceClass, this.sourceProxyMethodHandler);
-
-        this.destinationProxyMethodHandler = new TrackExecutedMethodHandler();
-        this.destinationProxy = (D) buildProxy(
-                destinationClass, this.destinationProxyMethodHandler);
-         */
-    }
-
-    private <T> T buildProxy(final Class<T> proxiedClass, final MethodHandler methodHandler) {
-        if ((proxiedClass.getModifiers() & Modifier.FINAL) == Modifier.FINAL) {
-            throw new MapDefinitionException(String.format(
-                    "Final classes mapping not supported, but %s is final class.", proxiedClass));
-        }
-
-        try {
-            Constructor<T> defaultConstructor = proxiedClass.getDeclaredConstructor();
-
-            if ((defaultConstructor.getModifiers() & Modifier.PRIVATE) == Modifier.PRIVATE) {
-                throw new MapDefinitionException(String.format(
-                        "Classes with no default public or protected constructor are not supported, "
-                        + "but %s's default constructor is private.", proxiedClass));
-            }
-        } catch (NoSuchMethodException ex) {
-            throw new MapDefinitionException(String.format(
-                    "Classes with no default public or protected constructor are not supported, "
-                    + "but %s has no such constructor.", proxiedClass));
-        }
-
-        ProxyFactory proxyFactory = new ProxyFactory();
-        proxyFactory.setSuperclass(proxiedClass);
-
-        try {
-            Class proxyClass = proxyFactory.createClass();
-
-            T proxy = (T) proxyClass.newInstance();
-            ((ProxyObject) proxy).setHandler(methodHandler);
-
-            return proxy;
-        } catch (InstantiationException | IllegalAccessException ex) {
-            throw new MapDefinitionException(String.format(
-                    "Internal mapper error. Failed to create proxy class for %s",
-                    proxiedClass.getName()), ex);
-        }
     }
 
     List<Binding> getBindings() {
@@ -147,8 +86,8 @@ public final class MapDefinition<S, D> {
         //TODO: What with final classes and classes with no public no argument constructor?
         //TODO: Input parameter error checking
 
-        BiConsumer<S, D> bindingExecutor =
-                (S source, D destination) -> to.accept(destination, from.apply(source));
+        BiConsumer<S, D> bindingExecutor
+                = (S source, D destination) -> to.accept(destination, from.apply(source));
         bindings.add(new Binding(bindingExecutor));
 
         //TODO: Applys only to biding with meta data

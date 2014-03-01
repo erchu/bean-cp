@@ -17,10 +17,6 @@
  */
 package org.objectmapper4j;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.util.List;
-import java.util.stream.Stream;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
@@ -91,6 +87,10 @@ public class FromMemberBindingTest {
 
         private String x;
 
+        private FinalSource(final String x) {
+            this.x = x;
+        }
+
         public final String getX() {
             return x;
         }
@@ -103,6 +103,10 @@ public class FromMemberBindingTest {
     public static final class FinalDestination {
 
         private String a;
+
+        public FinalDestination(final String a) {
+            this.a = a;
+        }
 
         public final String getA() {
             return a;
@@ -164,10 +168,10 @@ public class FromMemberBindingTest {
     }
 
     @Test
-    public void mapper_should_work_even_for_final_classes_and_final_class_members()
+    public void mapper_should_work_even_for_final_classes_and_final_class_members_with_no_default_constructor()
             throws NoSuchFieldException {
         // GIVEN
-        FinalSource source = new FinalSource();
+        FinalSource source = new FinalSource("");
         source.setX("xval");
 
         // WHEN
@@ -178,7 +182,8 @@ public class FromMemberBindingTest {
 
         Mapper mapper = mapperBuilder.buildMapper();
 
-        FinalDestination destination = mapper.map(source, FinalDestination.class);
+        FinalDestination destination = new FinalDestination("");
+        mapper.map(source, destination);
 
         // THEN
         assertEquals("Property 'x' is not mapped correctly.", "xval", destination.getA());
