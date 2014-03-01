@@ -125,14 +125,18 @@ public class FromMemberBindingTest {
         source.setY("yval");
 
         // WHEN
-        MapperBuilder mapperBuilder = new MapperBuilder();
+        Mapper mapper = new MapperBuilder()
+                .addMap(new Map<SimpleSourceWithProperties, SimpleDestinationWithProperties>() {
 
-        mapperBuilder.addMap(
-                SimpleSourceWithProperties.class, SimpleDestinationWithProperties.class)
-                .bindFromMember(s -> s.getX(), (d, v) -> d.setA(v))
-                .bindFromMember(s -> s.getY(), (d, v) -> d.setB(v));
-
-        Mapper mapper = mapperBuilder.buildMapper();
+                    @Override
+                    public void configure(
+                            final SimpleSourceWithProperties source,
+                            final SimpleDestinationWithProperties destination) {
+                                this.<String>bind(source::getX, destination::setA);
+                                this.<String>bind(source::getY, destination::setB);
+                            }
+                })
+                .buildMapper();
 
         SimpleDestinationWithProperties destination
                 = mapper.map(source, SimpleDestinationWithProperties.class);
@@ -143,6 +147,34 @@ public class FromMemberBindingTest {
     }
 
     @Test
+    public void mapper_should_be_able_to_bind_to_constants() {
+        // GIVEN
+        SimpleSourceWithProperties source = new SimpleSourceWithProperties();
+        source.setX("xval");
+        source.setY("yval");
+
+        // WHEN
+        Mapper mapper = new MapperBuilder()
+                .addMap(new Map<SimpleSourceWithProperties, SimpleDestinationWithProperties>() {
+
+                    @Override
+                    public void configure(
+                            final SimpleSourceWithProperties source,
+                            final SimpleDestinationWithProperties destination) {
+                                this.<String>bindConstant("const", destination::setA);
+                            }
+                })
+                .buildMapper();
+
+        SimpleDestinationWithProperties destination
+                = mapper.map(source, SimpleDestinationWithProperties.class);
+
+        // THEN
+        assertEquals("Destination property 'a' is not mapped correctly.", "const", destination.getA());
+        assertNull("Destination property 'b' is not mapped correctly.", destination.getB());
+    }
+
+    @Test
     public void mapper_should_be_able_to_extract_from_field_binding_information() {
         // GIVEN
         SimpleSourceWithFields source = new SimpleSourceWithFields();
@@ -150,14 +182,18 @@ public class FromMemberBindingTest {
         source.y = "yval";
 
         // WHEN
-        MapperBuilder mapperBuilder = new MapperBuilder();
+        Mapper mapper = new MapperBuilder()
+                .addMap(new Map<SimpleSourceWithFields, SimpleDestinationWithFields>() {
 
-        mapperBuilder.addMap(
-                SimpleSourceWithFields.class, SimpleDestinationWithFields.class)
-                .bindFromMember(s -> s.x, (d, v) -> d.a = v)
-                .bindFromMember(s -> s.y, (d, v) -> d.b = v);
-
-        Mapper mapper = mapperBuilder.buildMapper();
+                    @Override
+                    public void configure(
+                            final SimpleSourceWithFields source,
+                            final SimpleDestinationWithFields destination) {
+                                this.<String>bind(() -> source.x, v -> destination.a = v);
+                                this.<String>bind(() -> source.y, v -> destination.b = v);
+                            }
+                })
+                .buildMapper();
 
         SimpleDestinationWithFields destination
                 = mapper.map(source, SimpleDestinationWithFields.class);
@@ -175,12 +211,17 @@ public class FromMemberBindingTest {
         source.setX("xval");
 
         // WHEN
-        MapperBuilder mapperBuilder = new MapperBuilder();
+        Mapper mapper = new MapperBuilder()
+                .addMap(new Map<FinalSource, FinalDestination>() {
 
-        mapperBuilder.addMap(FinalSource.class, FinalDestination.class)
-                .bindFromMember(s -> s.getX(), (d, v) -> d.setA(v));
-
-        Mapper mapper = mapperBuilder.buildMapper();
+                    @Override
+                    public void configure(
+                            final FinalSource source,
+                            final FinalDestination destination) {
+                                this.<String>bind(source::getX, destination::setA);
+                            }
+                })
+                .buildMapper();
 
         FinalDestination destination = new FinalDestination("");
         mapper.map(source, destination);

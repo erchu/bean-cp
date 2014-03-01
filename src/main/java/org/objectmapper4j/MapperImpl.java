@@ -26,9 +26,9 @@ import java.util.Optional;
  */
 class MapperImpl implements Mapper {
 
-    private final List<MapDefinition<?, ?>> mapDefinitions;
+    private final List<Map<?, ?>> mapDefinitions;
 
-    MapperImpl(final List<MapDefinition<?, ?>> mapDefinitions) {
+    MapperImpl(final List<Map<?, ?>> mapDefinitions) {
         //TODO: Temporary solution
         this.mapDefinitions = mapDefinitions;
     }
@@ -39,20 +39,19 @@ class MapperImpl implements Mapper {
         Class destinationClass = destination.getClass();
 
         //TODO: Temporary solution, too simple ;-) solution
-        Optional<MapDefinition<?, ?>> mapper = mapDefinitions.stream().filter(
+        Optional<Map<?, ?>> mapperHolder = mapDefinitions.stream().filter(
                 n
                 -> n.getSourceClass().equals(sourceClass)
                 && n.getDestinationClass().equals(destinationClass))
                 .findFirst();
 
-        if (!mapper.isPresent()) {
+        if (!mapperHolder.isPresent()) {
             throw new MappingException(
                     String.format("No suitable mapping found from %s to %s.", source, destination));
         }
 
-        mapper.get().getBindings().stream().forEach(n -> {
-            n.map(source, destination);
-        });
+        Map<S, D> mapper = (Map<S, D>) mapperHolder.get();
+        mapper.configure(source, destination);
     }
 
     @Override

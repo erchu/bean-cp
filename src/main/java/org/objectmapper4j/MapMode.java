@@ -17,31 +17,13 @@
  */
 package org.objectmapper4j;
 
-import java.util.LinkedList;
-import java.util.List;
-
 
 /**
- *
  * @author Rafal Chojnacki
  */
-public class MapperBuilder {
+enum MapMode {
 
-    private final List<Map<?, ?>> mapDefinitions = new LinkedList<>();
+    CONFIGURATION,
 
-    public <S, D> MapperBuilder addMap(final Map<S, D> mapDefinition) {
-        mapDefinition.configure(null, null);
-
-        mapDefinitions.add(mapDefinition);
-
-        return this;
-    }
-
-    public Mapper buildMapper() {
-        //TODO: Clone map definitions
-
-        mapDefinitions.stream().forEach(n -> n.setMode(MapMode.EXECUTION));
-
-        return new MapperImpl(mapDefinitions);
-    }
+    EXECUTION
 }

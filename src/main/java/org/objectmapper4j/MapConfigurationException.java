@@ -23,12 +23,12 @@ package org.objectmapper4j;
  *
  * @author Rafal Chojnacki
  */
-public class MapDefinitionException extends RuntimeException {
+public class MapConfigurationException extends RuntimeException {
 
     /**
      * Creates a new instance of <code>MapDefinitionException</code> without detail message.
      */
-    public MapDefinitionException() {
+    public MapConfigurationException() {
     }
 
     /**
@@ -37,7 +37,7 @@ public class MapDefinitionException extends RuntimeException {
      *
      * @param message The detail message.
      */
-    public MapDefinitionException(String message) {
+    public MapConfigurationException(String message) {
         super(message);
     }
 
@@ -47,7 +47,7 @@ public class MapDefinitionException extends RuntimeException {
      *
      * @param throwable The inner exception.
      */
-    public MapDefinitionException(Throwable throwable) {
+    public MapConfigurationException(Throwable throwable) {
         super(throwable);
     }
 
@@ -58,7 +58,7 @@ public class MapDefinitionException extends RuntimeException {
      * @param message The detail message.
      * @param throwable The inner exception.
      */
-    public MapDefinitionException(String message, Throwable throwable) {
+    public MapConfigurationException(String message, Throwable throwable) {
         super(message, throwable);
     }
 }

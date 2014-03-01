@@ -17,31 +17,26 @@
  */
 package org.objectmapper4j;
 
-import java.util.LinkedList;
-import java.util.List;
-
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 
 /**
- *
  * @author Rafal Chojnacki
  */
-public class MapperBuilder {
+class ClassUtils {
 
-    private final List<Map<?, ?>> mapDefinitions = new LinkedList<>();
+    private ClassUtils() {}
 
-    public <S, D> MapperBuilder addMap(final Map<S, D> mapDefinition) {
-        mapDefinition.configure(null, null);
+    public static Class[] getGenericSuperclasses(final Class genericClass) {
+        Type[] actualTypeArguments = ((ParameterizedType) genericClass.getGenericSuperclass())
+                .getActualTypeArguments();
 
-        mapDefinitions.add(mapDefinition);
+        Class[] result = new Class[actualTypeArguments.length];
 
-        return this;
-    }
+        for (int i = 0; i < result.length; i++) {
+            result[i] = (Class) actualTypeArguments[i];
+        }
 
-    public Mapper buildMapper() {
-        //TODO: Clone map definitions
-
-        mapDefinitions.stream().forEach(n -> n.setMode(MapMode.EXECUTION));
-
-        return new MapperImpl(mapDefinitions);
+        return result;
     }
 }

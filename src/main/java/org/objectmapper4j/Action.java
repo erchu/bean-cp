@@ -17,20 +17,12 @@
  */
 package org.objectmapper4j;
 
-import java.util.function.BiConsumer;
 
 /**
  * @author Rafal Chojnacki
  */
-final class Binding<S, D> {
+@FunctionalInterface
+interface Action {
 
-    private final BiConsumer<S, D> implementation;
-
-    Binding(final BiConsumer<S, D> implementation) {
-        this.implementation = implementation;
-    }
-
-    void map(S source, D destination) {
-        implementation.accept(source, destination);
-    }
+    void execute();
 }
