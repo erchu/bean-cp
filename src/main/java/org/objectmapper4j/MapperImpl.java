@@ -69,9 +69,4 @@ class MapperImpl implements Mapper {
             throw new MappingException("Cannot create destination instance.", ex);
         }
     }
-
-    @Override
-    public <S, D> D mapWithMetaModel(S source, Class<D> target) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
 }

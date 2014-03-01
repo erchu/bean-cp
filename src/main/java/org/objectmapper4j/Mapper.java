@@ -26,6 +26,4 @@ public interface Mapper {
     <S, D> void map(S source, D destination);
 
     <S, D> D map(S source, Class<D> target);
-
-    <S, D> D mapWithMetaModel(S source, Class<D> target);
 }
