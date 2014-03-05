@@ -17,9 +17,9 @@
  */
 package org.objectmapper4j;
 
+import com.rits.cloning.Cloner;
 import java.util.LinkedList;
 import java.util.List;
-
 
 /**
  *
@@ -27,21 +27,22 @@ import java.util.List;
  */
 public class MapperBuilder {
 
-    private final List<Map<?, ?>> mapDefinitions = new LinkedList<>();
+    private final List<Map<?, ?>> maps = new LinkedList<>();
+
+    private final Cloner cloner = new Cloner();
 
     public <S, D> MapperBuilder addMap(final Map<S, D> mapDefinition) {
         mapDefinition.configure(null, null);
 
-        mapDefinitions.add(mapDefinition);
+        maps.add(mapDefinition);
 
         return this;
     }
 
     public Mapper buildMapper() {
-        //TODO: Clone map definitions
+        List<Map<?, ?>> mapsClone = cloner.deepClone(maps);
+        mapsClone.stream().forEach(n -> n.setMode(MapMode.EXECUTION));
 
-        mapDefinitions.stream().forEach(n -> n.setMode(MapMode.EXECUTION));
-
-        return new MapperImpl(mapDefinitions);
+        return new MapperImpl(mapsClone);
     }
 }

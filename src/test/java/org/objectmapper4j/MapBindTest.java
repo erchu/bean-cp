@@ -83,40 +83,6 @@ public class MapBindTest {
         private String b;
     }
 
-    public static final class FinalSource {
-
-        private String x;
-
-        private FinalSource(final String x) {
-            this.x = x;
-        }
-
-        public final String getX() {
-            return x;
-        }
-
-        public final void setX(String x) {
-            this.x = x;
-        }
-    }
-
-    public static final class FinalDestination {
-
-        private String a;
-
-        public FinalDestination(final String a) {
-            this.a = a;
-        }
-
-        public final String getA() {
-            return a;
-        }
-
-        public final void setA(String a) {
-            this.a = a;
-        }
-    }
-
     @Test(expected = NullParameterException.class)
     public void mapper_should_not_allow_null_as_source_expression() {
         new MapperBuilder()

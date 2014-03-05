@@ -97,7 +97,6 @@ public abstract class Map<S, D> {
         }
 
         //TODO: Options parameter processing
-
         return this;
     }
 
@@ -124,7 +123,6 @@ public abstract class Map<S, D> {
         }
 
         //TODO: Options parameter processing
-
         return this;
     }
 

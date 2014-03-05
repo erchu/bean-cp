@@ -20,8 +20,53 @@ package org.objectmapper4j;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-//TODO: Test is not complete, only basic scenario (proof of concept) implemented
 public class MapTest {
+
+    public static class Source {
+
+        private String x;
+
+        private String y;
+
+        public String getX() {
+            return x;
+        }
+
+        public void setX(String x) {
+            this.x = x;
+        }
+
+        public String getY() {
+            return y;
+        }
+
+        public void setY(String y) {
+            this.y = y;
+        }
+    }
+
+    public static class Destination {
+
+        private String a;
+
+        private String b;
+
+        public String getA() {
+            return a;
+        }
+
+        public void setA(String a) {
+            this.a = a;
+        }
+
+        public String getB() {
+            return b;
+        }
+
+        public void setB(String b) {
+            this.b = b;
+        }
+    }
 
     public static final class RestrictedSource {
 
@@ -79,6 +124,49 @@ public class MapTest {
 
         RestrictedDestination destination = new RestrictedDestination("");
         mapper.map(source, destination);
+
+        // THEN
+        assertEquals("Property 'x' is not mapped correctly.", "xval", destination.getA());
+    }
+
+    private static class SourceToDestinationMap extends Map<Source, Destination> {
+
+        private boolean enableBindings;
+
+        public boolean getEnableBindings() {
+            return enableBindings;
+        }
+
+        public void setEnableBindings(boolean enableBindings) {
+            this.enableBindings = enableBindings;
+        }
+
+        @Override
+        public void configure(Source source, Destination destination) {
+            if (enableBindings) {
+                this.<String>bind(source::getX, destination::setA);
+            }
+        }
+    }
+
+    @Test
+    public void map_definitions_after_change_should_not_affect_already_created_mappers()
+            throws NoSuchFieldException {
+        // GIVEN
+        Source source = new Source();
+        source.setX("xval");
+
+        // WHEN
+        SourceToDestinationMap map = new SourceToDestinationMap();
+        map.setEnableBindings(true);
+
+        Mapper mapper = new MapperBuilder()
+                .addMap(map)
+                .buildMapper();
+
+        map.setEnableBindings(false);
+
+        Destination destination = mapper.map(source, Destination.class);
 
         // THEN
         assertEquals("Property 'x' is not mapped correctly.", "xval", destination.getA());
