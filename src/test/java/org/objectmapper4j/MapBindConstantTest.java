@@ -69,6 +69,18 @@ public class MapBindConstantTest {
         }
     }
 
+    @Test(expected = NullParameterException.class)
+    public void mapper_should_not_allow_null_as_destination_expression() {
+        new MapperBuilder()
+                .addMap(new Map<Source, Destination>() {
+
+                    @Override
+                    public void configure(final Source source, final Destination destination) {
+                        this.<String>bindConstant("const", null);
+                    }
+                });
+    }
+
     @Test
     public void mapper_should_be_able_to_bind_to_constants() {
         // GIVEN
@@ -92,5 +104,34 @@ public class MapBindConstantTest {
         // THEN
         assertEquals("Destination property 'a' is not mapped correctly.", "const", destination.getA());
         assertNull("Destination property 'b' is not mapped correctly.", destination.getB());
+    }
+
+    @Test
+    public void mapper_should_allow_null_as_source() {
+        // GIVEN
+        Source source = new Source();
+        source.setX("xval");
+        source.setY("yval");
+
+        Destination destination = new Destination();
+        destination.setA("aval");
+        destination.setB("bval");
+
+        // WHEN
+        Mapper mapper = new MapperBuilder()
+                .addMap(new Map<Source, Destination>() {
+
+                    @Override
+                    public void configure(final Source source, final Destination destination) {
+                        this.<String>bindConstant(null, destination::setA);
+                    }
+                })
+                .buildMapper();
+
+        mapper.map(source, destination);
+
+        // THEN
+        assertNull("Destination property 'a' is not mapped correctly.", destination.getA());
+        assertEquals("Destination property 'b' is not mapped correctly.", "bval", destination.getB());
     }
 }

@@ -84,7 +84,13 @@ public abstract class Map<S, D> {
             final Supplier<T> from,
             final Consumer<T> to,
             final BindingOption... options) {
-        //TODO: Input parameters - error checking
+        if (from == null) {
+            throw new NullParameterException("from");
+        }
+
+        if (to == null) {
+            throw new NullParameterException("to");
+        }
 
         if (mode == MapMode.EXECUTION) {
             to.accept(from.get());
@@ -109,23 +115,15 @@ public abstract class Map<S, D> {
             final T constantValue,
             final Consumer<T> to,
             final BindingOption... options) {
-        //TODO: Input parameter error checking
+        if (to == null) {
+            throw new NullParameterException("to");
+        }
 
         if (mode == MapMode.EXECUTION) {
             to.accept(constantValue);
         }
 
         //TODO: Options parameter processing
-
-        //TODO: Applys only to biding with meta data:
-        //TODO: - Fields processing (right now only bean getter are supported)
-        //TODO: - Check if getter is really getter method
-        //TODO: - Check if setter is really setter method
-        //TODO: - Check if only one method was called on source/destination proxy
-        //TODO: - Check if method is static?
-        //TODO: - What if method is final?
-        //TODO: - Check if proxies aren't modified during execution
-        //TODO: - Proxy reset
 
         return this;
     }

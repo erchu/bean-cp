@@ -117,6 +117,34 @@ public class MapBindTest {
         }
     }
 
+    @Test(expected = NullParameterException.class)
+    public void mapper_should_not_allow_null_as_source_expression() {
+        new MapperBuilder()
+                .addMap(new Map<SourceWithProperties, DestinationWithProperties>() {
+
+                    @Override
+                    public void configure(
+                            final SourceWithProperties source,
+                            final DestinationWithProperties destination) {
+                                this.<String>bind(null, destination::setA);
+                            }
+                });
+    }
+
+    @Test(expected = NullParameterException.class)
+    public void mapper_should_not_allow_null_as_destination_expression() {
+        new MapperBuilder()
+                .addMap(new Map<SourceWithProperties, DestinationWithProperties>() {
+
+                    @Override
+                    public void configure(
+                            final SourceWithProperties source,
+                            final DestinationWithProperties destination) {
+                                this.<String>bind(source::getX, null);
+                            }
+                });
+    }
+
     @Test
     public void mapper_should_bind_properties() {
         // GIVEN
