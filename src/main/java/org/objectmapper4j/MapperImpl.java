@@ -26,20 +26,27 @@ import java.util.Optional;
  */
 class MapperImpl implements Mapper {
 
-    private final List<Map<?, ?>> mapDefinitions;
+    private final List<MapImpl<?, ?>> maps;
 
-    MapperImpl(final List<Map<?, ?>> mapDefinitions) {
-        //TODO: Temporary solution
-        this.mapDefinitions = mapDefinitions;
+    MapperImpl(final List<MapImpl<?, ?>> maps) {
+        this.maps = maps;
     }
 
     @Override
     public <S, D> void map(S source, D destination) {
+        if (source == null) {
+            throw new NullParameterException("source");
+        }
+
+        if (destination == null) {
+            throw new NullParameterException("destination");
+        }
+
         Class sourceClass = source.getClass();
         Class destinationClass = destination.getClass();
 
-        //TODO: Temporary solution, too simple ;-) solution
-        Optional<Map<?, ?>> mapperHolder = mapDefinitions.stream().filter(
+        //TODO: Subtypes handling
+        Optional<MapImpl<?, ?>> mapperHolder = maps.stream().filter(
                 n
                 -> n.getSourceClass().equals(sourceClass)
                 && n.getDestinationClass().equals(destinationClass))
@@ -50,8 +57,8 @@ class MapperImpl implements Mapper {
                     String.format("No suitable mapping found from %s to %s.", source, destination));
         }
 
-        Map<S, D> mapper = (Map<S, D>) mapperHolder.get();
-        mapper.configure(source, destination);
+        MapImpl<S, D> mapper = (MapImpl<S, D>) mapperHolder.get();
+        mapper.execute(source, destination);
     }
 
     @Override

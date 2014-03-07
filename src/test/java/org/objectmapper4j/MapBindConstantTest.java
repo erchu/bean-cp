@@ -72,66 +72,51 @@ public class MapBindConstantTest {
     @Test(expected = NullParameterException.class)
     public void mapper_should_not_allow_null_as_destination_expression() {
         new MapperBuilder()
-                .addMap(new Map<Source, Destination>() {
-
-                    @Override
-                    public void configure(final Source source, final Destination destination) {
-                        this.<String>bindConstant("const", null);
-                    }
-                });
+                .addMap(Source.class, Destination.class, (config, source, destination) -> config
+                        .bindConstant("const", null));
     }
 
     @Test
     public void mapper_should_be_able_to_bind_to_constants() {
         // GIVEN
-        Source source = new Source();
-        source.setX("xval");
-        source.setY("yval");
+        Source sampleSource = new Source();
+        sampleSource.setX("xval");
+        sampleSource.setY("yval");
 
         // WHEN
         Mapper mapper = new MapperBuilder()
-                .addMap(new Map<Source, Destination>() {
-
-                    @Override
-                    public void configure(final Source source, final Destination destination) {
-                        this.<String>bindConstant("const", destination::setA);
-                    }
-                })
+                .addMap(Source.class, Destination.class, (config, source, destination) -> config
+                        .bindConstant("const", destination::setA))
                 .buildMapper();
 
-        Destination destination = mapper.map(source, Destination.class);
+        Destination result = mapper.map(sampleSource, Destination.class);
 
         // THEN
-        assertEquals("Destination property 'a' is not mapped correctly.", "const", destination.getA());
-        assertNull("Destination property 'b' is not mapped correctly.", destination.getB());
+        assertEquals("Destination property 'a' is not mapped correctly.", "const", result.getA());
+        assertNull("Destination property 'b' is not mapped correctly.", result.getB());
     }
 
     @Test
     public void mapper_should_allow_null_as_source() {
         // GIVEN
-        Source source = new Source();
-        source.setX("xval");
-        source.setY("yval");
+        Source sampleSource = new Source();
+        sampleSource.setX("xval");
+        sampleSource.setY("yval");
 
-        Destination destination = new Destination();
-        destination.setA("aval");
-        destination.setB("bval");
+        Destination result = new Destination();
+        result.setA("aval");
+        result.setB("bval");
 
         // WHEN
         Mapper mapper = new MapperBuilder()
-                .addMap(new Map<Source, Destination>() {
-
-                    @Override
-                    public void configure(final Source source, final Destination destination) {
-                        this.<String>bindConstant(null, destination::setA);
-                    }
-                })
+                .addMap(Source.class, Destination.class, (config, source, destination) -> config
+                        .bindConstant(null, destination::setA))
                 .buildMapper();
 
-        mapper.map(source, destination);
+        mapper.map(sampleSource, result);
 
         // THEN
-        assertNull("Destination property 'a' is not mapped correctly.", destination.getA());
-        assertEquals("Destination property 'b' is not mapped correctly.", "bval", destination.getB());
+        assertNull("Destination property 'a' is not mapped correctly.", result.getA());
+        assertEquals("Destination property 'b' is not mapped correctly.", "bval", result.getB());
     }
 }

@@ -27,22 +27,19 @@ import java.util.List;
  */
 public class MapperBuilder {
 
-    private final List<Map<?, ?>> maps = new LinkedList<>();
+    private final List<MapImpl<?, ?>> maps = new LinkedList<>();
 
-    private final Cloner cloner = new Cloner();
+    public <S, D> MapperBuilder addMap(final Class<S> sourceClass, final Class<D> destinationClass,
+            final MapConfiguration<S, D> mapConfiguration) {
+        MapImpl map = new MapImpl(sourceClass, destinationClass, mapConfiguration);
+        map.configure();
 
-    public <S, D> MapperBuilder addMap(final Map<S, D> mapDefinition) {
-        mapDefinition.configure(null, null);
-
-        maps.add(mapDefinition);
+        maps.add(map);
 
         return this;
     }
 
     public Mapper buildMapper() {
-        List<Map<?, ?>> mapsClone = cloner.deepClone(maps);
-        mapsClone.stream().forEach(n -> n.setMode(MapMode.EXECUTION));
-
-        return new MapperImpl(mapsClone);
+        return new MapperImpl(maps);
     }
 }
