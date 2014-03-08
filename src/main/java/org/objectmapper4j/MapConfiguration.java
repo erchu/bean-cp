@@ -36,6 +36,8 @@ package org.objectmapper4j;
 /**
  *
  * @author Rafal Chojnacki
+ * @param <S> mapping source
+ * @param <D> mapping destination
  */
 @FunctionalInterface
 public interface MapConfiguration<S, D> {
@@ -44,8 +46,9 @@ public interface MapConfiguration<S, D> {
      * Defines map configuration. Implementation must be thread safe and has no side effects other
      * that binding definition. Method could be called more than once.
      *
+     * @param config configuration reference
      * @param source source object, null value must be allowed and can't cause exception
      * @param destination destination object, null value must be allowed and can't cause exception
      */
-    void apply(final Map<S, D> map, final S source, final D destination);
+    void apply(final Map<S, D> config, final S source, final D destination);
 }

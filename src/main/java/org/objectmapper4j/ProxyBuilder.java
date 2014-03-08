@@ -17,28 +17,29 @@
  */
 package org.objectmapper4j;
 
-import java.util.LinkedList;
-import java.util.List;
+import javassist.util.proxy.ProxyFactory;
+
 
 /**
  *
  * @author Rafal Chojnacki
  */
-public class MapperBuilder {
+class ProxyBuilder {
 
-    private final List<MapImpl<?, ?>> maps = new LinkedList<>();
+    public <T> T createProxy(Class<T> proxiedClass) {
+        ProxyFactory proxyFactory = new ProxyFactory();
+        proxyFactory.setSuperclass(proxiedClass);
 
-    public <S, D> MapperBuilder addMap(final Class<S> sourceClass, final Class<D> destinationClass,
-            final MapConfiguration<S, D> mapConfiguration) {
-        MapImpl map = new MapImpl(sourceClass, destinationClass, mapConfiguration);
-        map.configure();
+        Class proxyClass = proxyFactory.createClass();
 
-        maps.add(map);
+        try {
+            T proxy = (T) proxyClass.newInstance();
 
-        return this;
-    }
-
-    public Mapper buildMapper() {
-        return new MapperImpl(maps);
+            return proxy;
+        } catch (InstantiationException | IllegalAccessException ex) {
+            throw new MapConfigurationException(String.format(
+                    "Internal mapper error. Failed to create proxy class for %s",
+                    proxiedClass.getName()), ex);
+        }
     }
 }

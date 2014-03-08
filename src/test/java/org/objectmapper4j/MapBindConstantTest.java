@@ -85,7 +85,8 @@ public class MapBindConstantTest {
 
         // WHEN
         Mapper mapper = new MapperBuilder()
-                .addMap(Source.class, Destination.class, (config, source, destination) -> config
+                .addMap(Source.class, Destination.class,
+                        (config, source, destination) -> config
                         .bindConstant("const", destination::setA))
                 .buildMapper();
 

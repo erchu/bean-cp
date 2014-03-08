@@ -22,12 +22,11 @@ import static org.junit.Assert.*;
 
 public class MapTest {
 
-    public static final class RestrictedSource {
+    public static class RestrictedSource {
 
         private String x;
 
-        private RestrictedSource(final String x) {
-            this.x = x;
+        protected RestrictedSource() {
         }
 
         public final String getX() {
@@ -39,12 +38,11 @@ public class MapTest {
         }
     }
 
-    public static final class RestrictedDestination {
+    public static class RestrictedDestination {
 
         private String a;
 
-        public RestrictedDestination(final String a) {
-            this.a = a;
+        protected RestrictedDestination() {
         }
 
         public final String getA() {
@@ -57,10 +55,10 @@ public class MapTest {
     }
 
     @Test
-    public void mapper_should_work_even_for_final_classes_and_final_class_members_with_no_default_constructor()
+    public void mapper_should_work_even_classes_default_constructor_is_protected_and_mapped_properties_are_final()
             throws NoSuchFieldException {
         // GIVEN
-        RestrictedSource sampleSource = new RestrictedSource("");
+        RestrictedSource sampleSource = new RestrictedSource();
         sampleSource.setX("xval");
 
         // WHEN
@@ -70,7 +68,7 @@ public class MapTest {
                         .bind(source::getX, destination::setA))
                 .buildMapper();
 
-        RestrictedDestination result = new RestrictedDestination("");
+        RestrictedDestination result = new RestrictedDestination();
         mapper.map(sampleSource, result);
 
         // THEN

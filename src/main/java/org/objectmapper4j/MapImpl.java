@@ -23,7 +23,8 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 /**
- * Defines mapping between source and destination class. Class is not thread safe.
+ * Defines mapping between source and destination class. Class is not thread safe. Source and
+ * destination classes must have default public or private constructor.
  *
  * @param <S> source class
  * @param <D> destination class
@@ -58,7 +59,15 @@ class MapImpl<S, D> implements Map<S, D> {
             throw new IllegalStateException("Map was already configured.");
         }
 
-        configuration.apply(this, (S) null, (D) null);
+        ProxyBuilder proxyBuilder = new ProxyBuilder();
+        S sourceProxy = proxyBuilder.createProxy(sourceClass);
+        D destinationProxy = proxyBuilder.createProxy(destinationClass);
+
+        // Source and destination object instances are not required by MapImpl in CONFIGURATION
+        // mode, but Java lambda handling mechanizm requires non-null value, so we need to create
+        // proxy instance. Unfortunatelly this enforces constraint on source and destination
+        // classes: they must have default public or protected constructor.
+        configuration.apply(this, sourceProxy, destinationProxy);
 
         mode = MapMode.EXECUTION;
     }

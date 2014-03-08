@@ -59,9 +59,10 @@
         </dependency>
 
         <dependency>
-            <groupId>uk.com.robust-it</groupId>
-            <artifactId>cloning</artifactId>
-            <version>1.9.0</version>
+            <artifactId>javassist</artifactId>
+            <groupId>org.javassist</groupId>
+            <type>jar</type>
+            <version>3.18.1-GA</version>
         </dependency>
     </dependencies>
 
