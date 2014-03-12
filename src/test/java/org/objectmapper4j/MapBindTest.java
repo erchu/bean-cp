@@ -83,6 +83,32 @@ public class MapBindTest {
         private String b;
     }
 
+    public static class SourceInnerSource {
+        
+        private SourceWithProperties innerSource;
+
+        public SourceWithProperties getInnerSource() {
+            return innerSource;
+        }
+
+        public void setInnerSource(SourceWithProperties innerSource) {
+            this.innerSource = innerSource;
+        }
+    }
+
+    public static class AnotherSourceWithInnerSource {
+        
+        private SourceInnerSource innerSource;
+
+        public SourceInnerSource getInnerSource() {
+            return innerSource;
+        }
+
+        public void setInnerSource(SourceInnerSource innerSource) {
+            this.innerSource = innerSource;
+        }
+    }
+
     @Test(expected = NullParameterException.class)
     public void mapper_should_not_allow_null_as_source_expression() {
         new MapperBuilder()
@@ -151,6 +177,34 @@ public class MapBindTest {
         SourceWithProperties sourceInstance = new SourceWithProperties();
         sourceInstance.setX("xval");
         sourceInstance.setY("yval");
+
+        // WHEN
+        Mapper mapper = new MapperBuilder()
+                .addMap(SourceWithProperties.class, DestinationWithProperties.class,
+                        (config, source, destination) -> config
+                        .bind(() -> source.getX() + source.getY(), destination::setA)
+                        .bind(() -> source.getY() + "2", destination::setB))
+                .buildMapper();
+
+        DestinationWithProperties destination = mapper.map(sourceInstance, DestinationWithProperties.class);
+
+        // THEN
+        assertEquals(
+                "Property 'x' is not mapped correctly.", "xvalyval", destination.getA());
+        assertEquals(
+                "Property 'y' is not mapped correctly.", "yval2", destination.getB());
+    }
+
+    @Test
+    public void mapper_should_be_able_to_bind_inner_classes() {
+        // GIVEN
+        AnotherSourceWithInnerSource sourceInstance = new AnotherSourceWithInnerSource();
+        
+        sourceInstance.setInnerSource(new SourceInnerSource());
+        sourceInstance.getInnerSource().setInnerSource(new SourceWithProperties());
+        
+        sourceInstance.getInnerSource().getInnerSource().setX("xval");
+        sourceInstance.getInnerSource().getInnerSource().setY("yval");
 
         // WHEN
         Mapper mapper = new MapperBuilder()

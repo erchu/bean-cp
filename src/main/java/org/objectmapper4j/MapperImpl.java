@@ -45,11 +45,10 @@ class MapperImpl implements Mapper {
         Class sourceClass = source.getClass();
         Class destinationClass = destination.getClass();
 
-        //TODO: Subtypes handling
         Optional<MapImpl<?, ?>> mapperHolder = maps.stream().filter(
                 n
-                -> n.getSourceClass().equals(sourceClass)
-                && n.getDestinationClass().equals(destinationClass))
+                -> canBeMapped(sourceClass, n.getSourceClass())
+                && canBeMapped(destinationClass, n.getDestinationClass()))
                 .findFirst();
 
         if (!mapperHolder.isPresent()) {
@@ -75,5 +74,11 @@ class MapperImpl implements Mapper {
         } catch (InstantiationException | IllegalAccessException ex) {
             throw new MappingException("Cannot create destination instance.", ex);
         }
+    }
+
+    private boolean canBeMapped(final Class objectClazz, final Class asMappingSideClass) {
+        //TODO: options and subtypes handling
+
+        return objectClazz.equals(asMappingSideClass);
     }
 }

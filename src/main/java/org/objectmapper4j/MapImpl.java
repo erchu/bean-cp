@@ -59,15 +59,15 @@ class MapImpl<S, D> implements Map<S, D> {
             throw new IllegalStateException("Map was already configured.");
         }
 
-        ProxyBuilder proxyBuilder = new ProxyBuilder();
-        S sourceProxy = proxyBuilder.createProxy(sourceClass);
-        D destinationProxy = proxyBuilder.createProxy(destinationClass);
+        FakeObjectBuilder proxyBuilder = new FakeObjectBuilder();
+        S sourceObject = proxyBuilder.createFakeObject(sourceClass);
+        D destinationObject = proxyBuilder.createFakeObject(destinationClass);
 
         // Source and destination object instances are not required by MapImpl in CONFIGURATION
         // mode, but Java lambda handling mechanizm requires non-null value, so we need to create
         // proxy instance. Unfortunatelly this enforces constraint on source and destination
         // classes: they must have default public or protected constructor.
-        configuration.apply(this, sourceProxy, destinationProxy);
+        configuration.apply(this, sourceObject, destinationObject);
 
         mode = MapMode.EXECUTION;
     }
