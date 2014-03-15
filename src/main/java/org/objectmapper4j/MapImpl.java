@@ -45,6 +45,8 @@ class MapImpl<S, D> implements Map<S, D> {
 
     private final MapConfiguration<S, D> configuration;
 
+    private MapObjectsReferenceImpl<S, D> mapObjectsReference;
+
     private MapMode mode = MapMode.CONFIGURATION;
 
     public MapImpl(final Class<S> sourceClass, final Class<D> destinationClass,
@@ -55,7 +57,7 @@ class MapImpl<S, D> implements Map<S, D> {
     }
 
     void configure() {
-        if (mode == MapMode.EXECUTION) {
+        if (mode != MapMode.CONFIGURATION) {
             throw new IllegalStateException("Map was already configured.");
         }
 
@@ -67,9 +69,11 @@ class MapImpl<S, D> implements Map<S, D> {
         // mode, but Java lambda handling mechanizm requires non-null value, so we need to create
         // proxy instance. Unfortunatelly this enforces constraint on source and destination
         // classes: they must have default public or protected constructor.
-        configuration.apply(this, sourceObject, destinationObject);
+        mapObjectsReference = new MapObjectsReferenceImpl<>(sourceObject, destinationObject);
+        configuration.apply(this, mapObjectsReference);
 
         mode = MapMode.EXECUTION;
+        mapObjectsReference = null;
     }
 
     void execute(S source, D destination) {
@@ -77,7 +81,7 @@ class MapImpl<S, D> implements Map<S, D> {
             throw new IllegalStateException("Map is not configure. Use configure() first.");
         }
 
-        configuration.apply(this, source, destination);
+        configuration.apply(this, new MapObjectsReferenceImpl<>(source, destination));
     }
 
     Class<S> getSourceClass() {
@@ -93,18 +97,8 @@ class MapImpl<S, D> implements Map<S, D> {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    /**
-     * Adds mapping between source and destination class for single destination member.
-     *
-     * @param <T> value data type
-     * @param from source class member
-     * @param to destination class member
-     * @param options additional mapping options
-     *
-     * @return this (for method chaining)
-     */
     @Override
-    public <T> Map<S, D> bind(
+    public <T> Map<S, D> bindFunction(
             final Supplier<T> from,
             final Consumer<T> to,
             final BindingOption... options) {
@@ -124,16 +118,29 @@ class MapImpl<S, D> implements Map<S, D> {
         return this;
     }
 
-    /**
-     * Adds mapping between source and destination class for single destination member.
-     *
-     * @param <T> value data type
-     * @param constantValue constant value
-     * @param to destination class member
-     * @param options additional mapping options
-     *
-     * @return this (for method chaining)
-     */
+    @Override
+    public <T> Map<S, D> bindOneToOne(
+            final Supplier<T> from,
+            final Consumer<T> to,
+            final BindingOption... options) {
+        if (from == null) {
+            throw new NullParameterException("from");
+        }
+
+        if (to == null) {
+            throw new NullParameterException("to");
+        }
+
+        //TODO: Annotations propagation from source to destination
+
+        if (mode == MapMode.EXECUTION) {
+            to.accept(from.get());
+        }
+
+        //TODO: Options parameter processing
+        return this;
+    }
+
     @Override
     public <T> Map<S, D> bindConstant(
             final T constantValue,

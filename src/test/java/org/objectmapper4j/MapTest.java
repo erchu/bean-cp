@@ -33,8 +33,8 @@ public class MapTest {
         // WHEN
         Mapper mapper = new MapperBuilder()
                 .addMap(SourceWithFinalMembers.class, DestinationWithFinalMembers.class,
-                        (config, source, destination) -> config
-                        .bind(source::getX, destination::setA))
+                        (config, ref) -> config
+                        .bindFunction(ref.source()::getX, ref.destination()::setA))
                 .buildMapper();
 
         DestinationWithFinalMembers result = new DestinationWithFinalMembers();
@@ -85,8 +85,8 @@ public class MapTest {
         // WHEN
         Mapper mapper = new MapperBuilder()
                 .addMap(SourceWithFinalMembers.class, DestinationWithProtectedDefaultConstructor.class,
-                        (config, source, destination) -> config
-                        .bind(source::getX, destination::setA))
+                        (config, ref) -> config
+                        .bindFunction(ref.source()::getX, ref.destination()::setA))
                 .buildMapper();
 
         DestinationWithProtectedDefaultConstructor result
@@ -147,8 +147,8 @@ public class MapTest {
         // WHEN
         Mapper mapper = new MapperBuilder()
                 .addMap(FinalSource.class, FinalDestination.class,
-                        (config, source, destination) -> config
-                        .bind(source::getX, destination::setA))
+                        (config, ref) -> config
+                        .bindFunction(ref.source()::getX, ref.destination()::setA))
                 .buildMapper();
 
         FinalDestination result = new FinalDestination();
@@ -189,16 +189,16 @@ public class MapTest {
             throws NoSuchFieldException {
         new MapperBuilder()
                 .addMap(PrivateDefaultConstructorSource.class, PrivateDefaultConstructorDestination.class,
-                        (config, source, destination) -> {});
+                        (config, ref) -> {});
     }
 
     public static class PrivateDefaultConstructorSource {
-        
+
         private PrivateDefaultConstructorSource() {}
     }
 
     public static class PrivateDefaultConstructorDestination {
-        
+
         private PrivateDefaultConstructorDestination() {}
     }
 
@@ -207,17 +207,17 @@ public class MapTest {
             throws NoSuchFieldException {
         new MapperBuilder()
                 .addMap(NoDefaultConstructorSource.class, NoDefaultConstructorDestination.class,
-                        (config, source, destination) -> {});
+                        (config, ref) -> {});
     }
 
     public static class NoDefaultConstructorSource {
-        
+
         public NoDefaultConstructorSource(final int x) {
         }
     }
 
     public static class NoDefaultConstructorDestination {
-        
+
         public NoDefaultConstructorDestination(final int y) {
         }
     }
@@ -227,7 +227,7 @@ public class MapTest {
             throws NoSuchFieldException {
         new MapperBuilder()
                 .addMap(NonStaticSource.class, NonStaticDestination.class,
-                        (config, source, destination) -> {});
+                        (config, ref) -> {});
     }
 
     public class NonStaticSource {

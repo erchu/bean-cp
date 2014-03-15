@@ -20,7 +20,6 @@ package org.objectmapper4j;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-//TODO: Test is not complete, only basic scenario (proof of concept) implemented
 public class MapBindConstantTest {
 
     public static class Source {
@@ -72,7 +71,7 @@ public class MapBindConstantTest {
     @Test(expected = NullParameterException.class)
     public void mapper_should_not_allow_null_as_destination_expression() {
         new MapperBuilder()
-                .addMap(Source.class, Destination.class, (config, source, destination) -> config
+                .addMap(Source.class, Destination.class, (config, ref) -> config
                         .bindConstant("const", null));
     }
 
@@ -86,8 +85,8 @@ public class MapBindConstantTest {
         // WHEN
         Mapper mapper = new MapperBuilder()
                 .addMap(Source.class, Destination.class,
-                        (config, source, destination) -> config
-                        .bindConstant("const", destination::setA))
+                        (config, ref) -> config
+                        .bindConstant("const", ref.destination()::setA))
                 .buildMapper();
 
         Destination result = mapper.map(sampleSource, Destination.class);
@@ -110,8 +109,8 @@ public class MapBindConstantTest {
 
         // WHEN
         Mapper mapper = new MapperBuilder()
-                .addMap(Source.class, Destination.class, (config, source, destination) -> config
-                        .bindConstant(null, destination::setA))
+                .addMap(Source.class, Destination.class, (config, ref) -> config
+                        .bindConstant(null, ref.destination()::setA))
                 .buildMapper();
 
         mapper.map(sampleSource, result);
