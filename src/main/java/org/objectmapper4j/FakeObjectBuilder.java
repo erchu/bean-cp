@@ -1,17 +1,17 @@
 /*
  * ObjectMapper4j
  * Copyright (c) 2014, Rafal Chojnacki, All rights reserved.
- * 
+ *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 3.0 of the License, or (at your option) any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library.
  */
@@ -40,10 +40,11 @@ class FakeObjectBuilder {
 
         if (defaultConstructor == null) {
             throw new MapConfigurationException(String.format(
-                    "Class %s has no default public or protected constructor.", ofClass.toString()));
+                    "Class %s has no default public or protected constructor or is inner "
+                            + "non-static class.", ofClass.toString()));
         }
 
-        if (hasModifier(defaultConstructor, Modifier.PUBLIC)) {
+        if (Modifier.isPublic(defaultConstructor.getModifiers())) {
             try {
                 return (T) ofClass.newInstance();
             } catch (InstantiationException | IllegalAccessException ex) {
@@ -53,7 +54,7 @@ class FakeObjectBuilder {
             }
         }
 
-        if (hasModifier(defaultConstructor, Modifier.PROTECTED)) {
+        if (Modifier.isProtected(defaultConstructor.getModifiers())) {
             Class proxyClass = createProxyClass(ofClass);
 
             try {
@@ -67,7 +68,8 @@ class FakeObjectBuilder {
 
         // default constructor is private
         throw new MapConfigurationException(String.format(
-                "Class %s has no default public or protected constructor.", ofClass.toString()));
+                "Class %s has no default public or protected constructor or is private class.",
+                ofClass.toString()));
     }
 
     private Constructor getDefaultConstructor(final Class ofClass) {
@@ -76,10 +78,6 @@ class FakeObjectBuilder {
                 .findAny();
 
         return (defaultConstructor.isPresent() ? defaultConstructor.get() : null);
-    }
-
-    private boolean hasModifier(final Constructor constructor, int modifier) {
-        return (constructor.getModifiers() & modifier) != 0;
     }
 
     private <T> Class createProxyClass(final Class<T> superClass) {

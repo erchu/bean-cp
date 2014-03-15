@@ -17,8 +17,11 @@
  */
 package org.objectmapper4j;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 /**
  *
@@ -45,18 +48,19 @@ class MapperImpl implements Mapper {
         Class sourceClass = source.getClass();
         Class destinationClass = destination.getClass();
 
-        Optional<MapImpl<?, ?>> mapperHolder = maps.stream().filter(
-                n
-                -> canBeMapped(sourceClass, n.getSourceClass())
+        List<MapImpl<?, ?>> validMappers = maps.stream().filter(
+                n -> canBeMapped(sourceClass, n.getSourceClass())
                 && canBeMapped(destinationClass, n.getDestinationClass()))
-                .findFirst();
+                .collect(Collectors.toList());
 
-        if (!mapperHolder.isPresent()) {
+        if (validMappers.isEmpty()) {
             throw new MappingException(
                     String.format("No suitable mapping found from %s to %s.", source, destination));
         }
 
-        MapImpl<S, D> mapper = (MapImpl<S, D>) mapperHolder.get();
+        MapImpl<S, D> mapper = (MapImpl<S, D>) getBestMatchingMapper(
+                sourceClass, destinationClass, validMappers);
+
         mapper.execute(source, destination);
     }
 
@@ -76,9 +80,41 @@ class MapperImpl implements Mapper {
         }
     }
 
-    private boolean canBeMapped(final Class objectClazz, final Class asMappingSideClass) {
-        //TODO: options and subtypes handling
+    private MapImpl<?, ?> getBestMatchingMapper(
+            final Class sourceClass,
+            final Class destinationClass,
+            final List<MapImpl<?, ?>> validMappers) {
+        return coalesce(
+                firstOrNull(validMappers, (n
+                        -> sourceClass.equals(n.getSourceClass())
+                        && destinationClass.equals(n.getDestinationClass()))),
+                firstOrNull(validMappers, (n
+                        -> destinationClass.equals(n.getDestinationClass()))),
+                firstOrNull(validMappers, (n
+                        -> sourceClass.equals(n.getSourceClass()))),
+                validMappers.get(0));
+    }
 
-        return objectClazz.equals(asMappingSideClass);
+    private <T> T firstOrNull(Collection<T> collection, Predicate<T> filter) {
+        Optional<T> findFirst = collection
+                .stream()
+                .filter(filter)
+                .findFirst();
+
+        return (findFirst.isPresent() ? findFirst.get() : null);
+    }
+
+    private <T> T coalesce(T... args) {
+        for (T i : args) {
+            if (i != null) {
+                return i;
+            }
+        }
+
+        return null;
+    }
+
+    private boolean canBeMapped(final Class objectClazz, final Class asMappingSideClass) {
+        return asMappingSideClass.isAssignableFrom(objectClazz);
     }
 }

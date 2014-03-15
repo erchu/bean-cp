@@ -1,7 +1,7 @@
 package org.objectmapper4j;
 
 
-public interface MapObjectsReference<S, D>  {
+public interface ObjectsReference<S, D>  {
 
     S source();
     

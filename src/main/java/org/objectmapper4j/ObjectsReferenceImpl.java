@@ -6,7 +6,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-class MapObjectsReferenceImpl<S, D> implements MapObjectsReference<S, D> {
+class ObjectsReferenceImpl<S, D> implements ObjectsReference<S, D> {
 
     private final S sourceObject;
 
@@ -18,7 +18,7 @@ class MapObjectsReferenceImpl<S, D> implements MapObjectsReference<S, D> {
 
     private List<Method> destinationCallers;
 
-    public MapObjectsReferenceImpl(final S sourceObject, final D destinationObject) {
+    public ObjectsReferenceImpl(final S sourceObject, final D destinationObject) {
         this.sourceObject = sourceObject;
         this.destinationObject = destinationObject;
         this.tracingEnabled = false;

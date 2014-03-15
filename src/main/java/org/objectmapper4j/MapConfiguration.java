@@ -33,5 +33,5 @@ public interface MapConfiguration<S, D> {
      * @param config configuration
      * @param ref source and destination objects holder
      */
-    void apply(final Map<S, D> config, final MapObjectsReference<S, D> ref);
+    void apply(final Map<S, D> config, final ObjectsReference<S, D> ref);
 }

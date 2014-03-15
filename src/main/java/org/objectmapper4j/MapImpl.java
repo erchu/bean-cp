@@ -17,6 +17,7 @@
  */
 package org.objectmapper4j;
 
+import java.lang.reflect.Modifier;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -45,7 +46,7 @@ class MapImpl<S, D> implements Map<S, D> {
 
     private final MapConfiguration<S, D> configuration;
 
-    private MapObjectsReferenceImpl<S, D> mapObjectsReference;
+    private ObjectsReferenceImpl<S, D> mapObjectsReference;
 
     private MapMode mode = MapMode.CONFIGURATION;
 
@@ -61,6 +62,12 @@ class MapImpl<S, D> implements Map<S, D> {
             throw new IllegalStateException("Map was already configured.");
         }
 
+        if (Modifier.isFinal(destinationClass.getModifiers())) {
+            throw new MapConfigurationException(
+                    String.format("Destination class %s cannot be final.",
+                    destinationClass.getName()));
+        }
+
         FakeObjectBuilder proxyBuilder = new FakeObjectBuilder();
         S sourceObject = proxyBuilder.createFakeObject(sourceClass);
         D destinationObject = proxyBuilder.createFakeObject(destinationClass);
@@ -69,7 +76,7 @@ class MapImpl<S, D> implements Map<S, D> {
         // mode, but Java lambda handling mechanizm requires non-null value, so we need to create
         // proxy instance. Unfortunatelly this enforces constraint on source and destination
         // classes: they must have default public or protected constructor.
-        mapObjectsReference = new MapObjectsReferenceImpl<>(sourceObject, destinationObject);
+        mapObjectsReference = new ObjectsReferenceImpl<>(sourceObject, destinationObject);
         configuration.apply(this, mapObjectsReference);
 
         mode = MapMode.EXECUTION;
@@ -81,7 +88,7 @@ class MapImpl<S, D> implements Map<S, D> {
             throw new IllegalStateException("Map is not configure. Use configure() first.");
         }
 
-        configuration.apply(this, new MapObjectsReferenceImpl<>(source, destination));
+        configuration.apply(this, new ObjectsReferenceImpl<>(source, destination));
     }
 
     Class<S> getSourceClass() {
@@ -132,7 +139,6 @@ class MapImpl<S, D> implements Map<S, D> {
         }
 
         //TODO: Annotations propagation from source to destination
-
         if (mode == MapMode.EXECUTION) {
             to.accept(from.get());
         }
