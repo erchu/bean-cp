@@ -1,4 +1,4 @@
-package org.objectmapper4j;
+package org.beancp;
 
 import java.io.IOException;
 import java.io.InputStream;

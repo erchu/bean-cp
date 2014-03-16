@@ -15,8 +15,11 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library.
  */
-package org.objectmapper4j;
+package org.beancp;
 
+import org.beancp.MapperBuilder;
+import org.beancp.Mapper;
+import org.beancp.MapConfigurationException;
 import org.junit.Test;
 import static org.junit.Assert.*;
 

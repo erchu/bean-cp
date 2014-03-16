@@ -1,7 +1,7 @@
 <#if licenseFirst??>
 ${licenseFirst}
 </#if>
-${licensePrefix}ObjectMapper4j
+${licensePrefix}bean-cp
 ${licensePrefix}Copyright (c) 2014, Rafal Chojnacki, All rights reserved.
 ${licensePrefix}
 ${licensePrefix}This library is free software; you can redistribute it and/or

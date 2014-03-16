@@ -1,4 +1,4 @@
-package org.objectmapper4j;
+package org.beancp;
 
 
 public interface ObjectsReference<S, D>  {

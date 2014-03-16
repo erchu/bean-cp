@@ -15,22 +15,28 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library.
  */
-package org.objectmapper4j;
+package org.beancp;
+
+import java.util.function.Supplier;
+
 
 /**
- * Indicates null value for method parameter which do not allow nulls.
- *
  * @author Rafal Chojnacki
  */
-public class NullParameterException extends RuntimeException {
+public final class BindingOption {
 
-    /**
-     * Constructs an instance of <code>MapDefinitionException</code> with the specified parameter
-     * name.
-     *
-     * @param parameterName parameter name
-     */
-    public NullParameterException(String parameterName) {
-        super(String.format("Null not allowed for '%s' parameter.", parameterName));
+    private BindingOption() {
+    }
+
+    public static <S> BindingOption mapWhen(final Supplier<Boolean> condition) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public static <S> BindingOption ignore() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public static <T> BindingOption withNullSubstitution(final Supplier<T> nullSubstitution) {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 }

@@ -15,28 +15,30 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library.
  */
-package org.objectmapper4j;
+package org.beancp;
 
-import java.util.function.Supplier;
-
+import java.util.LinkedList;
+import java.util.List;
 
 /**
+ *
  * @author Rafal Chojnacki
  */
-public final class BindingOption {
+public class MapperBuilder {
 
-    private BindingOption() {
+    private final List<MapImpl<?, ?>> maps = new LinkedList<>();
+
+    public <S, D> MapperBuilder addMap(final Class<S> sourceClass, final Class<D> destinationClass,
+            final MapConfiguration<S, D> mapConfiguration) {
+        MapImpl map = new MapImpl(sourceClass, destinationClass, mapConfiguration);
+        map.configure();
+
+        maps.add(map);
+
+        return this;
     }
 
-    public static <S> BindingOption mapWhen(final Supplier<Boolean> condition) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    public static <S> BindingOption ignore() {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    public static <T> BindingOption withNullSubstitution(final Supplier<T> nullSubstitution) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public Mapper buildMapper() {
+        return new MapperImpl(maps);
     }
 }

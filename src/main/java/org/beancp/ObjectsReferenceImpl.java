@@ -1,4 +1,4 @@
-package org.objectmapper4j;
+package org.beancp;
 
 import java.lang.reflect.Method;
 import java.util.Arrays;
