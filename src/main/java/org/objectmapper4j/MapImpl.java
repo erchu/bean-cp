@@ -18,7 +18,6 @@
 package org.objectmapper4j;
 
 import java.lang.reflect.Modifier;
-import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -65,7 +64,7 @@ class MapImpl<S, D> implements Map<S, D> {
         if (Modifier.isFinal(destinationClass.getModifiers())) {
             throw new MapConfigurationException(
                     String.format("Destination class %s cannot be final.",
-                    destinationClass.getName()));
+                            destinationClass.getName()));
         }
 
         FakeObjectBuilder proxyBuilder = new FakeObjectBuilder();
@@ -100,25 +99,81 @@ class MapImpl<S, D> implements Map<S, D> {
     }
 
     @Override
+    public Map<S, D> afterAnyMemberMap(Consumer<String> action) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public Map<S, D> afterMap(Action action) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public <T> Map<S, D> afterMemberMap(Consumer<T> destinationMember, Action action) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public Map<S, D> beforeAnyMemberMap(Consumer<String> action) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public Map<S, D> beforeMap(Action action) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public <T> Map<S, D> beforeMemberMap(Consumer<T> destinationMember, Action action) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public Map<S, D> constructDestinationObjectUsing(Supplier<D> constructor) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public Map<S, D> constructDestinationObjectUsing(Function<S, D> constructor) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public Map<S, D> convertUsing(Action action) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public Map<S, D> enableAnnotationMapping() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public <T> Map<S, D> setOption(Consumer<T> destinationMember, BindingOption... options) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
     public MapImpl<S, D> useConvention(final MappingConvention mappingConvention) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public <T> Map<S, D> bindFunction(
-            final Supplier<T> from,
-            final Consumer<T> to,
+    public <T> Map<S, D> bindOneToOne(
+            final Supplier<T> fromMember,
+            final Consumer<T> toMember,
             final BindingOption... options) {
-        if (from == null) {
-            throw new NullParameterException("from");
+        if (fromMember == null) {
+            throw new NullParameterException("fromMember");
         }
 
-        if (to == null) {
-            throw new NullParameterException("to");
+        if (toMember == null) {
+            throw new NullParameterException("toMember");
         }
 
+        //TODO: Annotations propagation from source to destination
         if (mode == MapMode.EXECUTION) {
-            to.accept(from.get());
+            toMember.accept(fromMember.get());
         }
 
         //TODO: Options parameter processing
@@ -126,21 +181,20 @@ class MapImpl<S, D> implements Map<S, D> {
     }
 
     @Override
-    public <T> Map<S, D> bindOneToOne(
-            final Supplier<T> from,
-            final Consumer<T> to,
+    public <T> Map<S, D> bindFunction(
+            final Supplier<T> supplierFunction,
+            final Consumer<T> toMember,
             final BindingOption... options) {
-        if (from == null) {
-            throw new NullParameterException("from");
+        if (supplierFunction == null) {
+            throw new NullParameterException("supplierFunction");
         }
 
-        if (to == null) {
-            throw new NullParameterException("to");
+        if (toMember == null) {
+            throw new NullParameterException("toMember");
         }
 
-        //TODO: Annotations propagation from source to destination
         if (mode == MapMode.EXECUTION) {
-            to.accept(from.get());
+            toMember.accept(supplierFunction.get());
         }
 
         //TODO: Options parameter processing
@@ -150,33 +204,18 @@ class MapImpl<S, D> implements Map<S, D> {
     @Override
     public <T> Map<S, D> bindConstant(
             final T constantValue,
-            final Consumer<T> to,
+            final Consumer<T> toMember,
             final BindingOption... options) {
-        if (to == null) {
-            throw new NullParameterException("to");
+        if (toMember == null) {
+            throw new NullParameterException("toMember");
         }
 
         if (mode == MapMode.EXECUTION) {
-            to.accept(constantValue);
+            toMember.accept(constantValue);
         }
 
         //TODO: Options parameter processing
         return this;
-    }
-
-    @Override
-    public <T> Map<S, D> bindByConvention(
-            final BiConsumer<D, T> member,
-            final MappingConvention convention,
-            final BindingOption... options) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public <T> Map<S, D> setOption(
-            final BiConsumer<D, T> member,
-            final BindingOption... options) {
-        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
@@ -185,58 +224,7 @@ class MapImpl<S, D> implements Map<S, D> {
     }
 
     @Override
-    public Map<S, D> beforeMap(final BiConsumer<S, D> action) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public Map<S, D> afterMap(final BiConsumer<S, D> action) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public <T> Map<S, D> beforeMemberMap(
-            final BiConsumer<D, T> member,
-            final BiConsumer<S, D> action) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public <T> Map<S, D> afterMemberMap(
-            final BiConsumer<D, T> member,
-            final BiConsumer<S, D> action) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public Map<S, D> beforeMemberMap(
-            final TriConsumer<S, D, String> action) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public Map<S, D> afterMemberMap(
-            final TriConsumer<S, D, String> action) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public Map<S, D> convertUsing(final BiConsumer<S, D> action) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public Map<S, D> constructDestinationObjectUsing(final Supplier<D> action) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public Map<S, D> constructDestinationObjectUsing(final Function<S, D> action) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public <T> Map<D, S> withReverseMap(final ReverseMapOption reverseMapOption) {
+    public <T> Map<D, S> withReverseMap(ReverseMapOption reverseMapOption) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 }

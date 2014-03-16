@@ -17,7 +17,7 @@
  */
 package org.objectmapper4j;
 
-import java.util.function.Function;
+import java.util.function.Supplier;
 
 
 /**
@@ -28,11 +28,15 @@ public final class BindingOption {
     private BindingOption() {
     }
 
-    public static <S> BindingOption mapWhen(final Function<S, Boolean> condition) {
+    public static <S> BindingOption mapWhen(final Supplier<Boolean> condition) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public static <S, T> BindingOption withNullSubstitution(final Function<S, T> nullSubstitution) {
+    public static <S> BindingOption ignore() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public static <T> BindingOption withNullSubstitution(final Supplier<T> nullSubstitution) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 }

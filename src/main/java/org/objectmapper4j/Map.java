@@ -17,7 +17,6 @@
  */
 package org.objectmapper4j;
 
-import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -28,42 +27,30 @@ import java.util.function.Supplier;
  */
 public interface Map<S, D> {
 
-    Map<S, D> afterMap(final BiConsumer<S, D> action);
-
-    <T> Map<S, D> afterMemberMap(final BiConsumer<D, T> member, final BiConsumer<S, D> action);
-
-    Map<S, D> afterMemberMap(final TriConsumer<S, D, String> action);
-
-    Map<S, D> beforeMap(final BiConsumer<S, D> action);
-
-    <T> Map<S, D> beforeMemberMap(final BiConsumer<D, T> member, final BiConsumer<S, D> action);
-
-    Map<S, D> beforeMemberMap(final TriConsumer<S, D, String> action);
+    /**
+     * Adds mapping from <b>single</b> source member to <b>single</b> destination member.
+     *
+     * @param <T> value data type
+     * @param fromMember source class member
+     * @param toMember destination class member
+     * @param options additional mapping options
+     *
+     * @return this (for method chaining)
+     */
+    <T> Map<S, D> bindOneToOne(final Supplier<T> fromMember, final Consumer<T> toMember,
+            final BindingOption... options);
 
     /**
      * Adds calculated member binding to destination member or members.
      *
      * @param <T> value data type
-     * @param from calculated member function
-     * @param to destination class member
+     * @param supplierFunction calculated member function
+     * @param toMember destination class member
      * @param options additional mapping options
      *
      * @return this (for method chaining)
      */
-    <T> Map<S, D> bindFunction(final Supplier<T> from, final Consumer<T> to,
-            final BindingOption... options);
-
-    /**
-     * Adds mapping from <b>single</b> source member to <b>single</b> destination member.
-     *
-     * @param <T> value data type
-     * @param from source class member
-     * @param to destination class member
-     * @param options additional mapping options
-     *
-     * @return this (for method chaining)
-     */
-    <T> Map<S, D> bindOneToOne(final Supplier<T> from, final Consumer<T> to,
+    <T> Map<S, D> bindFunction(final Supplier<T> supplierFunction, final Consumer<T> toMember,
             final BindingOption... options);
 
     /**
@@ -71,26 +58,37 @@ public interface Map<S, D> {
      *
      * @param <T> value data type
      * @param constantValue constant value
-     * @param to destination class member
+     * @param toMember destination class member
      * @param options additional mapping options
      *
      * @return this (for method chaining)
      */
-    <T> Map<S, D> bindConstant(final T constantValue, final Consumer<T> to,
+    <T> Map<S, D> bindConstant(final T constantValue, final Consumer<T> toMember,
             final BindingOption... options);
 
-    <T> Map<S, D> bindByConvention(final BiConsumer<D, T> member,
-            final MappingConvention convention, final BindingOption... options);
-
-    Map<S, D> constructDestinationObjectUsing(final Supplier<D> action);
-
-    Map<S, D> constructDestinationObjectUsing(final Function<S, D> action);
-
-    Map<S, D> convertUsing(final BiConsumer<S, D> action);
-
-    <T> Map<S, D> setOption(final BiConsumer<D, T> member, final BindingOption... options);
+    Map<S, D> convertUsing(final Action action);
 
     Map<S, D> useConvention(final MappingConvention mappingConvention);
+
+    Map<S, D> enableAnnotationMapping();
+
+    <T> Map<S, D> setOption(final Consumer<T> destinationMember, final BindingOption... options);
+
+    Map<S, D> afterMap(final Action action);
+
+    <T> Map<S, D> afterMemberMap(final Consumer<T> destinationMember, final Action action);
+
+    Map<S, D> afterAnyMemberMap(final Consumer<String> action);
+
+    Map<S, D> beforeMap(final Action action);
+
+    <T> Map<S, D> beforeMemberMap(final Consumer<T> destinationMember, final Action action);
+
+    Map<S, D> beforeAnyMemberMap(final Consumer<String> action);
+
+    Map<S, D> constructDestinationObjectUsing(final Supplier<D> constructor);
+
+    Map<S, D> constructDestinationObjectUsing(final Function<S, D> constructor);
 
     <T> Map<S, D> verifyAllDestinationPropertiesConfigured();
 

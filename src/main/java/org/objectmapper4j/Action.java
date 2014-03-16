@@ -22,7 +22,7 @@ package org.objectmapper4j;
  * @author Rafal Chojnacki
  */
 @FunctionalInterface
-interface Action {
+public interface Action {
 
     void execute();
 }
