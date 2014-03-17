@@ -23,7 +23,7 @@ import org.beancp.Mapper;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-public class MapBindFunctionTest {
+public class BindOneToOneTest {
 
     public static class SourceWithProperties {
 
@@ -116,7 +116,7 @@ public class MapBindFunctionTest {
         new MapperBuilder()
                 .addMap(SourceWithProperties.class, DestinationWithProperties.class,
                         (config, ref) -> config
-                        .bindFunction(null, ref.destination()::setA));
+                        .bindOneToOne(null, ref.destination()::setA));
     }
 
     @Test(expected = NullParameterException.class)
@@ -124,31 +124,53 @@ public class MapBindFunctionTest {
         new MapperBuilder()
                 .addMap(SourceWithProperties.class, DestinationWithProperties.class,
                         (config, ref) -> config
-                        .bindFunction(ref.source()::getX, null));
+                        .bindOneToOne(ref.source()::getX, null));
     }
 
     @Test
-    public void mapper_should_bind_calculated_values() {
+    public void mapper_should_bind_properties() {
         // GIVEN
-        SourceWithProperties sourceInstance = new SourceWithProperties();
-        sourceInstance.setX("xval");
-        sourceInstance.setY("yval");
+        SourceWithProperties sampleSource = new SourceWithProperties();
+        sampleSource.setX("xval");
+        sampleSource.setY("yval");
 
         // WHEN
         Mapper mapper = new MapperBuilder()
                 .addMap(SourceWithProperties.class, DestinationWithProperties.class,
                         (config, ref) -> config
-                        .bindFunction(() -> ref.source().getX() + ref.source().getY(), ref.destination()::setA)
-                        .bindFunction(() -> ref.source().getY() + "2", ref.destination()::setB))
+                        .bindOneToOne(() -> ref.source().getX(), ref.destination()::setA)
+                        .bindOneToOne(() -> ref.source().getY(), ref.destination()::setB))
                 .buildMapper();
 
-        DestinationWithProperties destination = mapper.map(sourceInstance, DestinationWithProperties.class);
+        DestinationWithProperties result = mapper.map(sampleSource, DestinationWithProperties.class);
+
+        // THEN
+        assertEquals("Property 'x' is not mapped correctly.", "xval", result.getA());
+        assertEquals("Property 'y' is not mapped correctly.", "yval", result.getB());
+    }
+
+    @Test
+    public void mapper_should_bind_fields() {
+        // GIVEN
+        SourceWithFields sampleSource = new SourceWithFields();
+        sampleSource.x = "xval";
+        sampleSource.y = "yval";
+
+        // WHEN
+        Mapper mapper = new MapperBuilder()
+                .addMap(SourceWithFields.class, DestinationWithFields.class,
+                        (config, ref) -> config
+                        .bindOneToOne(() -> ref.source().x, v -> ref.destination().a = v)
+                        .bindOneToOne(() -> ref.source().y, v -> ref.destination().b = v))
+                .buildMapper();
+
+        DestinationWithFields result = mapper.map(sampleSource, DestinationWithFields.class);
 
         // THEN
         assertEquals(
-                "Property 'x' is not mapped correctly.", "xvalyval", destination.getA());
+                "Property 'x' is not mapped correctly.", "xval", result.a);
         assertEquals(
-                "Property 'y' is not mapped correctly.", "yval2", destination.getB());
+                "Property 'y' is not mapped correctly.", "yval", result.b);
     }
 
     @Test
@@ -166,25 +188,18 @@ public class MapBindFunctionTest {
         Mapper mapper = new MapperBuilder()
                 .addMap(AnotherSourceWithInnerSource.class, DestinationWithProperties.class,
                         (config, ref) -> config
-                        .bindFunction(
-                                () -> {
-                                    SourceWithProperties innerSource = ref.source()
-                                    .getInnerSource().getInnerSource();
-
-                                    return innerSource.getX() + innerSource.getY();
-                                },
+                        .bindOneToOne(
+                                () -> ref.source().getInnerSource().getInnerSource().getX(),
                                 ref.destination()::setA)
-                        .bindFunction(
-                                () -> ref.source().getInnerSource().getInnerSource().getY() + "2",
+                        .bindOneToOne(
+                                () -> ref.source().getInnerSource().getInnerSource().getY(),
                                 ref.destination()::setB))
                 .buildMapper();
 
         DestinationWithProperties destination = mapper.map(sourceInstance, DestinationWithProperties.class);
 
         // THEN
-        assertEquals(
-                "Property 'x' is not mapped correctly.", "xvalyval", destination.getA());
-        assertEquals(
-                "Property 'y' is not mapped correctly.", "yval2", destination.getB());
+        assertEquals("Property 'x' is not mapped correctly.", "xval", destination.getA());
+        assertEquals("Property 'y' is not mapped correctly.", "yval", destination.getB());
     }
 }

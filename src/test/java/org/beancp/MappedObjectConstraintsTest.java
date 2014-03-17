@@ -17,13 +17,10 @@
  */
 package org.beancp;
 
-import org.beancp.MapperBuilder;
-import org.beancp.Mapper;
-import org.beancp.MapConfigurationException;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-public class MapTest {
+public class MappedObjectConstraintsTest {
 
     public static class Source {
 
@@ -205,12 +202,6 @@ public class MapTest {
     public class NonStaticDestination {
     }
 
-    public static class InheritedFromSource extends Source {
-    }
-
-    public static class InheritedFromDestination extends Destination {
-    }
-
     public static class NoDefaultConstructorSource {
 
         public NoDefaultConstructorSource(final int x) {
@@ -261,110 +252,6 @@ public class MapTest {
 
     public static class InheritedFromDestinationWithProtectedDefaultConstructor
             extends DestinationWithProtectedDefaultConstructor {
-    }
-
-    @Test
-    public void exactly_matching_mapper_should_be_used_when_available() {
-        // GIVEN
-        InheritedFromSource source = new InheritedFromSource();
-        source.setX("xval");
-
-        Mapper mapper = new MapperBuilder()
-                .addMap(Source.class, Destination.class,
-                        (config, ref)
-                        -> config.bindFunction(
-                                () -> ref.source().getX() + "4", (v) -> ref.destination().setA(v)))
-                .addMap(InheritedFromSource.class, Destination.class,
-                        (config, ref)
-                        -> config.bindFunction(
-                                () -> ref.source().getX() + "3", (v) -> ref.destination().setA(v)))
-                .addMap(InheritedFromSource.class, InheritedFromDestination.class,
-                        (config, ref)
-                        -> config.bindFunction(
-                                () -> ref.source().getX() + "1", (v) -> ref.destination().setA(v)))
-                .addMap(Source.class, InheritedFromDestination.class,
-                        (config, ref)
-                        -> config.bindFunction(
-                                () -> ref.source().getX() + "2", (v) -> ref.destination().setA(v)))
-                .buildMapper();
-
-        // WHEN
-        InheritedFromDestination result = mapper.map(source, InheritedFromDestination.class);
-
-        // THEN
-        assertEquals("Property 'x' is not mapped correctly.", "xval1", result.getA());
-    }
-
-    @Test
-    public void map_with_exact_destination_class_has_higher_priority_than_with_exact_source_class() {
-        // GIVEN
-        InheritedFromSource source = new InheritedFromSource();
-        source.setX("xval");
-
-        Mapper mapper = new MapperBuilder()
-                .addMap(Source.class, Destination.class,
-                        (config, ref)
-                        -> config.bindFunction(
-                                () -> ref.source().getX() + "4", (v) -> ref.destination().setA(v)))
-                .addMap(Source.class, InheritedFromDestination.class,
-                        (config, ref)
-                        -> config.bindFunction(
-                                () -> ref.source().getX() + "2", (v) -> ref.destination().setA(v)))
-                .addMap(InheritedFromSource.class, Destination.class,
-                        (config, ref)
-                        -> config.bindFunction(
-                                () -> ref.source().getX() + "3", (v) -> ref.destination().setA(v)))
-                .buildMapper();
-
-        // WHEN
-        InheritedFromDestination result = mapper.map(source, InheritedFromDestination.class);
-
-        // THEN
-        assertEquals("Property 'x' is not mapped correctly.", "xval2", result.getA());
-    }
-
-    @Test
-    public void map_with_exact_source_class_has_higher_priority_than_with_no_exact_class_at_all() {
-        // GIVEN
-        InheritedFromSource source = new InheritedFromSource();
-        source.setX("xval");
-
-        Mapper mapper = new MapperBuilder()
-                .addMap(Source.class, Destination.class,
-                        (config, ref)
-                        -> config.bindFunction(
-                                () -> ref.source().getX() + "4", (v) -> ref.destination().setA(v)))
-                .addMap(InheritedFromSource.class, Destination.class,
-                        (config, ref)
-                        -> config.bindFunction(
-                                () -> ref.source().getX() + "3", (v) -> ref.destination().setA(v)))
-                .buildMapper();
-
-        // WHEN
-        InheritedFromDestination result = mapper.map(source, InheritedFromDestination.class);
-
-        // THEN
-        assertEquals("Property 'x' is not mapped correctly.", "xval3", result.getA());
-    }
-
-    @Test
-    public void mapper_should_accept_inherited_classes() {
-        // GIVEN
-        InheritedFromSource source = new InheritedFromSource();
-        source.setX("xval");
-
-        Mapper mapper = new MapperBuilder()
-                .addMap(Source.class, Destination.class,
-                        (config, ref)
-                        -> config.bindFunction(
-                                () -> ref.source().getX() + "4", (v) -> ref.destination().setA(v)))
-                .buildMapper();
-
-        // WHEN
-        InheritedFromDestination result = mapper.map(source, InheritedFromDestination.class);
-
-        // THEN
-        assertEquals("Property 'x' is not mapped correctly.", "xval4", result.getA());
     }
 
     @Test

@@ -23,7 +23,7 @@ import org.beancp.Mapper;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-public class MapBindConstantTest {
+public class BindConstantTest {
 
     public static class Source {
 
