@@ -1,5 +1,5 @@
 /*
- * ObjectMapper4j
+ * bean-cp
  * Copyright (c) 2014, Rafal Chojnacki, All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
