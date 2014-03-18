@@ -31,7 +31,8 @@ public interface MapConfiguration<S, D> {
      * that binding definition. Method could be called more than once.
      *
      * @param config configuration
-     * @param ref source and destination objects holder
+     * @param source source and destination object
+     * @param destination destination and destination object
      */
-    void apply(final Map<S, D> config, final ObjectsReference<S, D> ref);
+    void apply(final Map<S, D> config, final S source, final D destination);
 }

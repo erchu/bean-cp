@@ -28,19 +28,6 @@ import java.util.function.Supplier;
 public interface Map<S, D> {
 
     /**
-     * Adds mapping from <b>single</b> source member to <b>single</b> destination member.
-     *
-     * @param <T> value data type
-     * @param fromMember source class member
-     * @param toMember destination class member
-     * @param options additional mapping options
-     *
-     * @return this (for method chaining)
-     */
-    <T> Map<S, D> bindOneToOne(final Supplier<T> fromMember, final Consumer<T> toMember,
-            final BindingOption... options);
-
-    /**
      * Adds calculated member binding to destination member or members.
      *
      * @param <T> value data type
@@ -50,7 +37,7 @@ public interface Map<S, D> {
      *
      * @return this (for method chaining)
      */
-    <T> Map<S, D> bindFunction(final Supplier<T> supplierFunction, final Consumer<T> toMember,
+    <T> Map<S, D> bind(final Supplier<T> supplierFunction, final Consumer<T> toMember,
             final BindingOption... options);
 
     /**

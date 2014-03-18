@@ -118,8 +118,8 @@ public class MappedObjectConstraintsTest {
         // WHEN
         Mapper mapper = new MapperBuilder()
                 .addMap(SourceWithFinalMembers.class, DestinationWithFinalMembers.class,
-                        (config, ref) -> config
-                        .bindFunction(ref.source()::getX, ref.destination()::setA))
+                        (config, source, destination) -> config
+                        .bind(source::getX, destination::setA))
                 .buildMapper();
 
         DestinationWithFinalMembers result = new DestinationWithFinalMembers();
@@ -264,8 +264,8 @@ public class MappedObjectConstraintsTest {
         // WHEN
         Mapper mapper = new MapperBuilder()
                 .addMap(FinalSource.class, Destination.class,
-                        (config, ref) -> config
-                        .bindFunction(ref.source()::getX, ref.destination()::setA))
+                        (config, source, destination) -> config
+                        .bind(source::getX, destination::setA))
                 .buildMapper();
 
         Destination result = new Destination();
@@ -285,8 +285,8 @@ public class MappedObjectConstraintsTest {
         // WHEN
         Mapper mapper = new MapperBuilder()
                 .addMap(Source.class, DestinationWithProtectedDefaultConstructor.class,
-                        (config, ref) -> config
-                        .bindFunction(ref.source()::getX, ref.destination()::setA))
+                        (config, source, destination) -> config
+                        .bind(source::getX, destination::setA))
                 .buildMapper();
 
         DestinationWithProtectedDefaultConstructor result
@@ -307,8 +307,8 @@ public class MappedObjectConstraintsTest {
         // WHEN
         Mapper mapper = new MapperBuilder()
                 .addMap(Source.class, FinalDestination.class,
-                        (config, ref) -> config
-                        .bindFunction(ref.source()::getX, ref.destination()::setA))
+                        (config, source, destination) -> config
+                        .bind(source::getX, destination::setA))
                 .buildMapper();
 
         // THEN: exception expected
@@ -319,7 +319,7 @@ public class MappedObjectConstraintsTest {
             throws NoSuchFieldException {
         new MapperBuilder()
                 .addMap(PrivateDefaultConstructorSource.class, Destination.class,
-                        (config, ref) -> {
+                        (config, source, destination) -> {
                         });
     }
 
@@ -328,16 +328,25 @@ public class MappedObjectConstraintsTest {
             throws NoSuchFieldException {
         new MapperBuilder()
                 .addMap(Source.class, PrivateDefaultConstructorDestination.class,
-                        (config, ref) -> {
+                        (config, source, destination) -> {
                         });
     }
 
     @Test(expected = MapConfigurationException.class)
-    public void mapper_should_not_accept_non_static_classes()
+    public void mapper_should_not_accept_non_static_source_classes()
             throws NoSuchFieldException {
         new MapperBuilder()
-                .addMap(NonStaticSource.class, NonStaticDestination.class,
-                        (config, ref) -> {
+                .addMap(NonStaticSource.class, Destination.class,
+                        (config, source, destination) -> {
+                        });
+    }
+
+    @Test(expected = MapConfigurationException.class)
+    public void mapper_should_not_accept_non_static_destination_classes()
+            throws NoSuchFieldException {
+        new MapperBuilder()
+                .addMap(Source.class, NonStaticDestination.class,
+                        (config, source, destination) -> {
                         });
     }
 
@@ -346,7 +355,7 @@ public class MappedObjectConstraintsTest {
             throws NoSuchFieldException {
         new MapperBuilder()
                 .addMap(NoDefaultConstructorSource.class, Destination.class,
-                        (config, ref) -> {
+                        (config, source, destination) -> {
                         });
     }
 
@@ -355,7 +364,7 @@ public class MappedObjectConstraintsTest {
             throws NoSuchFieldException {
         new MapperBuilder()
                 .addMap(Source.class, NoDefaultConstructorDestination.class,
-                        (config, ref) -> {
+                        (config, source, destination) -> {
                         });
     }
 

@@ -17,9 +17,6 @@
  */
 package org.beancp;
 
-import org.beancp.MapperBuilder;
-import org.beancp.NullParameterException;
-import org.beancp.Mapper;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
@@ -74,7 +71,7 @@ public class BindConstantTest {
     @Test(expected = NullParameterException.class)
     public void mapper_should_not_allow_null_as_destination_expression() {
         new MapperBuilder()
-                .addMap(Source.class, Destination.class, (config, ref) -> config
+                .addMap(Source.class, Destination.class, (config, source, destination) -> config
                         .bindConstant("const", null));
     }
 
@@ -88,8 +85,8 @@ public class BindConstantTest {
         // WHEN
         Mapper mapper = new MapperBuilder()
                 .addMap(Source.class, Destination.class,
-                        (config, ref) -> config
-                        .bindConstant("const", ref.destination()::setA))
+                        (config, source, destination) -> config
+                        .bindConstant("const", destination::setA))
                 .buildMapper();
 
         Destination result = mapper.map(sampleSource, Destination.class);
@@ -112,8 +109,8 @@ public class BindConstantTest {
 
         // WHEN
         Mapper mapper = new MapperBuilder()
-                .addMap(Source.class, Destination.class, (config, ref) -> config
-                        .bindConstant(null, ref.destination()::setA))
+                .addMap(Source.class, Destination.class, (config, source, destination) -> config
+                        .bindConstant(null, destination::setA))
                 .buildMapper();
 
         mapper.map(sampleSource, result);

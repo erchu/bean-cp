@@ -45,8 +45,6 @@ class MapImpl<S, D> implements Map<S, D> {
 
     private final MapConfiguration<S, D> configuration;
 
-    private ObjectsReferenceImpl<S, D> mapObjectsReference;
-
     private MapMode mode = MapMode.CONFIGURATION;
 
     public MapImpl(final Class<S> sourceClass, final Class<D> destinationClass,
@@ -75,11 +73,9 @@ class MapImpl<S, D> implements Map<S, D> {
         // mode, but Java lambda handling mechanizm requires non-null value, so we need to create
         // proxy instance. Unfortunatelly this enforces constraint on source and destination
         // classes: they must have default public or protected constructor.
-        mapObjectsReference = new ObjectsReferenceImpl<>(sourceObject, destinationObject);
-        configuration.apply(this, mapObjectsReference);
+        configuration.apply(this, sourceObject, destinationObject);
 
         mode = MapMode.EXECUTION;
-        mapObjectsReference = null;
     }
 
     void execute(S source, D destination) {
@@ -87,7 +83,7 @@ class MapImpl<S, D> implements Map<S, D> {
             throw new IllegalStateException("Map is not configure. Use configure() first.");
         }
 
-        configuration.apply(this, new ObjectsReferenceImpl<>(source, destination));
+        configuration.apply(this, source, destination);
     }
 
     Class<S> getSourceClass() {
@@ -159,29 +155,7 @@ class MapImpl<S, D> implements Map<S, D> {
     }
 
     @Override
-    public <T> Map<S, D> bindOneToOne(
-            final Supplier<T> fromMember,
-            final Consumer<T> toMember,
-            final BindingOption... options) {
-        if (fromMember == null) {
-            throw new NullParameterException("fromMember");
-        }
-
-        if (toMember == null) {
-            throw new NullParameterException("toMember");
-        }
-
-        //TODO: Annotations propagation from source to destination
-        if (mode == MapMode.EXECUTION) {
-            toMember.accept(fromMember.get());
-        }
-
-        //TODO: Options parameter processing
-        return this;
-    }
-
-    @Override
-    public <T> Map<S, D> bindFunction(
+    public <T> Map<S, D> bind(
             final Supplier<T> supplierFunction,
             final Consumer<T> toMember,
             final BindingOption... options) {
