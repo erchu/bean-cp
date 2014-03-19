@@ -3,5 +3,6 @@
     <properties xmlns="http://www.netbeans.org/ns/maven-properties-data/1">
         <netbeans.hint.jdkPlatform>JDK_1.8</netbeans.hint.jdkPlatform>
         <netbeans.hint.licensePath>${project.basedir}/LICENSE-header.txt</netbeans.hint.licensePath>
+        <netbeans.checkstyle.format>true</netbeans.checkstyle.format>
     </properties>
 </project-shared-configuration>
