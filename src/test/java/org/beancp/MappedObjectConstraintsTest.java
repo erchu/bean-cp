@@ -230,6 +230,22 @@ public class MappedObjectConstraintsTest {
         }
     }
 
+    public static final class SourceFinalWithWithProtectedDefaultConstructor {
+
+        private String x;
+
+        protected SourceFinalWithWithProtectedDefaultConstructor() {
+        }
+
+        public String getX() {
+            return x;
+        }
+
+        public void setX(String x) {
+            this.x = x;
+        }
+    }
+
     public static class InheritedFromSourceWithWithProtectedDefaultConstructor
             extends SourceWithWithProtectedDefaultConstructor {
     }
@@ -239,6 +255,22 @@ public class MappedObjectConstraintsTest {
         private String a;
 
         protected DestinationWithProtectedDefaultConstructor() {
+        }
+
+        public String getA() {
+            return a;
+        }
+
+        public void setA(String a) {
+            this.a = a;
+        }
+    }
+
+    public static final class DestinationFinalWithProtectedDefaultConstructor {
+
+        private String a;
+
+        protected DestinationFinalWithProtectedDefaultConstructor() {
         }
 
         public String getA() {
@@ -276,7 +308,7 @@ public class MappedObjectConstraintsTest {
     }
 
     @Test
-    public void mapper_should_accept_classes_with_protected_default_constructor()
+    public void mapper_should_accept_classes_with_protected_default_constructor_when_class_is_not_final()
             throws NoSuchFieldException {
         // GIVEN
         Source sampleSource = new Source();
@@ -284,17 +316,37 @@ public class MappedObjectConstraintsTest {
 
         // WHEN
         Mapper mapper = new MapperBuilder()
-                .addMap(Source.class, DestinationWithProtectedDefaultConstructor.class,
+                .addMap(SourceWithWithProtectedDefaultConstructor.class, DestinationWithProtectedDefaultConstructor.class,
                         (config, source, destination) -> config
                         .bind(source::getX, destination::setA))
                 .buildMapper();
 
-        DestinationWithProtectedDefaultConstructor result
-                = new InheritedFromDestinationWithProtectedDefaultConstructor();
-        mapper.map(sampleSource, result);
+        // THEN: No error
+    }
 
-        // THEN
-        assertEquals("Property 'x' is not mapped correctly.", "xval", result.getA());
+    @Test(expected = MapConfigurationException.class)
+    public void mapper_should_not_accept_source_classes_with_protected_default_constructor_when_class_is_final()
+            throws NoSuchFieldException {
+        // WHEN
+        new MapperBuilder()
+                .addMap(SourceFinalWithWithProtectedDefaultConstructor.class, Destination.class,
+                        (config, source, destination) -> config
+                        .bind(source::getX, destination::setA))
+                .buildMapper();
+
+        // THEN: expect exception
+    }
+    @Test(expected = MapConfigurationException.class)
+    public void mapper_should_not_accept_destination_classes_with_protected_default_constructor_when_class_is_final()
+            throws NoSuchFieldException {
+        // WHEN
+        new MapperBuilder()
+                .addMap(Source.class, DestinationFinalWithProtectedDefaultConstructor.class,
+                        (config, source, destination) -> config
+                        .bind(source::getX, destination::setA))
+                .buildMapper();
+
+        // THEN: expect exception
     }
 
     @Test(expected = MapConfigurationException.class)

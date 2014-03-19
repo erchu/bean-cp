@@ -55,6 +55,12 @@ class FakeObjectBuilder {
         }
 
         if (Modifier.isProtected(defaultConstructor.getModifiers())) {
+            if (Modifier.isFinal(ofClass.getModifiers())) {
+                throw new MapConfigurationException(String.format("Class %s is "
+                        + "final and has no public default constructor.",
+                        ofClass.getName()));
+            }
+            
             Class proxyClass = createProxyClass(ofClass);
 
             try {
