@@ -18,12 +18,31 @@
 package org.beancp;
 
 /**
+ * Object to object mapper.
  *
  * @author Rafal Chojnacki
  */
 public interface Mapper {
 
+    /**
+     * Copies data from source object to destination object.
+     *
+     * @param <S> source object class.
+     * @param <D> destination object class.
+     * @param source source object.
+     * @param destination destination object.
+     */
     <S, D> void map(S source, D destination);
 
+    /**
+     * Constructs destination object and copies data from source object to newly
+     * created destination object.
+     *
+     * @param <S> source object class.
+     * @param <D> destination object class.
+     * @param source source object.
+     * @param target destination object class.
+     * @return destination object.
+     */
     <S, D> D map(S source, Class<D> target);
 }

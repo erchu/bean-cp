@@ -17,28 +17,54 @@
  */
 package org.beancp;
 
-
 /**
+ * Map by convention configuration.
  *
  * @author Rafal Chojnacki
  */
-public class DefaultMappingConvention extends MappingConvention {
+public class DefaultMappingConvention implements MappingConvention {
 
-    protected DefaultMappingConvention() {}
+    protected DefaultMappingConvention() {
+    }
 
+    /**
+     * Returns default mapping convention.
+     *
+     * @return default mapping convention.
+     */
     public static DefaultMappingConvention get() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public DefaultMappingConvention ignoreCase() {
+    /**
+     * Sets list of destination members which will be ignored (not mapped) by
+     * convention.
+     *
+     * @param members members to ignore
+     *
+     * @return this (for method chaining)
+     */
+    public DefaultMappingConvention ignoreDestinationMembers(String... members) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public DefaultMappingConvention enableFlattening() {
+    /**
+     * Only direct, primitive type (according to isPrimitive() method of Type
+     * class)and Strings will be mapped by convention.
+     *
+     * @return this (for method chaining)
+     */
+    public DefaultMappingConvention forPrimitiveTypeAndStringMembersOnly() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public DefaultMappingConvention forPrimitiveTypeMembersOnly() {
+    @Override
+    public void build(Mapper mapper, Class sourceClass, Class destinationClass) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public void execute(Mapper mapper, Object source, Object destination) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 }

@@ -17,11 +17,32 @@
  */
 package org.beancp;
 
-
 /**
+ * Map by convention.
  *
  * @author Rafal Chojnacki
  */
-public abstract class MappingConvention {
+public interface MappingConvention {
 
+    /**
+     * Indicates that mapping configuration is defined, so convention may
+     * populate its internal configuration.
+     *
+     * @param mapper mapper which will use this convention.
+     * @param sourceClass source object class.
+     * @param destinationClass destination object class.
+     */
+    void build(Mapper mapper, Class sourceClass, Class destinationClass);
+
+    /**
+     * Executes mappings.
+     * {@link #build(org.beancp.Mapper, java.lang.Class, java.lang.Class)} must
+     * be executed before first execution of this method. Implementation must be
+     * thread-safe.
+     *
+     * @param mapper mapper delegating mapping to this convention.
+     * @param source source object.
+     * @param destination destination object.
+     */
+    void execute(Mapper mapper, Object source, Object destination);
 }

@@ -18,6 +18,7 @@
 package org.beancp;
 
 import java.lang.reflect.Modifier;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -43,12 +44,12 @@ class MapImpl<S, D> implements Map<S, D> {
 
     private final Class<D> destinationClass;
 
-    private final MapConfiguration<S, D> configuration;
+    private final MapBuilder<S, D> configuration;
 
     private MapMode mode = MapMode.CONFIGURATION;
 
     public MapImpl(final Class<S> sourceClass, final Class<D> destinationClass,
-            final MapConfiguration<S, D> configuration) {
+            final MapBuilder<S, D> configuration) {
         this.configuration = configuration;
         this.sourceClass = sourceClass;
         this.destinationClass = destinationClass;
@@ -78,7 +79,7 @@ class MapImpl<S, D> implements Map<S, D> {
         mode = MapMode.EXECUTION;
     }
 
-    void execute(S source, D destination) {
+    void execute(final S source, final D destination) {
         if (mode != MapMode.EXECUTION) {
             throw new IllegalStateException("Map is not configure. Use configure() first.");
         }
@@ -92,66 +93,6 @@ class MapImpl<S, D> implements Map<S, D> {
 
     Class<D> getDestinationClass() {
         return destinationClass;
-    }
-
-    @Override
-    public Map<S, D> afterAnyMemberMap(Consumer<String> action) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public Map<S, D> afterMap(Action action) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public <T> Map<S, D> afterMemberMap(Consumer<T> destinationMember, Action action) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public Map<S, D> beforeAnyMemberMap(Consumer<String> action) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public Map<S, D> beforeMap(Action action) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public <T> Map<S, D> beforeMemberMap(Consumer<T> destinationMember, Action action) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public Map<S, D> constructDestinationObjectUsing(Supplier<D> constructor) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public Map<S, D> constructDestinationObjectUsing(Function<S, D> constructor) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public Map<S, D> convertUsing(Action action) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public Map<S, D> enableAnnotationMapping() {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public <T> Map<S, D> setOption(Consumer<T> destinationMember, BindingOption... options) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public MapImpl<S, D> useConvention(final MappingConvention mappingConvention) {
-        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
@@ -193,12 +134,22 @@ class MapImpl<S, D> implements Map<S, D> {
     }
 
     @Override
-    public <T> Map<S, D> verifyAllDestinationPropertiesConfigured() {
+    public MapImpl<S, D> useConvention(final MappingConvention mappingConvention) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public <T> Map<D, S> withReverseMap(ReverseMapOption reverseMapOption) {
+    public Map<S, D> afterMap(final BiConsumer<S, D> action) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public Map<S, D> beforeMap(final BiConsumer<S, D> action) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public Map<S, D> constructDestinationObjectUsing(final Supplier<D> constructor) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 }

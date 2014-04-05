@@ -27,10 +27,6 @@ import javassist.CtClass;
 import javassist.Modifier;
 import javassist.NotFoundException;
 
-/**
- *
- * @author Rafal Chojnacki
- */
 class FakeObjectBuilder {
 
     private final ClassPool classPool = ClassPool.getDefault();

@@ -17,12 +17,16 @@
  */
 package org.beancp;
 
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
 /**
+ * Map configuration.
  *
+ * @param <S> source class
+ * @param <D> destination class
  * @author Rafal Chojnacki
  */
 public interface Map<S, D> {
@@ -53,31 +57,39 @@ public interface Map<S, D> {
     <T> Map<S, D> bindConstant(final T constantValue, final Consumer<T> toMember,
             final BindingOption... options);
 
-    Map<S, D> convertUsing(final Action action);
-
+    /**
+     * Adds mappings using convention. Convention mappings are performed before
+     * other mappings defined by
+     * {@link #bind(java.util.function.Supplier, java.util.function.Consumer, org.beancp.BindingOption...)}
+     * and
+     * {@link #bindConstant(java.lang.Object, java.util.function.Consumer, org.beancp.BindingOption...)}.
+     *
+     * @param mappingConvention convention to use.
+     * @return this (for method chaining)
+     */
     Map<S, D> useConvention(final MappingConvention mappingConvention);
 
-    Map<S, D> enableAnnotationMapping();
+    /**
+     * Action to be performed before mappings.
+     *
+     * @param action action to be executed before mappings.
+     * @return this (for method chaining)
+     */
+    Map<S, D> afterMap(final BiConsumer<S, D> action);
 
-    <T> Map<S, D> setOption(final Consumer<T> destinationMember, final BindingOption... options);
+    /**
+     * Action to be performed after mappings.
+     *
+     * @param action action to be executed after mappings.
+     * @return this (for method chaining)
+     */
+    Map<S, D> beforeMap(final BiConsumer<S, D> action);
 
-    Map<S, D> afterMap(final Action action);
-
-    <T> Map<S, D> afterMemberMap(final Consumer<T> destinationMember, final Action action);
-
-    Map<S, D> afterAnyMemberMap(final Consumer<String> action);
-
-    Map<S, D> beforeMap(final Action action);
-
-    <T> Map<S, D> beforeMemberMap(final Consumer<T> destinationMember, final Action action);
-
-    Map<S, D> beforeAnyMemberMap(final Consumer<String> action);
-
+    /**
+     * Operation used to build destination object.
+     *
+     * @param constructor destination object builder.
+     * @return this (for method chaining)
+     */
     Map<S, D> constructDestinationObjectUsing(final Supplier<D> constructor);
-
-    Map<S, D> constructDestinationObjectUsing(final Function<S, D> constructor);
-
-    <T> Map<S, D> verifyAllDestinationPropertiesConfigured();
-
-    <T> Map<D, S> withReverseMap(final ReverseMapOption reverseMapOption);
 }

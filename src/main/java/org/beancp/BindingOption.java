@@ -19,8 +19,12 @@ package org.beancp;
 
 import java.util.function.Supplier;
 
-
 /**
+ * Binding options used in
+ * {@link Map#bind(java.util.function.Supplier, java.util.function.Consumer, org.beancp.BindingOption...)}
+ * and
+ * {@link Map#bindConstant(java.lang.Object, java.util.function.Consumer, org.beancp.BindingOption...)}.
+ *
  * @author Rafal Chojnacki
  */
 public final class BindingOption {
@@ -28,15 +32,25 @@ public final class BindingOption {
     private BindingOption() {
     }
 
-    public static <S> BindingOption mapWhen(final Supplier<Boolean> condition) {
+    /**
+     * Property mapping will be performed when condition lambda will return
+     * true.
+     *
+     * @param condition mapping condition lambda.
+     * @return this (for method chaining)
+     */
+    public static BindingOption mapWhen(final Supplier<Boolean> condition) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public static <S> BindingOption ignore() {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    public static <T> BindingOption withNullSubstitution(final Supplier<T> nullSubstitution) {
+    /**
+     *
+     *
+     * @param <S> source object type.
+     * @param nullSubstitution null substitution lambda.
+     * @return this (for method chaining)
+     */
+    public static <S> BindingOption withNullSubstitution(final Supplier<S> nullSubstitution) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 }

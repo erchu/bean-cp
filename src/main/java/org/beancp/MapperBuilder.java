@@ -21,6 +21,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
+ * Builds mapper implementation.
  *
  * @author Rafal Chojnacki
  */
@@ -28,8 +29,18 @@ public class MapperBuilder {
 
     private final List<MapImpl<?, ?>> maps = new LinkedList<>();
 
+    /**
+     * Adds new map.
+     *
+     * @param <S> source object class.
+     * @param <D> destination object class.
+     * @param sourceClass source object class.
+     * @param destinationClass destination object class.
+     * @param mapConfiguration map configuration.
+     * @return this (for method chaining)
+     */
     public <S, D> MapperBuilder addMap(final Class<S> sourceClass, final Class<D> destinationClass,
-            final MapConfiguration<S, D> mapConfiguration) {
+            final MapBuilder<S, D> mapConfiguration) {
         MapImpl map = new MapImpl(sourceClass, destinationClass, mapConfiguration);
         map.configure();
 
@@ -38,6 +49,11 @@ public class MapperBuilder {
         return this;
     }
 
+    /**
+     * Creates map implementation from definitions.
+     *
+     * @return map implementation.
+     */
     public Mapper buildMapper() {
         return new MapperImpl(maps);
     }
