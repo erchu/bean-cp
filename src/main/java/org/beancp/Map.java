@@ -17,7 +17,6 @@
  */
 package org.beancp;
 
-import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -71,20 +70,20 @@ public interface Map<S, D> {
     Map<S, D> useConvention(final MappingConvention mappingConvention);
 
     /**
-     * Action to be performed before mappings.
-     *
-     * @param action action to be executed before mappings.
-     * @return this (for method chaining)
-     */
-    Map<S, D> afterMap(final BiConsumer<S, D> action);
-
-    /**
      * Action to be performed after mappings.
      *
      * @param action action to be executed after mappings.
      * @return this (for method chaining)
      */
-    Map<S, D> beforeMap(final BiConsumer<S, D> action);
+    Map<S, D> beforeMap(final Action action);
+
+    /**
+     * Action to be performed before mappings.
+     *
+     * @param action action to be executed before mappings.
+     * @return this (for method chaining)
+     */
+    Map<S, D> afterMap(final Action action);
 
     /**
      * Operation used to build destination object.

@@ -18,7 +18,6 @@
 package org.beancp;
 
 import java.lang.reflect.Modifier;
-import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -47,6 +46,10 @@ class MapImpl<S, D> implements Map<S, D> {
 
     private MapMode mode = MapMode.CONFIGURATION;
 
+    private boolean bindAndBindConstantExecuted;
+
+    private boolean afterMapExecuted;
+
     public MapImpl(final Class<S> sourceClass, final Class<D> destinationClass,
             final MapSetup<S, D> configuration) {
         this.configuration = configuration;
@@ -63,6 +66,7 @@ class MapImpl<S, D> implements Map<S, D> {
                 break;
             }
         }
+
         return map;
     }
 
@@ -80,6 +84,8 @@ class MapImpl<S, D> implements Map<S, D> {
         FakeObjectBuilder proxyBuilder = new FakeObjectBuilder();
         S sourceObject = proxyBuilder.createFakeObject(sourceClass);
         D destinationObject = proxyBuilder.createFakeObject(destinationClass);
+
+        bindAndBindConstantExecuted = afterMapExecuted = false;
 
         // Source and destination object instances are not required by MapImpl 
         // in CONFIGURATION mode, but Java lambda handling mechanizm requires 
@@ -121,6 +127,15 @@ class MapImpl<S, D> implements Map<S, D> {
             throw new NullParameterException("toMember");
         }
 
+        if (mode == MapMode.CONFIGURATION) {
+            if (afterMapExecuted) {
+                throw new MapConfigurationException(
+                        "afterMap() must be defined after bind() and bindConstant().");
+            }
+
+            bindAndBindConstantExecuted = true;
+        }
+
         if (mode == MapMode.EXECUTION) {
             boolean map = shouldBeMapped(options);
 
@@ -153,6 +168,15 @@ class MapImpl<S, D> implements Map<S, D> {
         }
 
         if (mode == MapMode.CONFIGURATION) {
+            if (afterMapExecuted) {
+                throw new MapConfigurationException(
+                        "afterMap() must be defined after bind() and bindConstant().");
+            }
+
+            bindAndBindConstantExecuted = true;
+        }
+
+        if (mode == MapMode.CONFIGURATION) {
             for (BindingOption<S, D, T> i : options) {
                 if (i.getNullSubstitution() != null) {
                     throw new MapConfigurationException(
@@ -179,13 +203,37 @@ class MapImpl<S, D> implements Map<S, D> {
     }
 
     @Override
-    public Map<S, D> afterMap(final BiConsumer<S, D> action) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public Map<S, D> beforeMap(final Action action) {
+        if (mode == MapMode.CONFIGURATION) {
+            if (bindAndBindConstantExecuted) {
+                throw new MapConfigurationException(
+                        "beforeMap() must be defined before bind() and bindConstant().");
+            }
+            
+            if (afterMapExecuted) {
+                throw new MapConfigurationException(
+                        "beforeMap() must be defined before afterMap().");
+            }
+        }
+        
+        if (mode == MapMode.EXECUTION) {
+            action.invoke();
+        }
+
+        return this;
     }
 
     @Override
-    public Map<S, D> beforeMap(final BiConsumer<S, D> action) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public Map<S, D> afterMap(final Action action) {
+        if (mode == MapMode.CONFIGURATION) {
+            afterMapExecuted = true;
+        }
+        
+        if (mode == MapMode.EXECUTION) {
+            action.invoke();
+        }
+
+        return this;
     }
 
     @Override
