@@ -25,32 +25,67 @@ import java.util.function.Supplier;
  * and
  * {@link Map#bindConstant(java.lang.Object, java.util.function.Consumer, org.beancp.BindingOption...)}.
  *
+ * @param <S> source object type.
+ * @param <D> destination object type.
+ * @param <T> destination member type.
  * @author Rafal Chojnacki
  */
-public final class BindingOption {
+public final class BindingOption<S, D, T> {
+    
+    private Supplier<Boolean> mapWhenCondition = null;
+    
+    private T nullSubstitution = null;
 
     private BindingOption() {
     }
 
-    /**
-     * Property mapping will be performed when condition lambda will return
-     * true.
-     *
-     * @param condition mapping condition lambda.
-     * @return this (for method chaining)
-     */
-    public static BindingOption mapWhen(final Supplier<Boolean> condition) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public Supplier<Boolean> getMapWhenCondition() {
+        return mapWhenCondition;
+    }
+
+    public void setMapWhenCondition(Supplier<Boolean> mapWhenCondition) {
+        this.mapWhenCondition = mapWhenCondition;
+    }
+
+    public T getNullSubstitution() {
+        return nullSubstitution;
+    }
+
+    public void setNullSubstitution(T nullSubstitution) {
+        this.nullSubstitution = nullSubstitution;
     }
 
     /**
-     *
+     * Property mapping will be performed when condition lambda will return true. This option is
+     * evaluated first and when evaluates to false no other options are evaluated.
      *
      * @param <S> source object type.
-     * @param nullSubstitution null substitution lambda.
+     * @param <D> destination object type.
+     * @param <T> destination member type.
+     * @param condition mapping condition lambda.
      * @return this (for method chaining)
      */
-    public static <S> BindingOption withNullSubstitution(final Supplier<S> nullSubstitution) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public static <S, D, T> BindingOption<S, D, T> mapWhen(final Supplier<Boolean> condition) {
+        BindingOption<S, D, T> result = new BindingOption<>();
+        result.mapWhenCondition = condition;
+        
+        return result;
+    }
+
+    /**
+     * If source getter will return true then value will be substituted with result from
+     * nullSubstitution lambda.
+     *
+     * @param <S> source object type.
+     * @param <D> destination object type.
+     * @param <T> destination member type.
+     * @param nullSubstitution null substitution value.
+     * @return this (for method chaining)
+     */
+    public static <S, D, T> BindingOption<S, D, T> withNullSubstitution(final T nullSubstitution) {
+        BindingOption<S, D, T> result = new BindingOption<>();
+        result.nullSubstitution = nullSubstitution;
+        
+        return result;
     }
 }

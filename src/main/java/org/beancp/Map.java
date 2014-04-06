@@ -42,7 +42,7 @@ public interface Map<S, D> {
      */
     <T> Map<S, D> bind(final Supplier<T> supplierFunction,
             final Consumer<T> toMember,
-            final BindingOption... options);
+            final BindingOption<S, D, T>... options);
 
     /**
      * Adds constant binding to destination member or members.
@@ -56,7 +56,7 @@ public interface Map<S, D> {
      */
     <T> Map<S, D> bindConstant(final T constantValue,
             final Consumer<T> toMember,
-            final BindingOption... options);
+            final BindingOption<S, D, T>... options);
 
     /**
      * Adds mappings using convention. Convention mappings are performed before
