@@ -1,6 +1,6 @@
 bean-cp
 ==============
 
-Bean to bean mapping library for Java. Library is targeted for Java version 8 to bring the power of lambas to object mapping.
+Object to object mapping library for Java 8+
 
 Checkout project home page: http://erchu.github.io/bean-cp/
