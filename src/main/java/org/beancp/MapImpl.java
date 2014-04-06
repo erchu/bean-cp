@@ -23,9 +23,8 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 /**
- * Defines mapping between source and destination class. Class is not thread
- * safe. Source and destination classes must have default public or private
- * constructor.
+ * Defines mapping between source and destination class. Class is not thread safe. Source and
+ * destination classes must have default public or private constructor.
  *
  * @param <S> source class
  * @param <D> destination class
@@ -53,6 +52,18 @@ class MapImpl<S, D> implements Map<S, D> {
         this.configuration = configuration;
         this.sourceClass = sourceClass;
         this.destinationClass = destinationClass;
+    }
+
+    private <T> boolean shouldBeMapped(final BindingOption<S, D, T>[] options) {
+        boolean map = true;
+
+        for (BindingOption<S, D, T> i : options) {
+            if (i.getMapWhenCondition() != null && i.getMapWhenCondition().get() == false) {
+                map = false;
+                break;
+            }
+        }
+        return map;
     }
 
     void configure() {
@@ -101,7 +112,7 @@ class MapImpl<S, D> implements Map<S, D> {
     public <T> Map<S, D> bind(
             final Supplier<T> supplierFunction,
             final Consumer<T> toMember,
-            final BindingOption... options) {
+            final BindingOption<S, D, T>... options) {
         if (supplierFunction == null) {
             throw new NullParameterException("supplierFunction");
         }
@@ -111,10 +122,24 @@ class MapImpl<S, D> implements Map<S, D> {
         }
 
         if (mode == MapMode.EXECUTION) {
-            toMember.accept(supplierFunction.get());
+            boolean map = shouldBeMapped(options);
+
+            if (map) {
+                T getValue = supplierFunction.get();
+
+                if (getValue == null) {
+                    for (BindingOption<S, D, T> i : options) {
+                        if (i.getNullSubstitution() != null) {
+                            getValue = i.getNullSubstitution();
+                            break;
+                        }
+                    }
+                }
+
+                toMember.accept(getValue);
+            }
         }
 
-        //TODO: Options parameter processing
         return this;
     }
 
@@ -122,16 +147,28 @@ class MapImpl<S, D> implements Map<S, D> {
     public <T> Map<S, D> bindConstant(
             final T constantValue,
             final Consumer<T> toMember,
-            final BindingOption... options) {
+            final BindingOption<S, D, T>... options) {
         if (toMember == null) {
             throw new NullParameterException("toMember");
         }
 
-        if (mode == MapMode.EXECUTION) {
-            toMember.accept(constantValue);
+        if (mode == MapMode.CONFIGURATION) {
+            for (BindingOption<S, D, T> i : options) {
+                if (i.getNullSubstitution() != null) {
+                    throw new MapConfigurationException(
+                            "Null substitution option not allowed for bindConstant.");
+                }
+            }
         }
 
-        //TODO: Options parameter processing
+        if (mode == MapMode.EXECUTION) {
+            boolean map = shouldBeMapped(options);
+
+            if (map) {
+                toMember.accept(constantValue);
+            }
+        }
+
         return this;
     }
 
