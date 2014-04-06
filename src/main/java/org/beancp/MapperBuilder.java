@@ -40,7 +40,7 @@ public class MapperBuilder {
      * @return this (for method chaining)
      */
     public <S, D> MapperBuilder addMap(final Class<S> sourceClass, final Class<D> destinationClass,
-            final MapBuilder<S, D> mapConfiguration) {
+            final MapSetup<S, D> mapConfiguration) {
         MapImpl map = new MapImpl(sourceClass, destinationClass, mapConfiguration);
         map.configure();
 

@@ -20,12 +20,12 @@ package org.beancp;
 import java.lang.reflect.Modifier;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
-import java.util.function.Function;
 import java.util.function.Supplier;
 
 /**
- * Defines mapping between source and destination class. Class is not thread safe. Source and
- * destination classes must have default public or private constructor.
+ * Defines mapping between source and destination class. Class is not thread
+ * safe. Source and destination classes must have default public or private
+ * constructor.
  *
  * @param <S> source class
  * @param <D> destination class
@@ -44,12 +44,12 @@ class MapImpl<S, D> implements Map<S, D> {
 
     private final Class<D> destinationClass;
 
-    private final MapBuilder<S, D> configuration;
+    private final MapSetup<S, D> configuration;
 
     private MapMode mode = MapMode.CONFIGURATION;
 
     public MapImpl(final Class<S> sourceClass, final Class<D> destinationClass,
-            final MapBuilder<S, D> configuration) {
+            final MapSetup<S, D> configuration) {
         this.configuration = configuration;
         this.sourceClass = sourceClass;
         this.destinationClass = destinationClass;
@@ -70,10 +70,11 @@ class MapImpl<S, D> implements Map<S, D> {
         S sourceObject = proxyBuilder.createFakeObject(sourceClass);
         D destinationObject = proxyBuilder.createFakeObject(destinationClass);
 
-        // Source and destination object instances are not required by MapImpl in CONFIGURATION
-        // mode, but Java lambda handling mechanizm requires non-null value, so we need to create
-        // proxy instance. Unfortunatelly this enforces constraint on source and destination
-        // classes: they must have default public or protected constructor.
+        // Source and destination object instances are not required by MapImpl 
+        // in CONFIGURATION mode, but Java lambda handling mechanizm requires 
+        // non-null value, so we need to create proxy instance. Unfortunatelly
+        // this enforces constraint on source and destination classes: they must
+        // have default public or protected constructor.
         configuration.apply(this, sourceObject, destinationObject);
 
         mode = MapMode.EXECUTION;
@@ -81,7 +82,8 @@ class MapImpl<S, D> implements Map<S, D> {
 
     void execute(final S source, final D destination) {
         if (mode != MapMode.EXECUTION) {
-            throw new IllegalStateException("Map is not configure. Use configure() first.");
+            throw new IllegalStateException(
+                    "Map is not configure. Use configure() first.");
         }
 
         configuration.apply(this, source, destination);
@@ -134,7 +136,8 @@ class MapImpl<S, D> implements Map<S, D> {
     }
 
     @Override
-    public MapImpl<S, D> useConvention(final MappingConvention mappingConvention) {
+    public MapImpl<S, D> useConvention(
+            final MappingConvention mappingConvention) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
@@ -149,7 +152,8 @@ class MapImpl<S, D> implements Map<S, D> {
     }
 
     @Override
-    public Map<S, D> constructDestinationObjectUsing(final Supplier<D> constructor) {
+    public Map<S, D> constructDestinationObjectUsing(
+            final Supplier<D> constructor) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 }

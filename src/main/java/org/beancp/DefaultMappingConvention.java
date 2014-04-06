@@ -24,6 +24,9 @@ package org.beancp;
  */
 public class DefaultMappingConvention implements MappingConvention {
 
+    /**
+     * Constructs instance.
+     */
     protected DefaultMappingConvention() {
     }
 

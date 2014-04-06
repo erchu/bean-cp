@@ -19,7 +19,6 @@ package org.beancp;
 
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
-import java.util.function.Function;
 import java.util.function.Supplier;
 
 /**
@@ -41,7 +40,8 @@ public interface Map<S, D> {
      *
      * @return this (for method chaining)
      */
-    <T> Map<S, D> bind(final Supplier<T> supplierFunction, final Consumer<T> toMember,
+    <T> Map<S, D> bind(final Supplier<T> supplierFunction,
+            final Consumer<T> toMember,
             final BindingOption... options);
 
     /**
@@ -54,7 +54,8 @@ public interface Map<S, D> {
      *
      * @return this (for method chaining)
      */
-    <T> Map<S, D> bindConstant(final T constantValue, final Consumer<T> toMember,
+    <T> Map<S, D> bindConstant(final T constantValue,
+            final Consumer<T> toMember,
             final BindingOption... options);
 
     /**

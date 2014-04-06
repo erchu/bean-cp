@@ -36,8 +36,9 @@ class FakeObjectBuilder {
 
         if (defaultConstructor == null) {
             throw new MapConfigurationException(String.format(
-                    "Class %s has no default public or protected constructor or is inner "
-                            + "non-static class.", ofClass.toString()));
+                    "Class %s has no default public or protected constructor "
+                    + "or is inner non-static class.",
+                    ofClass.toString()));
         }
 
         if (Modifier.isPublic(defaultConstructor.getModifiers())) {
@@ -56,7 +57,7 @@ class FakeObjectBuilder {
                         + "final and has no public default constructor.",
                         ofClass.getName()));
             }
-            
+
             Class proxyClass = createProxyClass(ofClass);
 
             try {
@@ -70,16 +71,18 @@ class FakeObjectBuilder {
 
         // default constructor is private
         throw new MapConfigurationException(String.format(
-                "Class %s has no default public or protected constructor or is private class.",
-                ofClass.toString()));
+                "Class %s has no default public or protected constructor or is "
+                + "private class.", ofClass.toString()));
     }
 
     private Constructor getDefaultConstructor(final Class ofClass) {
-        Optional<Constructor> defaultConstructor = Arrays.stream(ofClass.getDeclaredConstructors())
+        Optional<Constructor> defaultConstructor
+                = Arrays.stream(ofClass.getDeclaredConstructors())
                 .filter(n -> n.getParameterTypes().length == 0)
                 .findAny();
 
-        return (defaultConstructor.isPresent() ? defaultConstructor.get() : null);
+        return (defaultConstructor.isPresent()
+                ? defaultConstructor.get() : null);
     }
 
     private <T> Class createProxyClass(final Class<T> superClass) {
@@ -97,7 +100,8 @@ class FakeObjectBuilder {
                 proxyCtClass.setSuperclass(superCtClass);
 
                 proxyClass = proxyCtClass.toClass(
-                        superClass.getClassLoader(), superClass.getProtectionDomain());
+                        superClass.getClassLoader(),
+                        superClass.getProtectionDomain());
 
                 superCtClass.detach();
                 proxyCtClass.detach();

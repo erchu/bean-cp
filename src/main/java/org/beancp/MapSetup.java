@@ -18,7 +18,7 @@
 package org.beancp;
 
 /**
- * Interface for lambda expression used to define mappings.
+ * Interface for lambda expression used to configure map.
  *
  * Example shows how to use this interface, to bind <code>getX()</code> to
  * <code>setA()</code>:
@@ -34,7 +34,7 @@ package org.beancp;
  * @author Rafal Chojnacki
  */
 @FunctionalInterface
-public interface MapBuilder<S, D> {
+public interface MapSetup<S, D> {
 
     /**
      * Defines new map configuration. Implementation must be thread safe and has
