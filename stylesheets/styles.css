@@ -1,11 +1,11 @@
-@import url(http: //fonts.googleapis.com/css?family=Open+Sans: 300italic,400italic,700,300,400);
+@import url(http://fonts.googleapis.com/css?family=Arimo:400,700);
 
 body {
   padding: 50px;
-  font-family:  'Open Sans', sans-serif;
+  font-family:  'Arimo', sans-serif;
   font-size:  14px;
-  color: #222;
-  font-weight: 300;
+  color: #1c1e21;
+  font-weight: 400;
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -25,12 +25,8 @@ h1 {
   font-size: 28px;
 }
 
-h2 {
-  color: #393939;
-}
-
-h3, h4, h5, h6 {
-  color: #494949;
+h1, h2, h3, h4, h5, h6 {
+  color: #C9820A;
 }
 
 a {
@@ -123,7 +119,7 @@ header ul {
 }
 
 header li {
-  width: 89px;
+  width: 134px;
   float: left;
   border-right: 1px solid #d2d2d2;
   height: 40px;
@@ -145,13 +141,8 @@ strong {
 }
 
 header ul li + li {
-  width: 88px;
-  border-left: 1px solid #fff;
-}
-
-header ul li + li + li {
   border-right: none;
-  width: 89px;
+  width: 135px;
 }
 
 header ul a strong {
