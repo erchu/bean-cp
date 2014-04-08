@@ -184,6 +184,22 @@ public class MappedObjectConstraintsTest {
         }
     }
 
+    public final static class FinalDestinationWithProtectedDefaultConstructor {
+
+        private String a;
+
+        protected FinalDestinationWithProtectedDefaultConstructor() {
+        }
+
+        public String getA() {
+            return a;
+        }
+
+        public void setA(String a) {
+            this.a = a;
+        }
+    }
+
     public static class PrivateDefaultConstructorSource {
 
         private PrivateDefaultConstructorSource() {
@@ -336,8 +352,9 @@ public class MappedObjectConstraintsTest {
 
         // THEN: expect exception
     }
+
     @Test(expected = MapConfigurationException.class)
-    public void mapper_should_not_accept_destination_classes_with_protected_default_constructor_when_class_is_final()
+    public void mapper_should_not_accept_destination_classes_with_protected_default_constructor_when_class_is_final_and_constructDestinationObjectUsing_is_not_available()
             throws NoSuchFieldException {
         // WHEN
         new MapperBuilder()
@@ -349,8 +366,8 @@ public class MappedObjectConstraintsTest {
         // THEN: expect exception
     }
 
-    @Test(expected = MapConfigurationException.class)
-    public void mapper_should_not_accept_final_destination_classes()
+    @Test
+    public void mapper_should_accept_final_destination_classes_when_default_constructor_is_public()
             throws NoSuchFieldException {
         // GIVEN
         Source sampleSource = new Source();
@@ -359,6 +376,23 @@ public class MappedObjectConstraintsTest {
         // WHEN
         Mapper mapper = new MapperBuilder()
                 .addMap(Source.class, FinalDestination.class,
+                        (config, source, destination) -> config
+                        .bind(source::getX, destination::setA))
+                .buildMapper();
+
+        // THEN: exception expected
+    }
+
+    @Test(expected = MapConfigurationException.class)
+    public void mapper_should_accept_final_destination_classes_with_protected_default_constructor()
+            throws NoSuchFieldException {
+        // GIVEN
+        Source sampleSource = new Source();
+        sampleSource.setX("xval");
+
+        // WHEN
+        Mapper mapper = new MapperBuilder()
+                .addMap(Source.class, FinalDestinationWithProtectedDefaultConstructor.class,
                         (config, source, destination) -> config
                         .bind(source::getX, destination::setA))
                 .buildMapper();
@@ -412,12 +446,11 @@ public class MappedObjectConstraintsTest {
     }
 
     @Test(expected = MapConfigurationException.class)
-    public void mapper_should_not_accept_destination_classes_with_no_default_constructor()
+    public void mapper_should_not_accept_destination_classes_with_no_default_constructor_when_constructDestinationObjectUsing_is_not_privided()
             throws NoSuchFieldException {
         new MapperBuilder()
                 .addMap(Source.class, NoDefaultConstructorDestination.class,
                         (config, source, destination) -> {
                         });
     }
-
 }

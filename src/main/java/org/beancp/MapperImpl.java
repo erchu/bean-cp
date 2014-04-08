@@ -23,13 +23,30 @@ import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-
 class MapperImpl implements Mapper {
 
     private final List<MapImpl<?, ?>> maps;
 
     MapperImpl(final List<MapImpl<?, ?>> maps) {
         this.maps = maps;
+    }
+
+    private MapImpl<?, ?> getMapper(final Class sourceClass, final Class destinationClass)
+            throws MappingException {
+        List<MapImpl<?, ?>> validMappers = maps.stream().filter(
+                n -> canBeMapped(sourceClass, n.getSourceClass())
+                && canBeMapped(destinationClass, n.getDestinationClass()))
+                .collect(Collectors.toList());
+
+        if (validMappers.isEmpty()) {
+            throw new MappingException(
+                    String.format("No suitable mapping found from %s to %s.",
+                            sourceClass, destinationClass));
+        }
+
+        MapImpl<?, ?> mapper = getBestMatchingMapper(sourceClass, destinationClass, validMappers);
+
+        return mapper;
     }
 
     @Override
@@ -42,39 +59,24 @@ class MapperImpl implements Mapper {
             throw new NullParameterException("destination");
         }
 
-        Class sourceClass = source.getClass();
-        Class destinationClass = destination.getClass();
-
-        List<MapImpl<?, ?>> validMappers = maps.stream().filter(
-                n -> canBeMapped(sourceClass, n.getSourceClass())
-                && canBeMapped(destinationClass, n.getDestinationClass()))
-                .collect(Collectors.toList());
-
-        if (validMappers.isEmpty()) {
-            throw new MappingException(
-                    String.format("No suitable mapping found from %s to %s.", source, destination));
-        }
-
-        MapImpl<S, D> mapper = (MapImpl<S, D>) getBestMatchingMapper(
-                sourceClass, destinationClass, validMappers);
+        MapImpl<S, D> mapper = (MapImpl<S, D>) getMapper(source.getClass(), destination.getClass());
 
         mapper.execute(source, destination);
     }
 
     @Override
-    public <S, D> D map(S source, Class<D> target) {
-        //TODO: Error handling
-
-        try {
-            //TODO: constructUsing support
-            D destination = (D) target.newInstance();
-
-            map(source, destination);
-
-            return destination;
-        } catch (InstantiationException | IllegalAccessException ex) {
-            throw new MappingException("Cannot create destination instance.", ex);
+    public <S, D> D map(final S source, final Class<D> destinationClass) {
+        if (source == null) {
+            throw new NullParameterException("source");
         }
+
+        if (destinationClass == null) {
+            throw new NullParameterException("destinationClass");
+        }
+
+        MapImpl<S, D> mapper = (MapImpl<S, D>) getMapper(source.getClass(), destinationClass);
+
+        return mapper.execute(source, destinationClass);
     }
 
     private MapImpl<?, ?> getBestMatchingMapper(
