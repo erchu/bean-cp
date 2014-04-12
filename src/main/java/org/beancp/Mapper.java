@@ -41,7 +41,7 @@ public interface Mapper {
      * @param <S> source object class.
      * @param <D> destination object class.
      * @param source source object.
-     * @param target destination object class.
+     * @param destinationClass destination object class.
      * @return destination object.
      */
     <S, D> D map(S source, Class<D> destinationClass);
