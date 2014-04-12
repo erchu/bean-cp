@@ -19,7 +19,7 @@ package org.beancp;
 
 
 /**
- * Represents error during mapping.
+ * Indicates error during mapping.
  */
 public class MappingException extends RuntimeException {
 

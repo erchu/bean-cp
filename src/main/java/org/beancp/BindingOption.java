@@ -38,19 +38,19 @@ public final class BindingOption<S, D, T> {
     private BindingOption() {
     }
 
-    public Supplier<Boolean> getMapWhenCondition() {
+    Supplier<Boolean> getMapWhenCondition() {
         return mapWhenCondition;
     }
 
-    public void setMapWhenCondition(Supplier<Boolean> mapWhenCondition) {
+    void setMapWhenCondition(Supplier<Boolean> mapWhenCondition) {
         this.mapWhenCondition = mapWhenCondition;
     }
 
-    public T getNullSubstitution() {
+    T getNullSubstitution() {
         return nullSubstitution;
     }
 
-    public void setNullSubstitution(T nullSubstitution) {
+    void setNullSubstitution(T nullSubstitution) {
         this.nullSubstitution = nullSubstitution;
     }
 
