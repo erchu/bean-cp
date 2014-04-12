@@ -19,8 +19,6 @@ package org.beancp;
 
 /**
  * Indicates null value for method parameter which do not allow nulls.
- *
- * @author Rafal Chojnacki
  */
 public class NullParameterException extends RuntimeException {
 

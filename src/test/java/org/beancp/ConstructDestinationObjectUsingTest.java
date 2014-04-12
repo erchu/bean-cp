@@ -20,10 +20,6 @@ package org.beancp;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-/**
- *
- * @author rach
- */
 public class ConstructDestinationObjectUsingTest {
 
     public static class Source {
@@ -59,7 +55,7 @@ public class ConstructDestinationObjectUsingTest {
             this.b = b;
         }
     }
-    
+
     public static class InheritedFromDestination extends Destination {
     }
 
@@ -72,15 +68,15 @@ public class ConstructDestinationObjectUsingTest {
         // WHEN
         Mapper mapper = new MapperBuilder().addMap(Source.class, Destination.class,
                 (config, source, destination) -> config
-                        .constructDestinationObjectUsing(() -> {
-                            Destination newDestination = new Destination();
-                            newDestination.setB(7);
-                            
-                            return newDestination;
-                        })
-                        .bind(source::getX, destination::setA))
+                .constructDestinationObjectUsing(() -> {
+                    Destination newDestination = new Destination();
+                    newDestination.setB(7);
+
+                    return newDestination;
+                })
+                .bind(source::getX, destination::setA))
                 .buildMapper();
-        
+
         Destination result = mapper.map(sourceInstance, Destination.class);
 
         // THEN
@@ -96,14 +92,14 @@ public class ConstructDestinationObjectUsingTest {
         // WHEN
         Mapper mapper = new MapperBuilder().addMap(Source.class, Destination.class,
                 (config, source, destination) -> config
-                        .constructDestinationObjectUsing(() -> {
-                            Destination newDestination = new Destination();
-                            newDestination.setB(7);
-                            
-                            return newDestination;
-                        }))
+                .constructDestinationObjectUsing(() -> {
+                    Destination newDestination = new Destination();
+                    newDestination.setB(7);
+
+                    return newDestination;
+                }))
                 .buildMapper();
-        
+
         mapper.map(sourceInstance, InheritedFromDestination.class);
 
         // THEN: exception expected
@@ -117,14 +113,14 @@ public class ConstructDestinationObjectUsingTest {
         // WHEN
         Mapper mapper = new MapperBuilder().addMap(Source.class, Destination.class,
                 (config, source, destination) -> config
-                        .constructDestinationObjectUsing(() -> {
-                            InheritedFromDestination newDestination = new InheritedFromDestination();
-                            newDestination.setB(7);
-                            
-                            return newDestination;
-                        }))
+                .constructDestinationObjectUsing(() -> {
+                    InheritedFromDestination newDestination = new InheritedFromDestination();
+                    newDestination.setB(7);
+
+                    return newDestination;
+                }))
                 .buildMapper();
-        
+
         mapper.map(sourceInstance, Destination.class);
 
         // THEN: exception expected
@@ -139,14 +135,15 @@ public class ConstructDestinationObjectUsingTest {
         // WHEN
         Mapper mapper = new MapperBuilder().addMap(Source.class, Destination.class,
                 (config, source, destination) -> config
-                        .beforeMap(() -> {})
-                        .constructDestinationObjectUsing(() -> {
-                            Destination newDestination = new Destination();
-                            newDestination.setB(7);
-                            
-                            return newDestination;
-                        })
-                        .bind(source::getX, destination::setA))
+                .beforeMap(() -> {
+                })
+                .constructDestinationObjectUsing(() -> {
+                    Destination newDestination = new Destination();
+                    newDestination.setB(7);
+
+                    return newDestination;
+                })
+                .bind(source::getX, destination::setA))
                 .buildMapper();
 
         // THEN: exception exptected
@@ -161,13 +158,13 @@ public class ConstructDestinationObjectUsingTest {
         // WHEN
         Mapper mapper = new MapperBuilder().addMap(Source.class, Destination.class,
                 (config, source, destination) -> config
-                        .bind(source::getX, destination::setA)
-                        .constructDestinationObjectUsing(() -> {
-                            Destination newDestination = new Destination();
-                            newDestination.setB(7);
-                            
-                            return newDestination;
-                        }))
+                .bind(source::getX, destination::setA)
+                .constructDestinationObjectUsing(() -> {
+                    Destination newDestination = new Destination();
+                    newDestination.setB(7);
+
+                    return newDestination;
+                }))
                 .buildMapper();
 
         // THEN: exception exptected
@@ -182,13 +179,13 @@ public class ConstructDestinationObjectUsingTest {
         // WHEN
         Mapper mapper = new MapperBuilder().addMap(Source.class, Destination.class,
                 (config, source, destination) -> config
-                        .bindConstant(9, destination::setA)
-                        .constructDestinationObjectUsing(() -> {
-                            Destination newDestination = new Destination();
-                            newDestination.setB(7);
-                            
-                            return newDestination;
-                        }))
+                .bindConstant(9, destination::setA)
+                .constructDestinationObjectUsing(() -> {
+                    Destination newDestination = new Destination();
+                    newDestination.setB(7);
+
+                    return newDestination;
+                }))
                 .buildMapper();
 
         // THEN: exception exptected
@@ -203,14 +200,15 @@ public class ConstructDestinationObjectUsingTest {
         // WHEN
         Mapper mapper = new MapperBuilder().addMap(Source.class, Destination.class,
                 (config, source, destination) -> config
-                        .afterMap(() -> {})
-                        .constructDestinationObjectUsing(() -> {
-                            Destination newDestination = new Destination();
-                            newDestination.setB(7);
-                            
-                            return newDestination;
-                        })
-                        .bind(source::getX, destination::setA))
+                .afterMap(() -> {
+                })
+                .constructDestinationObjectUsing(() -> {
+                    Destination newDestination = new Destination();
+                    newDestination.setB(7);
+
+                    return newDestination;
+                })
+                .bind(source::getX, destination::setA))
                 .buildMapper();
 
         // THEN: exception exptected

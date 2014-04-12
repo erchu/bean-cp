@@ -26,8 +26,6 @@ import java.util.function.Supplier;
  *
  * @param <S> source class
  * @param <D> destination class
- *
- * @author Rafal Chojnacki
  */
 class MapImpl<S, D> implements Map<S, D> {
 

@@ -25,7 +25,6 @@ import java.util.function.Supplier;
  *
  * @param <S> source class
  * @param <D> destination class
- * @author Rafal Chojnacki
  */
 public interface Map<S, D> {
 

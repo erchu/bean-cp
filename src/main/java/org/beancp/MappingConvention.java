@@ -19,8 +19,6 @@ package org.beancp;
 
 /**
  * Map by convention.
- *
- * @author Rafal Chojnacki
  */
 public interface MappingConvention {
 

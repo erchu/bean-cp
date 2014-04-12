@@ -31,7 +31,6 @@ package org.beancp;
  *
  * @param <S> mapping source
  * @param <D> mapping destination
- * @author Rafal Chojnacki
  */
 @FunctionalInterface
 public interface MapSetup<S, D> {

@@ -22,8 +22,6 @@ import java.util.List;
 
 /**
  * Builds mapper implementation.
- *
- * @author Rafal Chojnacki
  */
 public class MapperBuilder {
 

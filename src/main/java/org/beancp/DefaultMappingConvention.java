@@ -19,8 +19,6 @@ package org.beancp;
 
 /**
  * Map by convention configuration.
- *
- * @author Rafal Chojnacki
  */
 public class DefaultMappingConvention implements MappingConvention {
 

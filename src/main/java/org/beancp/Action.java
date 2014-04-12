@@ -19,8 +19,6 @@ package org.beancp;
 
 /**
  * No argument action interface.
- *
- * @author Rafal Chojnacki
  */
 @FunctionalInterface
 public interface Action {

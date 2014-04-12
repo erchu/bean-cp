@@ -20,8 +20,6 @@ package org.beancp;
 
 /**
  * Indicates error in mappings configuration.
- *
- * @author Rafal Chojnacki
  */
 public class MapConfigurationException extends RuntimeException {
 

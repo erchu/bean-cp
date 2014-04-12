@@ -19,8 +19,6 @@ package org.beancp;
 
 /**
  * Object to object mapper.
- *
- * @author Rafal Chojnacki
  */
 public interface Mapper {
 

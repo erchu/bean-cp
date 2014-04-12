@@ -20,8 +20,6 @@ package org.beancp;
 
 /**
  * Represents error during mapping.
- *
- * @author Rafal Chojnacki
  */
 public class MappingException extends RuntimeException {
 

@@ -28,7 +28,6 @@ import java.util.function.Supplier;
  * @param <S> source object type.
  * @param <D> destination object type.
  * @param <T> destination member type.
- * @author Rafal Chojnacki
  */
 public final class BindingOption<S, D, T> {
     
