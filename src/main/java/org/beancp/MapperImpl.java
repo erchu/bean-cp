@@ -61,7 +61,7 @@ class MapperImpl implements Mapper {
 
         MapImpl<S, D> mapper = (MapImpl<S, D>) getMapper(source.getClass(), destination.getClass());
 
-        mapper.execute(source, destination);
+        mapper.execute(this, source, destination);
     }
 
     @Override
@@ -76,7 +76,7 @@ class MapperImpl implements Mapper {
 
         MapImpl<S, D> mapper = (MapImpl<S, D>) getMapper(source.getClass(), destinationClass);
 
-        return mapper.execute(source, destinationClass);
+        return mapper.execute(this, source, destinationClass);
     }
 
     private MapImpl<?, ?> getBestMatchingMapper(

@@ -57,6 +57,42 @@ public interface Map<S, D> {
             final BindingOption<S, D, T>... options);
 
     /**
+     * Adds inner object mapping.
+     *
+     * @param <SI> source value data type
+     * @param <DI> destination value data type
+     * @param supplierFunction calculated member function
+     * @param toMember destination class member setter
+     * @param toMemberGetter destination class member getter
+     * @param toMemberClass destination class member type
+     * @param options additional mapping options
+     *
+     * @return this (for method chaining)
+     */
+    <SI, DI> Map<S, D> map(final Supplier<SI> supplierFunction,
+            final Consumer<DI> toMember,
+            final Supplier<DI> toMemberGetter,
+            final Class<DI> toMemberClass,
+            final BindingOption<S, D, DI>... options);
+
+    /**
+     * Adds inner object mapping.
+     *
+     * @param <SI> source value data type
+     * @param <DI> destination value data type
+     * @param supplierFunction calculated member function
+     * @param toMember destination class member setter
+     * @param toMemberClass destination class member type
+     * @param options additional mapping options
+     *
+     * @return this (for method chaining)
+     */
+    <SI, DI> Map<S, D> map(final Supplier<SI> supplierFunction,
+            final Consumer<DI> toMember,
+            final Class<DI> toMemberClass,
+            final BindingOption<S, D, DI>... options);
+
+    /**
      * Adds mappings using convention. Convention mappings are performed before
      * other mappings defined by
      * {@link #bind(java.util.function.Supplier, java.util.function.Consumer, org.beancp.BindingOption...)}
