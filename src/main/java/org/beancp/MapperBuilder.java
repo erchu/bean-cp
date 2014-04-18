@@ -23,15 +23,22 @@ import java.util.function.BiConsumer;
 import java.util.function.Supplier;
 
 /**
- * Builds mapper implementation.
+ * Builds mapper implementation. This class do not guarantee to be thread-safe.
  */
 public final class MapperBuilder {
 
     private final List<MappingExecutor<?, ?>> mappingExecutors = new LinkedList<>();
 
-    //TODO: Document constraints
+    private boolean mapperBuilded = false;
+
     /**
-     * Adds new mapping defined by map.
+     * Adds new mapping defined by map. Both {@code source} and {@code destination} classes must:
+     * <ul>
+     * <li>Must have default public constructor or have not been final and have default protected
+     * constructor. This requirement is valid even if destination object builder is provided by
+     * {@link Map#constructDestinationObjectUsing(java.util.function.Supplier)} method.</li>
+     * <li>Cannot be inner non-static classes.</li>
+     * </ul>
      *
      * @param <S> source object class.
      * @param <D> destination object class.
@@ -43,7 +50,8 @@ public final class MapperBuilder {
      */
     public <S, D> MapperBuilder addMap(final Class<S> sourceClass, final Class<D> destinationClass,
             final MapSetup<S, D> mapConfiguration) {
-        //TODO: validate if mapping already defined
+        validateNewMappingAddAction(sourceClass, destinationClass);
+
         MapImpl map = new MapImpl(sourceClass, destinationClass, mapConfiguration);
         map.configure();
 
@@ -59,13 +67,15 @@ public final class MapperBuilder {
      * @param <D> destination object class.
      * @param sourceClass source object class.
      * @param destinationClass destination object class.
-     * @param convertionAction converter action.
+     * @param convertionAction converter action, must be thread-safe.
      *
      * @return this (for method chaining)
      */
     public <S, D> MapperBuilder addConverter(final Class<S> sourceClass,
             final Class<D> destinationClass,
             final BiConsumer<S, D> convertionAction) {
+        validateNewMappingAddAction(sourceClass, destinationClass);
+
         TriConsumer<Mapper, S, D> convertActionWrapper
                 = (Mapper mapper, S source, D destination)
                 -> convertionAction.accept(source, destination);
@@ -82,7 +92,7 @@ public final class MapperBuilder {
      * @param <D> destination object class.
      * @param sourceClass source object class.
      * @param destinationClass destination object class.
-     * @param convertionAction converter action.
+     * @param convertionAction converter action, must be thread-safe.
      * @param destinationObjectBuilder destination object builder.
      *
      * @return this (for method chaining)
@@ -91,6 +101,8 @@ public final class MapperBuilder {
             final Class<D> destinationClass,
             final BiConsumer<S, D> convertionAction,
             final Supplier<D> destinationObjectBuilder) {
+        validateNewMappingAddAction(sourceClass, destinationClass);
+
         TriConsumer<Mapper, S, D> convertActionWrapper
                 = (Mapper mapper, S source, D destination)
                 -> convertionAction.accept(source, destination);
@@ -107,13 +119,15 @@ public final class MapperBuilder {
      * @param <D> destination object class.
      * @param sourceClass source object class.
      * @param destinationClass destination object class.
-     * @param convertionAction converter action.
+     * @param convertionAction converter action, must be thread-safe.
      *
      * @return this (for method chaining)
      */
     public <S, D> MapperBuilder addConverter(final Class<S> sourceClass,
             final Class<D> destinationClass,
             final TriConsumer<Mapper, S, D> convertionAction) {
+        validateNewMappingAddAction(sourceClass, destinationClass);
+
         addConverter(sourceClass, destinationClass, convertionAction, null);
 
         return this;
@@ -126,7 +140,7 @@ public final class MapperBuilder {
      * @param <D> destination object class.
      * @param sourceClass source object class.
      * @param destinationClass destination object class.
-     * @param convertionAction converter action.
+     * @param convertionAction converter action, must be thread-safe.
      * @param destinationObjectBuilder destination object builder.
      *
      * @return this (for method chaining)
@@ -135,7 +149,8 @@ public final class MapperBuilder {
             final Class<D> destinationClass,
             final TriConsumer<Mapper, S, D> convertionAction,
             final Supplier<D> destinationObjectBuilder) {
-        //TODO: validate if mapping already defined
+        validateNewMappingAddAction(sourceClass, destinationClass);
+
         Converter converter = new Converter(
                 sourceClass, destinationClass, convertionAction, destinationObjectBuilder);
 
@@ -145,11 +160,52 @@ public final class MapperBuilder {
     }
 
     /**
-     * Creates map implementation from definitions.
+     * Creates map implementation from definitions. After executed no other methods can be executed
+     * on this instance.
      *
      * @return map implementation.
      */
     public Mapper buildMapper() {
+        this.mapperBuilded = true;
+
         return new MapperImpl(mappingExecutors);
+    }
+
+    private <S, D> void validateNewMappingAddAction(final Class<S> sourceClass,
+            final Class<D> destinationClass) {
+        if (this.mapperBuilded) {
+            throw new MapperConfigurationException("Mapper already builded. No changes allowed.");
+        }
+
+        if (sourceClass == null) {
+            throw new NullParameterException("sourceClass");
+        }
+
+        if (destinationClass == null) {
+            throw new NullParameterException("destinationClass");
+        }
+
+        for (MappingExecutor<?, ?> i : mappingExecutors) {
+            if (i.getSourceClass().equals(sourceClass)
+                    && i.getDestinationClass().equals(destinationClass)) {
+                throw new MapperConfigurationException(String.format(
+                        "Mapping from %s to %s already defined.",
+                        sourceClass.getName(), destinationClass.getName()));
+            }
+        }
+    }
+
+    /**
+     * If two data types has no mapping defined by
+     * {@link #addMap(java.lang.Class, java.lang.Class, org.beancp.MapSetup)} or any of
+     * {@code addConverter} methods then this convention will be used.
+     *
+     * @param convention convention to be used.
+     *
+     * @return this (for method chaining)
+     */
+    public MapperBuilder mapAnyByConvention(final MapConvention convention) {
+        //TODO: Not supported yet
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 }

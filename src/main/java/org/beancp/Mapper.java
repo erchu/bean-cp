@@ -18,7 +18,7 @@
 package org.beancp;
 
 /**
- * Object to object mapper.
+ * Object to object mapper. Implementation must be thread-safe.
  */
 public interface Mapper {
 

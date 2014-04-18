@@ -32,8 +32,8 @@ public interface Map<S, D> {
      * Adds calculated member binding to destination member or members.
      *
      * @param <T> value data type
-     * @param supplierFunction calculated member function
-     * @param toMember destination class member
+     * @param supplierFunction calculated member function, must be thread-safe.
+     * @param toMember destination class member, must be thread-safe.
      * @param options additional mapping options
      *
      * @return this (for method chaining)
@@ -47,7 +47,7 @@ public interface Map<S, D> {
      *
      * @param <T> value data type
      * @param constantValue constant value
-     * @param toMember destination class member
+     * @param toMember destination class member, must be thread-safe.
      * @param options additional mapping options
      *
      * @return this (for method chaining)
@@ -61,9 +61,9 @@ public interface Map<S, D> {
      *
      * @param <SI> source value data type
      * @param <DI> destination value data type
-     * @param supplierFunction calculated member function
-     * @param toMember destination class member setter
-     * @param toMemberGetter destination class member getter
+     * @param supplierFunction calculated member function, must be thread-safe.
+     * @param toMember destination class member setter, must be thread-safe.
+     * @param toMemberGetter destination class member get, must be thread-safe.ter
      * @param toMemberClass destination class member type
      * @param options additional mapping options
      *
@@ -80,8 +80,8 @@ public interface Map<S, D> {
      *
      * @param <SI> source value data type
      * @param <DI> destination value data type
-     * @param supplierFunction calculated member function
-     * @param toMember destination class member setter
+     * @param supplierFunction calculated member function, must be thread-safe.
+     * @param toMember destination class member setter, must be thread-safe.
      * @param toMemberClass destination class member type
      * @param options additional mapping options
      *
@@ -107,7 +107,8 @@ public interface Map<S, D> {
     /**
      * Action to be performed after mappings.
      *
-     * @param action action to be executed after mappings.
+     * @param action action to be executed after mappings, must be thread-safe.
+     * 
      * @return this (for method chaining)
      */
     Map<S, D> beforeMap(final Action action);
@@ -115,7 +116,8 @@ public interface Map<S, D> {
     /**
      * Action to be performed before mappings.
      *
-     * @param action action to be executed before mappings.
+     * @param action action to be executed before mappings, must be thread-safe.
+     * 
      * @return this (for method chaining)
      */
     Map<S, D> afterMap(final Action action);
@@ -123,7 +125,7 @@ public interface Map<S, D> {
     /**
      * Operation used to build destination object.
      *
-     * @param destinationObjectBuilder destination object builder.
+     * @param destinationObjectBuilder destination object builder, must be thread-safe.
      * @return this (for method chaining)
      */
     Map<S, D> constructDestinationObjectUsing(final Supplier<D> destinationObjectBuilder);

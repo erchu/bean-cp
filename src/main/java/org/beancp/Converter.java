@@ -19,9 +19,6 @@ package org.beancp;
 
 import java.util.function.Supplier;
 
-/**
- *
- */
 final class Converter<S, D> extends MappingExecutor<S, D> {
 
     private final Class<S> sourceClass;
