@@ -43,14 +43,14 @@ abstract class MappingExecutor<S, D> {
         this.destinationObjectBuilder = destinationObjectBuilder;
     }
 
-    protected D constructDestinationObject(final Class<D> destinationClass) throws MapperException {
+    protected D constructDestinationObject(final Class<D> destinationClass) throws MappingException {
         try {
             D destination;
 
             if (destinationObjectBuilder != null) {
                 destination = destinationObjectBuilder.get();
                 if (destinationClass.isAssignableFrom(destination.getClass()) == false) {
-                    throw new MapperException(String.format("Destination object class %s returned "
+                    throw new MappingException(String.format("Destination object class %s returned "
                             + "by constructDestinationObjectUsing cannot be assigned to expected "
                             + "class %s.", destination.getClass(), destinationClass));
                 }
@@ -60,7 +60,7 @@ abstract class MappingExecutor<S, D> {
 
             return destination;
         } catch (InstantiationException | IllegalAccessException ex) {
-            throw new MapperException("Cannot create destination instance.", ex);
+            throw new MappingException("Cannot create destination instance.", ex);
         }
     }
 }

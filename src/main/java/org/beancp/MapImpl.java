@@ -27,7 +27,7 @@ import java.util.function.Supplier;
  * @param <S> source class
  * @param <D> destination class
  */
-class MapImpl<S, D> extends MappingExecutor<S, D> implements Map<S, D> {
+final class MapImpl<S, D> extends MappingExecutor<S, D> implements Map<S, D> {
 
     private static enum MapMode {
 

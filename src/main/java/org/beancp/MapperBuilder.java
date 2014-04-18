@@ -25,7 +25,7 @@ import java.util.function.Supplier;
 /**
  * Builds mapper implementation.
  */
-public class MapperBuilder {
+public final class MapperBuilder {
 
     private final List<MappingExecutor<?, ?>> mappingExecutors = new LinkedList<>();
 

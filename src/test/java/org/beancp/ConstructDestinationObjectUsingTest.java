@@ -84,7 +84,7 @@ public class ConstructDestinationObjectUsingTest {
         assertEquals("Invalid 'b' value.", 7, result.getB());
     }
 
-    @Test(expected = MapperException.class)
+    @Test(expected = MappingException.class)
     public void when_constructDestinationObjectUsing_returned_other_method_that_expected_the_mapper_should_throw_exception() {
         // GIVEN
         Source sourceInstance = new Source();

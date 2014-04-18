@@ -25,8 +25,6 @@ package org.beancp;
  * @param <T1> the type of the first argument to the operation
  * @param <T2> the type of the second argument to the operation
  * @param <T3> the type of the third argument to the operation
- *
- * @see Consumer
  */
 @FunctionalInterface
 public interface TriConsumer<T1, T2, T3> {

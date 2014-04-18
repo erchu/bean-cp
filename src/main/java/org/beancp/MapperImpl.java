@@ -33,14 +33,14 @@ class MapperImpl implements Mapper {
 
     private MappingExecutor<?, ?> getMappingExecutor(
             final Class sourceClass, final Class destinationClass)
-            throws MapperException {
+            throws MappingException {
         List<MappingExecutor<?, ?>> validMappers = mappingExecutors.stream().filter(
                 n -> canBeMapped(sourceClass, n.getSourceClass())
                 && canBeMapped(destinationClass, n.getDestinationClass()))
                 .collect(Collectors.toList());
 
         if (validMappers.isEmpty()) {
-            throw new MapperException(
+            throw new MappingException(
                     String.format("No suitable mapping found from %s to %s.",
                             sourceClass, destinationClass));
         }

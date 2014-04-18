@@ -21,12 +21,12 @@ package org.beancp;
 /**
  * Indicates error during mapping.
  */
-public class MapperException extends RuntimeException {
+public class MappingException extends RuntimeException {
 
     /**
      * Creates a new instance of <code>MappingException</code> without detail message.
      */
-    public MapperException() {
+    public MappingException() {
     }
 
     /**
@@ -35,7 +35,7 @@ public class MapperException extends RuntimeException {
      *
      * @param message The detail message.
      */
-    public MapperException(String message) {
+    public MappingException(String message) {
         super(message);
     }
 
@@ -45,7 +45,7 @@ public class MapperException extends RuntimeException {
      *
      * @param throwable The inner exception.
      */
-    public MapperException(Throwable throwable) {
+    public MappingException(Throwable throwable) {
         super(throwable);
     }
 
@@ -56,7 +56,7 @@ public class MapperException extends RuntimeException {
      * @param message The detail message.
      * @param throwable The inner exception.
      */
-    public MapperException(String message, Throwable throwable) {
+    public MappingException(String message, Throwable throwable) {
         super(message, throwable);
     }
 }

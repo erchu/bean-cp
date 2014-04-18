@@ -22,7 +22,7 @@ import java.util.function.Supplier;
 /**
  *
  */
-class Converter<S, D> extends MappingExecutor<S, D> {
+final class Converter<S, D> extends MappingExecutor<S, D> {
 
     private final Class<S> sourceClass;
 
