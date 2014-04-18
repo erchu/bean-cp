@@ -19,44 +19,44 @@ package org.beancp;
 
 
 /**
- * Indicates error in mappings configuration.
+ * Indicates error during mapping.
  */
-public class MapConfigurationException extends RuntimeException {
+public class MapperException extends RuntimeException {
 
     /**
-     * Creates a new instance of <code>MapDefinitionException</code> without detail message.
+     * Creates a new instance of <code>MappingException</code> without detail message.
      */
-    public MapConfigurationException() {
+    public MapperException() {
     }
 
     /**
-     * Constructs an instance of <code>MapDefinitionException</code> with the specified detail
+     * Constructs an instance of <code>MappingException</code> with the specified detail
      * message.
      *
      * @param message The detail message.
      */
-    public MapConfigurationException(String message) {
+    public MapperException(String message) {
         super(message);
     }
 
     /**
-     * Constructs an instance of <code>MapDefinitionException</code> with the specified inner
+     * Constructs an instance of <code>MappingException</code> with the specified inner
      * exception.
      *
      * @param throwable The inner exception.
      */
-    public MapConfigurationException(Throwable throwable) {
+    public MapperException(Throwable throwable) {
         super(throwable);
     }
 
     /**
-     * Constructs an instance of <code>MapDefinitionException</code> with the specified detail
+     * Constructs an instance of <code>MappingException</code> with the specified detail
      * message and inner exception.
      *
      * @param message The detail message.
      * @param throwable The inner exception.
      */
-    public MapConfigurationException(String message, Throwable throwable) {
+    public MapperException(String message, Throwable throwable) {
         super(message, throwable);
     }
 }

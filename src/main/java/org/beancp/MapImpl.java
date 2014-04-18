@@ -27,7 +27,7 @@ import java.util.function.Supplier;
  * @param <S> source class
  * @param <D> destination class
  */
-class MapImpl<S, D> implements Map<S, D> {
+class MapImpl<S, D> extends MappingExecutor<S, D> implements Map<S, D> {
 
     private static enum MapMode {
 
@@ -48,8 +48,6 @@ class MapImpl<S, D> implements Map<S, D> {
     private boolean bindAndBindConstantOrMapExecuted;
 
     private boolean afterMapExecuted;
-
-    private Supplier<D> destinationObjectConstructor;
 
     private Mapper executionPhaseMapper;
 
@@ -83,18 +81,17 @@ class MapImpl<S, D> implements Map<S, D> {
         D destinationObject = proxyBuilder.createFakeObject(destinationClass);
 
         beforeMapExecuted = bindAndBindConstantOrMapExecuted = afterMapExecuted = false;
-        destinationObjectConstructor = null;
 
         // Source and destination object instances are not required by MapImpl 
         // in CONFIGURATION mode, but Java lambda handling mechanizm requires 
         // non-null value, so we need to create proxy instance. Unfortunatelly
-        // this enforces constraint on source and destination classes: they must
-        // have default public or protected constructor.
+        // this enforces constraint on source and destination classes as in javadoc.
         configuration.apply(this, sourceObject, destinationObject);
 
         mode = MapMode.EXECUTION;
     }
 
+    @Override
     D execute(final Mapper caller, final S source, final Class<D> destinationClass) {
         if (mode != MapMode.EXECUTION) {
             throw new IllegalStateException(
@@ -103,29 +100,14 @@ class MapImpl<S, D> implements Map<S, D> {
 
         executionPhaseMapper = caller;
 
-        try {
-            D destination;
+        D destination = constructDestinationObject(destinationClass);
 
-            if (destinationObjectConstructor != null) {
-                destination = destinationObjectConstructor.get();
+        configuration.apply(this, source, destination);
 
-                if (destinationClass.isAssignableFrom(destination.getClass()) == false) {
-                    throw new MappingException(String.format("Destination object class %s returned "
-                            + "by constructDestinationObjectUsing cannot be assigned to expected "
-                            + "class %s.", destination.getClass(), destinationClass));
-                }
-            } else {
-                destination = (D) destinationClass.newInstance();
-            }
-
-            configuration.apply(this, source, destination);
-
-            return destination;
-        } catch (InstantiationException | IllegalAccessException ex) {
-            throw new MappingException("Cannot create destination instance.", ex);
-        }
+        return destination;
     }
 
+    @Override
     void execute(final Mapper caller, final S source, final D destination) {
         if (mode != MapMode.EXECUTION) {
             throw new IllegalStateException(
@@ -137,10 +119,12 @@ class MapImpl<S, D> implements Map<S, D> {
         configuration.apply(this, source, destination);
     }
 
+    @Override
     Class<S> getSourceClass() {
         return sourceClass;
     }
 
+    @Override
     Class<D> getDestinationClass() {
         return destinationClass;
     }
@@ -160,7 +144,7 @@ class MapImpl<S, D> implements Map<S, D> {
 
         if (mode == MapMode.CONFIGURATION) {
             if (afterMapExecuted) {
-                throw new MapConfigurationException(
+                throw new MapperConfigurationException(
                         "afterMap() must be defined after bind(), bindConstant() and map().");
             }
 
@@ -200,7 +184,7 @@ class MapImpl<S, D> implements Map<S, D> {
 
         if (mode == MapMode.CONFIGURATION) {
             if (afterMapExecuted) {
-                throw new MapConfigurationException(
+                throw new MapperConfigurationException(
                         "afterMap() must be defined after bind(), bindConstant() and map().");
             }
 
@@ -210,7 +194,7 @@ class MapImpl<S, D> implements Map<S, D> {
         if (mode == MapMode.CONFIGURATION) {
             for (BindingOption<S, D, T> i : options) {
                 if (i.getNullSubstitution() != null) {
-                    throw new MapConfigurationException(
+                    throw new MapperConfigurationException(
                             "Null substitution option not allowed for bindConstant.");
                 }
             }
@@ -251,7 +235,7 @@ class MapImpl<S, D> implements Map<S, D> {
 
         if (mode == MapMode.CONFIGURATION) {
             if (afterMapExecuted) {
-                throw new MapConfigurationException(
+                throw new MapperConfigurationException(
                         "afterMap() must be defined after bind(), bindConstant() and map().");
             }
 
@@ -286,7 +270,7 @@ class MapImpl<S, D> implements Map<S, D> {
 
     @Override
     public MapImpl<S, D> useConvention(
-            final MappingConvention mappingConvention) {
+            final MapConvention mappingConvention) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
@@ -294,12 +278,12 @@ class MapImpl<S, D> implements Map<S, D> {
     public Map<S, D> beforeMap(final Action action) {
         if (mode == MapMode.CONFIGURATION) {
             if (bindAndBindConstantOrMapExecuted) {
-                throw new MapConfigurationException(
+                throw new MapperConfigurationException(
                         "beforeMap() must be defined before bind(), bindConstant() and map().");
             }
 
             if (afterMapExecuted) {
-                throw new MapConfigurationException(
+                throw new MapperConfigurationException(
                         "beforeMap() must be defined before afterMap().");
             }
 
@@ -328,31 +312,31 @@ class MapImpl<S, D> implements Map<S, D> {
 
     @Override
     public Map<S, D> constructDestinationObjectUsing(
-            final Supplier<D> constructor) {
-        if (constructor == null) {
-            throw new NullParameterException("toMember");
+            final Supplier<D> destinationObjectBuilder) {
+        if (destinationObjectBuilder == null) {
+            throw new NullParameterException("destinationObjectBuilder");
         }
 
         if (mode == MapMode.CONFIGURATION) {
             if (beforeMapExecuted) {
-                throw new MapConfigurationException(
+                throw new MapperConfigurationException(
                         "constructDestinationObjectUsing() must be defined before beforeMap().");
             }
 
             if (bindAndBindConstantOrMapExecuted) {
-                throw new MapConfigurationException(
+                throw new MapperConfigurationException(
                         "constructDestinationObjectUsing() must be defined before bind() and bindConstant().");
             }
 
             if (afterMapExecuted) {
-                throw new MapConfigurationException(
+                throw new MapperConfigurationException(
                         "constructDestinationObjectUsing() must be defined before afterMap().");
             }
 
             beforeMapExecuted = true;
         }
 
-        destinationObjectConstructor = constructor;
+        setDestinationObjectBuilder(destinationObjectBuilder);
 
         return this;
     }

@@ -340,7 +340,7 @@ public class MappedObjectConstraintsTest {
         // THEN: No error
     }
 
-    @Test(expected = MapConfigurationException.class)
+    @Test(expected = MapperConfigurationException.class)
     public void mapper_should_not_accept_source_classes_with_protected_default_constructor_when_class_is_final()
             throws NoSuchFieldException {
         // WHEN
@@ -353,7 +353,7 @@ public class MappedObjectConstraintsTest {
         // THEN: expect exception
     }
 
-    @Test(expected = MapConfigurationException.class)
+    @Test(expected = MapperConfigurationException.class)
     public void mapper_should_not_accept_destination_classes_with_protected_default_constructor_when_class_is_final_and_constructDestinationObjectUsing_is_not_available()
             throws NoSuchFieldException {
         // WHEN
@@ -383,7 +383,7 @@ public class MappedObjectConstraintsTest {
         // THEN: exception expected
     }
 
-    @Test(expected = MapConfigurationException.class)
+    @Test(expected = MapperConfigurationException.class)
     public void mapper_should_accept_final_destination_classes_with_protected_default_constructor()
             throws NoSuchFieldException {
         // GIVEN
@@ -400,7 +400,7 @@ public class MappedObjectConstraintsTest {
         // THEN: exception expected
     }
 
-    @Test(expected = MapConfigurationException.class)
+    @Test(expected = MapperConfigurationException.class)
     public void mapper_should_not_accept_source_classes_with_private_default_constructor()
             throws NoSuchFieldException {
         new MapperBuilder()
@@ -409,7 +409,7 @@ public class MappedObjectConstraintsTest {
                         });
     }
 
-    @Test(expected = MapConfigurationException.class)
+    @Test(expected = MapperConfigurationException.class)
     public void mapper_should_not_accept_destination_classes_with_private_default_constructor()
             throws NoSuchFieldException {
         new MapperBuilder()
@@ -418,7 +418,7 @@ public class MappedObjectConstraintsTest {
                         });
     }
 
-    @Test(expected = MapConfigurationException.class)
+    @Test(expected = MapperConfigurationException.class)
     public void mapper_should_not_accept_non_static_source_classes()
             throws NoSuchFieldException {
         new MapperBuilder()
@@ -427,7 +427,7 @@ public class MappedObjectConstraintsTest {
                         });
     }
 
-    @Test(expected = MapConfigurationException.class)
+    @Test(expected = MapperConfigurationException.class)
     public void mapper_should_not_accept_non_static_destination_classes()
             throws NoSuchFieldException {
         new MapperBuilder()
@@ -436,7 +436,7 @@ public class MappedObjectConstraintsTest {
                         });
     }
 
-    @Test(expected = MapConfigurationException.class)
+    @Test(expected = MapperConfigurationException.class)
     public void mapper_should_not_accept_source_classes_with_no_default_constructor()
             throws NoSuchFieldException {
         new MapperBuilder()
@@ -445,7 +445,7 @@ public class MappedObjectConstraintsTest {
                         });
     }
 
-    @Test(expected = MapConfigurationException.class)
+    @Test(expected = MapperConfigurationException.class)
     public void mapper_should_not_accept_destination_classes_with_no_default_constructor_when_constructDestinationObjectUsing_is_not_privided()
             throws NoSuchFieldException {
         new MapperBuilder()

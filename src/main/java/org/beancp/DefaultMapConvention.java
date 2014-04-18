@@ -20,12 +20,12 @@ package org.beancp;
 /**
  * Map by convention configuration.
  */
-public class DefaultMappingConvention implements MappingConvention {
+public class DefaultMapConvention implements MapConvention {
 
     /**
      * Constructs instance.
      */
-    protected DefaultMappingConvention() {
+    protected DefaultMapConvention() {
     }
 
     /**
@@ -33,7 +33,7 @@ public class DefaultMappingConvention implements MappingConvention {
      *
      * @return default mapping convention.
      */
-    public static DefaultMappingConvention get() {
+    public static DefaultMapConvention get() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
@@ -45,7 +45,7 @@ public class DefaultMappingConvention implements MappingConvention {
      *
      * @return this (for method chaining)
      */
-    public DefaultMappingConvention ignoreDestinationMembers(String... members) {
+    public DefaultMapConvention ignoreDestinationMembers(String... members) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
@@ -55,7 +55,7 @@ public class DefaultMappingConvention implements MappingConvention {
      *
      * @return this (for method chaining)
      */
-    public DefaultMappingConvention forPrimitiveTypeAndStringMembersOnly() {
+    public DefaultMapConvention forPrimitiveTypeAndStringMembersOnly() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 

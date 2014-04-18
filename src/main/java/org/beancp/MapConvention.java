@@ -20,7 +20,7 @@ package org.beancp;
 /**
  * Map by convention.
  */
-public interface MappingConvention {
+public interface MapConvention {
 
     /**
      * Indicates that mapping configuration is defined, so convention may

@@ -124,7 +124,7 @@ public class AfterAndBeforeMapActionTest {
         assertEquals("Invalid 'c' property value.", "abcxyz", destinationObject.getC());
     }
 
-    @Test(expected = MapConfigurationException.class)
+    @Test(expected = MapperConfigurationException.class)
     public void beforeMap_line_must_be_before_binding_lines() {
         // GIVEN: source and destination class
 
@@ -139,7 +139,7 @@ public class AfterAndBeforeMapActionTest {
         // THEN: expect exception
     }
 
-    @Test(expected = MapConfigurationException.class)
+    @Test(expected = MapperConfigurationException.class)
     public void afterMap_line_must_be_after_binding_lines() {
         // GIVEN: source and destination class
 

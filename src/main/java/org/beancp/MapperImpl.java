@@ -25,26 +25,28 @@ import java.util.stream.Collectors;
 
 class MapperImpl implements Mapper {
 
-    private final List<MapImpl<?, ?>> maps;
+    private final List<MappingExecutor<?, ?>> mappingExecutors;
 
-    MapperImpl(final List<MapImpl<?, ?>> maps) {
-        this.maps = maps;
+    MapperImpl(final List<MappingExecutor<?, ?>> mappingExecutors) {
+        this.mappingExecutors = mappingExecutors;
     }
 
-    private MapImpl<?, ?> getMapper(final Class sourceClass, final Class destinationClass)
-            throws MappingException {
-        List<MapImpl<?, ?>> validMappers = maps.stream().filter(
+    private MappingExecutor<?, ?> getMappingExecutor(
+            final Class sourceClass, final Class destinationClass)
+            throws MapperException {
+        List<MappingExecutor<?, ?>> validMappers = mappingExecutors.stream().filter(
                 n -> canBeMapped(sourceClass, n.getSourceClass())
                 && canBeMapped(destinationClass, n.getDestinationClass()))
                 .collect(Collectors.toList());
 
         if (validMappers.isEmpty()) {
-            throw new MappingException(
+            throw new MapperException(
                     String.format("No suitable mapping found from %s to %s.",
                             sourceClass, destinationClass));
         }
 
-        MapImpl<?, ?> mapper = getBestMatchingMapper(sourceClass, destinationClass, validMappers);
+        MappingExecutor<?, ?> mapper =
+                getBestMatchingMappingExecutor(sourceClass, destinationClass, validMappers);
 
         return mapper;
     }
@@ -59,9 +61,10 @@ class MapperImpl implements Mapper {
             throw new NullParameterException("destination");
         }
 
-        MapImpl<S, D> mapper = (MapImpl<S, D>) getMapper(source.getClass(), destination.getClass());
+        MappingExecutor<S, D> mappingExecutor =
+                (MappingExecutor<S, D>) getMappingExecutor(source.getClass(), destination.getClass());
 
-        mapper.execute(this, source, destination);
+        mappingExecutor.execute(this, source, destination);
     }
 
     @Override
@@ -74,15 +77,16 @@ class MapperImpl implements Mapper {
             throw new NullParameterException("destinationClass");
         }
 
-        MapImpl<S, D> mapper = (MapImpl<S, D>) getMapper(source.getClass(), destinationClass);
+        MappingExecutor<S, D> mappingExecutor =
+                (MappingExecutor<S, D>) getMappingExecutor(source.getClass(), destinationClass);
 
-        return mapper.execute(this, source, destinationClass);
+        return mappingExecutor.execute(this, source, destinationClass);
     }
 
-    private MapImpl<?, ?> getBestMatchingMapper(
+    private MappingExecutor<?, ?> getBestMatchingMappingExecutor(
             final Class sourceClass,
             final Class destinationClass,
-            final List<MapImpl<?, ?>> validMappers) {
+            final List<MappingExecutor<?, ?>> validMappers) {
         return coalesce(
                 firstOrNull(validMappers, (n
                         -> sourceClass.equals(n.getSourceClass())

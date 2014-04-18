@@ -35,7 +35,7 @@ class FakeObjectBuilder {
         Constructor defaultConstructor = getDefaultConstructor(ofClass);
 
         if (defaultConstructor == null) {
-            throw new MapConfigurationException(String.format(
+            throw new MapperConfigurationException(String.format(
                     "Class %s has no default public or protected constructor "
                     + "or is inner non-static class.",
                     ofClass.toString()));
@@ -45,7 +45,7 @@ class FakeObjectBuilder {
             try {
                 return (T) ofClass.newInstance();
             } catch (InstantiationException | IllegalAccessException ex) {
-                throw new MapConfigurationException(String.format(
+                throw new MapperConfigurationException(String.format(
                         "Failed to instantiate %s class.",
                         ofClass.getName()), ex);
             }
@@ -53,7 +53,7 @@ class FakeObjectBuilder {
 
         if (Modifier.isProtected(defaultConstructor.getModifiers())) {
             if (Modifier.isFinal(ofClass.getModifiers())) {
-                throw new MapConfigurationException(String.format("Class %s is "
+                throw new MapperConfigurationException(String.format("Class %s is "
                         + "final and has no public default constructor.",
                         ofClass.getName()));
             }
@@ -63,14 +63,14 @@ class FakeObjectBuilder {
             try {
                 return (T) proxyClass.newInstance();
             } catch (InstantiationException | IllegalAccessException ex) {
-                throw new MapConfigurationException(String.format(
+                throw new MapperConfigurationException(String.format(
                         "Failed to instantiate proxy object for %s class.",
                         ofClass.getName()), ex);
             }
         }
 
         // default constructor is private
-        throw new MapConfigurationException(String.format(
+        throw new MapperConfigurationException(String.format(
                 "Class %s has no default public or protected constructor or is "
                 + "private class.", ofClass.toString()));
     }
@@ -109,7 +109,7 @@ class FakeObjectBuilder {
 
             return proxyClass;
         } catch (NotFoundException | CannotCompileException ex) {
-            throw new MapConfigurationException(String.format(
+            throw new MapperConfigurationException(String.format(
                     "Failed to create proxy class for %s",
                     superClass.getName()), ex);
         }

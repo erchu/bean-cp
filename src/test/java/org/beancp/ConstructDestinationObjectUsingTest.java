@@ -84,7 +84,7 @@ public class ConstructDestinationObjectUsingTest {
         assertEquals("Invalid 'b' value.", 7, result.getB());
     }
 
-    @Test(expected = MappingException.class)
+    @Test(expected = MapperException.class)
     public void when_constructDestinationObjectUsing_returned_other_method_that_expected_the_mapper_should_throw_exception() {
         // GIVEN
         Source sourceInstance = new Source();
@@ -126,7 +126,7 @@ public class ConstructDestinationObjectUsingTest {
         // THEN: exception expected
     }
 
-    @Test(expected = MapConfigurationException.class)
+    @Test(expected = MapperConfigurationException.class)
     public void constructDestinationObjectUsing_line_must_be_before_beforeMap_line() {
         // GIVEN
         Source sourceInstance = new Source();
@@ -149,7 +149,7 @@ public class ConstructDestinationObjectUsingTest {
         // THEN: exception exptected
     }
 
-    @Test(expected = MapConfigurationException.class)
+    @Test(expected = MapperConfigurationException.class)
     public void constructDestinationObjectUsing_line_must_be_before_bind_line() {
         // GIVEN
         Source sourceInstance = new Source();
@@ -170,7 +170,7 @@ public class ConstructDestinationObjectUsingTest {
         // THEN: exception exptected
     }
 
-    @Test(expected = MapConfigurationException.class)
+    @Test(expected = MapperConfigurationException.class)
     public void constructDestinationObjectUsing_line_must_be_before_bindConstant_line() {
         // GIVEN
         Source sourceInstance = new Source();
@@ -191,7 +191,7 @@ public class ConstructDestinationObjectUsingTest {
         // THEN: exception exptected
     }
 
-    @Test(expected = MapConfigurationException.class)
+    @Test(expected = MapperConfigurationException.class)
     public void constructDestinationObjectUsing_line_must_be_before_afterMap_line() {
         // GIVEN
         Source sourceInstance = new Source();

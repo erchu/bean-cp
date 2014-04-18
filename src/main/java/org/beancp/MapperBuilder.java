@@ -19,30 +19,127 @@ package org.beancp;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.function.BiConsumer;
+import java.util.function.Supplier;
 
 /**
  * Builds mapper implementation.
  */
 public class MapperBuilder {
 
-    private final List<MapImpl<?, ?>> maps = new LinkedList<>();
+    private final List<MappingExecutor<?, ?>> mappingExecutors = new LinkedList<>();
 
+    //TODO: Document constraints
     /**
-     * Adds new map.
+     * Adds new mapping defined by map.
      *
      * @param <S> source object class.
      * @param <D> destination object class.
      * @param sourceClass source object class.
      * @param destinationClass destination object class.
      * @param mapConfiguration map configuration.
+     *
      * @return this (for method chaining)
      */
     public <S, D> MapperBuilder addMap(final Class<S> sourceClass, final Class<D> destinationClass,
             final MapSetup<S, D> mapConfiguration) {
+        //TODO: validate if mapping already defined
         MapImpl map = new MapImpl(sourceClass, destinationClass, mapConfiguration);
         map.configure();
 
-        maps.add(map);
+        mappingExecutors.add(map);
+
+        return this;
+    }
+
+    /**
+     * Adds new mapping implemented by converter.
+     *
+     * @param <S> source object class.
+     * @param <D> destination object class.
+     * @param sourceClass source object class.
+     * @param destinationClass destination object class.
+     * @param convertionAction converter action.
+     *
+     * @return this (for method chaining)
+     */
+    public <S, D> MapperBuilder addConverter(final Class<S> sourceClass,
+            final Class<D> destinationClass,
+            final BiConsumer<S, D> convertionAction) {
+        TriConsumer<Mapper, S, D> convertActionWrapper
+                = (Mapper mapper, S source, D destination)
+                -> convertionAction.accept(source, destination);
+
+        addConverter(sourceClass, destinationClass, convertActionWrapper);
+
+        return this;
+    }
+
+    /**
+     * Adds new mapping implemented by converter.
+     *
+     * @param <S> source object class.
+     * @param <D> destination object class.
+     * @param sourceClass source object class.
+     * @param destinationClass destination object class.
+     * @param convertionAction converter action.
+     * @param destinationObjectBuilder destination object builder.
+     *
+     * @return this (for method chaining)
+     */
+    public <S, D> MapperBuilder addConverter(final Class<S> sourceClass,
+            final Class<D> destinationClass,
+            final BiConsumer<S, D> convertionAction,
+            final Supplier<D> destinationObjectBuilder) {
+        TriConsumer<Mapper, S, D> convertActionWrapper
+                = (Mapper mapper, S source, D destination)
+                -> convertionAction.accept(source, destination);
+
+        addConverter(sourceClass, destinationClass, convertActionWrapper, destinationObjectBuilder);
+
+        return this;
+    }
+
+    /**
+     * Adds new mapping implemented by converter.
+     *
+     * @param <S> source object class.
+     * @param <D> destination object class.
+     * @param sourceClass source object class.
+     * @param destinationClass destination object class.
+     * @param convertionAction converter action.
+     *
+     * @return this (for method chaining)
+     */
+    public <S, D> MapperBuilder addConverter(final Class<S> sourceClass,
+            final Class<D> destinationClass,
+            final TriConsumer<Mapper, S, D> convertionAction) {
+        addConverter(sourceClass, destinationClass, convertionAction, null);
+
+        return this;
+    }
+
+    /**
+     * Adds new mapping implemented by converter.
+     *
+     * @param <S> source object class.
+     * @param <D> destination object class.
+     * @param sourceClass source object class.
+     * @param destinationClass destination object class.
+     * @param convertionAction converter action.
+     * @param destinationObjectBuilder destination object builder.
+     *
+     * @return this (for method chaining)
+     */
+    public <S, D> MapperBuilder addConverter(final Class<S> sourceClass,
+            final Class<D> destinationClass,
+            final TriConsumer<Mapper, S, D> convertionAction,
+            final Supplier<D> destinationObjectBuilder) {
+        //TODO: validate if mapping already defined
+        Converter converter = new Converter(
+                sourceClass, destinationClass, convertionAction, destinationObjectBuilder);
+
+        mappingExecutors.add(converter);
 
         return this;
     }
@@ -53,6 +150,6 @@ public class MapperBuilder {
      * @return map implementation.
      */
     public Mapper buildMapper() {
-        return new MapperImpl(maps);
+        return new MapperImpl(mappingExecutors);
     }
 }

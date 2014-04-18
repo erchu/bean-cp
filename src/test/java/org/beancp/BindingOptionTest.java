@@ -214,7 +214,7 @@ public class BindingOptionTest {
         assertEquals("Invalid 'b' property value.", "8", destinationObject.getB());  // value from source object
     }
 
-    @Test(expected = MapConfigurationException.class)
+    @Test(expected = MapperConfigurationException.class)
     public void bindConstant_shold_not_accept_withNullSubstitution_option() {
         // GIVEN: source and destination class
 

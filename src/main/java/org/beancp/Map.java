@@ -102,7 +102,7 @@ public interface Map<S, D> {
      * @param mappingConvention convention to use.
      * @return this (for method chaining)
      */
-    Map<S, D> useConvention(final MappingConvention mappingConvention);
+    Map<S, D> useConvention(final MapConvention mappingConvention);
 
     /**
      * Action to be performed after mappings.
@@ -123,8 +123,8 @@ public interface Map<S, D> {
     /**
      * Operation used to build destination object.
      *
-     * @param constructor destination object builder.
+     * @param destinationObjectBuilder destination object builder.
      * @return this (for method chaining)
      */
-    Map<S, D> constructDestinationObjectUsing(final Supplier<D> constructor);
+    Map<S, D> constructDestinationObjectUsing(final Supplier<D> destinationObjectBuilder);
 }
