@@ -49,7 +49,7 @@ public final class MapperBuilder {
      * @return this (for method chaining)
      */
     public <S, D> MapperBuilder addMap(final Class<S> sourceClass, final Class<D> destinationClass,
-            final MapSetup<S, D> mapConfiguration) {
+            final MapSetup<S, D> mapConfiguration) throws MapperConfigurationException {
         validateNewMappingAddAction(sourceClass, destinationClass);
 
         MapImpl map = new MapImpl(sourceClass, destinationClass, mapConfiguration);
@@ -73,7 +73,7 @@ public final class MapperBuilder {
      */
     public <S, D> MapperBuilder addConverter(final Class<S> sourceClass,
             final Class<D> destinationClass,
-            final BiConsumer<S, D> convertionAction) {
+            final BiConsumer<S, D> convertionAction) throws MapperConfigurationException {
         validateNewMappingAddAction(sourceClass, destinationClass);
 
         TriConsumer<Mapper, S, D> convertActionWrapper
@@ -100,7 +100,7 @@ public final class MapperBuilder {
     public <S, D> MapperBuilder addConverter(final Class<S> sourceClass,
             final Class<D> destinationClass,
             final BiConsumer<S, D> convertionAction,
-            final Supplier<D> destinationObjectBuilder) {
+            final Supplier<D> destinationObjectBuilder) throws MapperConfigurationException {
         validateNewMappingAddAction(sourceClass, destinationClass);
 
         TriConsumer<Mapper, S, D> convertActionWrapper
@@ -125,7 +125,7 @@ public final class MapperBuilder {
      */
     public <S, D> MapperBuilder addConverter(final Class<S> sourceClass,
             final Class<D> destinationClass,
-            final TriConsumer<Mapper, S, D> convertionAction) {
+            final TriConsumer<Mapper, S, D> convertionAction) throws MapperConfigurationException {
         validateNewMappingAddAction(sourceClass, destinationClass);
 
         addConverter(sourceClass, destinationClass, convertionAction, null);
@@ -148,7 +148,7 @@ public final class MapperBuilder {
     public <S, D> MapperBuilder addConverter(final Class<S> sourceClass,
             final Class<D> destinationClass,
             final TriConsumer<Mapper, S, D> convertionAction,
-            final Supplier<D> destinationObjectBuilder) {
+            final Supplier<D> destinationObjectBuilder) throws MapperConfigurationException {
         validateNewMappingAddAction(sourceClass, destinationClass);
 
         Converter converter = new Converter(
@@ -157,6 +157,20 @@ public final class MapperBuilder {
         mappingExecutors.add(converter);
 
         return this;
+    }
+
+    /**
+     * If two data types has no mapping defined by
+     * {@link #addMap(java.lang.Class, java.lang.Class, org.beancp.MapSetup)} or any of
+     * {@code addConverter} methods then this convention will be used.
+     *
+     * @param convention convention to be used.
+     *
+     * @return this (for method chaining)
+     */
+    public MapperBuilder mapAnyByConvention(final MappingConvention convention) throws MapperConfigurationException {
+        //TODO: Not supported yet
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     /**
@@ -193,19 +207,5 @@ public final class MapperBuilder {
                         sourceClass.getName(), destinationClass.getName()));
             }
         }
-    }
-
-    /**
-     * If two data types has no mapping defined by
-     * {@link #addMap(java.lang.Class, java.lang.Class, org.beancp.MapSetup)} or any of
-     * {@code addConverter} methods then this convention will be used.
-     *
-     * @param convention convention to be used.
-     *
-     * @return this (for method chaining)
-     */
-    public MapperBuilder mapAnyByConvention(final MapConvention convention) {
-        //TODO: Not supported yet
-        throw new UnsupportedOperationException("Not supported yet.");
     }
 }

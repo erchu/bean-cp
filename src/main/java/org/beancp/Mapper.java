@@ -25,16 +25,56 @@ public interface Mapper {
     /**
      * Copies data from source object to destination object.
      *
+     * When the are more than one mapper valid for source and destination classes then mapper is
+     * chose according to priority (first option has highest priority):
+     * <ol>
+     * <li>source class equals to mapper source class and destination class equals to mapper
+     * destination class</li>
+     * <li>source class inherits from mapper source class and destination class equals to mapper
+     * destination class</li>
+     * <li>source class equals to mapper source class and destination class inherits from mapper
+     * destination class</li>
+     * <li>source class inherits from mapper source class and destination class inherits from mapper
+     * destination class</li>
+     * <li>convention defined by
+     * {@link MapperBuilder#mapAnyByConvention(org.beancp.MappingConvention)}</li>
+     * </ol>
+     *
+     * When there is more than one mapper of the same priority then is used the first one added to
+     * {@link MapperBuilder}. If there is no mapper available then {@link MappingException} will be
+     * thrown.
+     *
      * @param <S> source object class.
      * @param <D> destination object class.
      * @param source source object.
      * @param destination destination object.
      */
-    <S, D> void map(S source, D destination);
+    <S, D> void map(S source, D destination) throws MappingException;
 
     /**
-     * Constructs destination object and copies data from source object to newly
-     * created destination object.
+     * Constructs destination object and copies data from source object to newly created destination
+     * object. Destination object is created by destination object builder defined by
+     * {@link Map#constructDestinationObjectUsing(java.util.function.Supplier)} or if destination
+     * object builder is not available by default constructor.
+     *
+     * When the are more than one mapper valid for source and destination classes then mapper is
+     * chose according to priority (first option has highest priority):
+     * <ol>
+     * <li>source class equals to mapper source class and destination class equals to mapper
+     * destination class</li>
+     * <li>source class inherits from mapper source class and destination class equals to mapper
+     * destination class</li>
+     * <li>source class equals to mapper source class and destination class inherits from mapper
+     * destination class</li>
+     * <li>source class inherits from mapper source class and destination class inherits from mapper
+     * destination class</li>
+     * <li>convention defined by
+     * {@link MapperBuilder#mapAnyByConvention(org.beancp.MappingConvention)}</li>
+     * </ol>
+     *
+     * When there is more than one mapper of the same priority then is used the first one added to
+     * {@link MapperBuilder}. If there is no mapper available then {@link MappingException} will be
+     * thrown.
      *
      * @param <S> source object class.
      * @param <D> destination object class.
@@ -42,5 +82,6 @@ public interface Mapper {
      * @param destinationClass destination object class.
      * @return destination object.
      */
-    <S, D> D map(S source, Class<D> destinationClass);
+    //TODO: Mapping executior choose algorithm descrition in javadoc
+    <S, D> D map(S source, Class<D> destinationClass) throws MappingException;
 }

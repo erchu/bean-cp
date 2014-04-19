@@ -270,7 +270,7 @@ final class MapImpl<S, D> extends MappingExecutor<S, D> implements Map<S, D> {
 
     @Override
     public MapImpl<S, D> useConvention(
-            final MapConvention mappingConvention) {
+            final MappingConvention mappingConvention) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 

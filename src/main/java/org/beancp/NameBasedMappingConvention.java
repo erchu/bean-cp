@@ -18,9 +18,9 @@
 package org.beancp;
 
 /**
- * Standard mapping conventions provided by bean-cp library.
+ * Standard mapping conventions provided by bean-cp library. Convention matches fields by name.
  */
-public class StandardMapConvention implements MapConvention {
+public class NameBasedMappingConvention implements MappingConvention {
 
     private String[] includeDestinationMembers;
 
@@ -37,13 +37,12 @@ public class StandardMapConvention implements MapConvention {
     /**
      * Constructs instance.
      */
-    protected StandardMapConvention() {
+    protected NameBasedMappingConvention() {
     }
 
     /**
      * Returns mapping convention with following configuration:
-     * 
-     * <p>
+     *
      * <ul>
      * <li>No destination members excluded</li>
      * <li>Maximum possible number of destination members included</li>
@@ -53,12 +52,11 @@ public class StandardMapConvention implements MapConvention {
      * <li>Will cast or map if possible for members of different data type (see
      * {@link #castOrMapIfPossible()} method)</li>
      * </ul>
-     * </p>
      *
      * @return mapping convention.
      */
-    public static StandardMapConvention getMaximumFlexibilityMatch() {
-        StandardMapConvention defaultConvention = new StandardMapConvention();
+    public static NameBasedMappingConvention getMaximumFlexibilityMatch() {
+        NameBasedMappingConvention defaultConvention = new NameBasedMappingConvention();
         defaultConvention.excludeDestinationMembers = new String[0];
         defaultConvention.includeDestinationMembers = new String[0];
         defaultConvention.failIfNotAllDestinationMembersMapped = false;
@@ -71,8 +69,7 @@ public class StandardMapConvention implements MapConvention {
 
     /**
      * Returns mapping convention with following configuration
-     * 
-     * <p>
+     *
      * <ul>
      * <li>No destination members excluded</li>
      * <li>Maximum possible number of destination members included</li>
@@ -82,12 +79,11 @@ public class StandardMapConvention implements MapConvention {
      * <li>Will <b>not</b> cast or map if possible for members of different data type (see
      * {@link #castOrMapIfPossible()} method)</li>
      * </ul>
-     * </p>
      *
      * @return mapping convention.
      */
-    public static StandardMapConvention getStrictMatch() {
-        StandardMapConvention defaultConvention = new StandardMapConvention();
+    public static NameBasedMappingConvention getStrictMatch() {
+        NameBasedMappingConvention defaultConvention = new NameBasedMappingConvention();
         defaultConvention.excludeDestinationMembers = new String[0];
         defaultConvention.includeDestinationMembers = new String[0];
         defaultConvention.failIfNotAllDestinationMembersMapped = false;
@@ -115,7 +111,7 @@ public class StandardMapConvention implements MapConvention {
      *
      * @return this (for method chaining)
      */
-    public StandardMapConvention includeDestinationMembers(String... members) {
+    public NameBasedMappingConvention includeDestinationMembers(String... members) {
         if (members == null) {
             throw new NullParameterException("members");
         }
@@ -140,7 +136,7 @@ public class StandardMapConvention implements MapConvention {
      *
      * @return this (for method chaining)
      */
-    public StandardMapConvention excludeDestinationMembers(String... members) {
+    public NameBasedMappingConvention excludeDestinationMembers(String... members) {
         if (members == null) {
             throw new NullParameterException("members");
         }
@@ -199,7 +195,7 @@ public class StandardMapConvention implements MapConvention {
      *
      * @return this (for method chaining)
      */
-    public StandardMapConvention enableFlattening() {
+    public NameBasedMappingConvention enableFlattening() {
         this.flateningEnabled = true;
 
         return this;
@@ -211,31 +207,33 @@ public class StandardMapConvention implements MapConvention {
      *
      * @return this (for method chaining)
      */
-    public StandardMapConvention disableFlattening() {
+    public NameBasedMappingConvention disableFlattening() {
         this.flateningEnabled = false;
 
         return this;
     }
 
     /**
-     * Convention will fail during map building (see {@link #build(org.beancp.Mapper, java.lang.Class, java.lang.Class) method)
-     * if not all destination properties are mapped.
+     * Convention will fail during map building (see
+     * {@link #build(org.beancp.Mapper, java.lang.Class, java.lang.Class)} method) if not all
+     * destination properties are mapped.
      *
      * @return this (for method chaining)
      */
-    public StandardMapConvention failIfNotAllDestinationMembersMapped() {
+    public NameBasedMappingConvention failIfNotAllDestinationMembersMapped() {
         this.failIfNotAllDestinationMembersMapped = true;
 
         return this;
     }
 
     /**
-     * Convention will fail during map building (see {@link #build(org.beancp.Mapper, java.lang.Class, java.lang.Class) method)
-     * if not all source properties are mapped.
+     * Convention will fail during map building (see
+     * {@link #build(org.beancp.Mapper, java.lang.Class, java.lang.Class)} method) if not all source
+     * properties are mapped.
      *
      * @return this (for method chaining)
      */
-    public StandardMapConvention failIfNotAllSourceMembersMapped() {
+    public NameBasedMappingConvention failIfNotAllSourceMembersMapped() {
         this.failIfNotAllSourceMembersMapped = true;
 
         return this;
@@ -245,15 +243,13 @@ public class StandardMapConvention implements MapConvention {
      * For matching members names, but of different data types will try cast or map members wherever
      * it is possible. If matching members are of different types mapper will try one of the
      * following techniques to perform mapping:
-     * 
-     * <p>
+     *
      * <ul>
      * <li>Cast between primitive types</li>
      * <li>Convert values to string</li>
      * <li>Parse string value (only for primitive types)</li>
      * <li>Map types using available mapper</li>
      * </ul>
-     * </p>
      *
      * <p>
      * This option is opposite to {@link #mapOnlySameTypeMembers()}.
@@ -266,7 +262,7 @@ public class StandardMapConvention implements MapConvention {
      *
      * @return this (for method chaining)
      */
-    public StandardMapConvention castOrMapIfPossible() {
+    public NameBasedMappingConvention castOrMapIfPossible() {
         this.castOrMapIfPossible = true;
 
         return this;
@@ -281,7 +277,7 @@ public class StandardMapConvention implements MapConvention {
      *
      * @return this (for method chaining)
      */
-    public StandardMapConvention mapOnlySameTypeMembers() {
+    public NameBasedMappingConvention mapOnlySameTypeMembers() {
         this.castOrMapIfPossible = false;
 
         return this;

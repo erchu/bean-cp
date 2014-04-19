@@ -102,7 +102,7 @@ public interface Map<S, D> {
      * @param mappingConvention convention to use.
      * @return this (for method chaining)
      */
-    Map<S, D> useConvention(final MapConvention mappingConvention);
+    Map<S, D> useConvention(final MappingConvention mappingConvention);
 
     /**
      * Action to be performed after mappings.
