@@ -15,7 +15,10 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library.
  */
-package org.beancp;
+package org.beancp.convention;
+
+import org.beancp.Mapper;
+import org.beancp.NullParameterException;
 
 /**
  * Standard mapping conventions provided by bean-cp library. Convention matches fields by name.

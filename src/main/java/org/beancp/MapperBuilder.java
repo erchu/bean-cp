@@ -17,6 +17,7 @@
  */
 package org.beancp;
 
+import org.beancp.convention.MappingConvention;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.function.BiConsumer;

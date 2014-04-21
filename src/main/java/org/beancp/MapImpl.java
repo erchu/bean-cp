@@ -17,6 +17,7 @@
  */
 package org.beancp;
 
+import org.beancp.convention.MappingConvention;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
