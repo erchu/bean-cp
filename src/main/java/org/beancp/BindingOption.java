@@ -30,9 +30,9 @@ import java.util.function.Supplier;
  * @param <T> destination member type.
  */
 public final class BindingOption<S, D, T> {
-    
+
     private Supplier<Boolean> mapWhenCondition = null;
-    
+
     private T nullSubstitution = null;
 
     private BindingOption() {
@@ -67,12 +67,12 @@ public final class BindingOption<S, D, T> {
     public static <S, D, T> BindingOption<S, D, T> mapWhen(final Supplier<Boolean> condition) {
         BindingOption<S, D, T> result = new BindingOption<>();
         result.mapWhenCondition = condition;
-        
+
         return result;
     }
 
     /**
-     * If source getter will return true then value will be substituted with result from
+     * If from source value getter will return null then value will be substituted with result from
      * nullSubstitution lambda.
      *
      * @param <S> source object type.
@@ -84,7 +84,7 @@ public final class BindingOption<S, D, T> {
     public static <S, D, T> BindingOption<S, D, T> withNullSubstitution(final T nullSubstitution) {
         BindingOption<S, D, T> result = new BindingOption<>();
         result.nullSubstitution = nullSubstitution;
-        
+
         return result;
     }
 }

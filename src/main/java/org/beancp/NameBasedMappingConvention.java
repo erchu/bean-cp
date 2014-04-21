@@ -55,7 +55,7 @@ public class NameBasedMappingConvention implements MappingConvention {
      *
      * @return mapping convention.
      */
-    public static NameBasedMappingConvention getMaximumFlexibilityMatch() {
+    public static NameBasedMappingConvention getFlexibleMatch() {
         NameBasedMappingConvention defaultConvention = new NameBasedMappingConvention();
         defaultConvention.excludeDestinationMembers = new String[0];
         defaultConvention.includeDestinationMembers = new String[0];
