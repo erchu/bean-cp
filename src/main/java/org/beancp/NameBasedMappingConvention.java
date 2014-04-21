@@ -247,6 +247,8 @@ public class NameBasedMappingConvention implements MappingConvention {
      * <ul>
      * <li>Cast between primitive types</li>
      * <li>Convert values to string</li>
+     * <li>Convert collection to array</li>
+     * <li>Convert array to collection</li>
      * <li>Parse string value (only for primitive types)</li>
      * <li>Map types using available mapper</li>
      * </ul>
