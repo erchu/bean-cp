@@ -33,13 +33,13 @@ public interface Map<S, D> {
      * Adds calculated member binding to destination member or members.
      *
      * @param <T> value data type
-     * @param supplierFunction calculated member function, must be thread-safe.
+     * @param fromFunction calculated member function, must be thread-safe.
      * @param toMember destination class member, must be thread-safe.
      * @param options additional mapping options
      *
      * @return this (for method chaining)
      */
-    <T> Map<S, D> bind(final Supplier<T> supplierFunction,
+    <T> Map<S, D> bind(final Supplier<T> fromFunction,
             final Consumer<T> toMember,
             final BindingOption<S, D, T>... options);
 

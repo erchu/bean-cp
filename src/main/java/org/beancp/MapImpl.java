@@ -132,11 +132,11 @@ final class MapImpl<S, D> extends MappingExecutor<S, D> implements Map<S, D> {
 
     @Override
     public <T> Map<S, D> bind(
-            final Supplier<T> supplierFunction,
+            final Supplier<T> fromFunction,
             final Consumer<T> toMember,
             final BindingOption<S, D, T>... options) {
-        if (supplierFunction == null) {
-            throw new NullParameterException("supplierFunction");
+        if (fromFunction == null) {
+            throw new NullParameterException("fromFunction");
         }
 
         if (toMember == null) {
@@ -156,7 +156,7 @@ final class MapImpl<S, D> extends MappingExecutor<S, D> implements Map<S, D> {
             boolean map = shouldBeMapped(options);
 
             if (map) {
-                T getValue = supplierFunction.get();
+                T getValue = fromFunction.get();
 
                 if (getValue == null) {
                     for (BindingOption<S, D, T> i : options) {
