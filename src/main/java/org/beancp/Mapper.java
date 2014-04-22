@@ -82,6 +82,5 @@ public interface Mapper {
      * @param destinationClass destination object class.
      * @return destination object.
      */
-    //TODO: Mapping executior choose algorithm descrition in javadoc
     <S, D> D map(S source, Class<D> destinationClass) throws MappingException;
 }
