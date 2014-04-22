@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import org.beancp.convention.MappingConvention;
 
 class MapperSelector {
 
@@ -29,9 +30,10 @@ class MapperSelector {
         throw new IllegalStateException("Not allowed to create instance of this class");
     }
 
-    public static boolean mappingExecutorIsAvailable(final Class sourceClass,
-            final Class destinationClass, final Collection<MappingExecutor<?, ?>> inCollection) {
-        return MapperSelector.getMappingExecutor(
+    public static boolean isMappingAvailable(final Class sourceClass,
+            final Class destinationClass, final Collection<MappingExecutor<?, ?>> inCollection,
+            final MappingConvention mapAnyConvention) {
+        return (mapAnyConvention != null) || MapperSelector.getMappingExecutor(
                 sourceClass, destinationClass,
                 inCollection) != null;
     }

@@ -20,13 +20,18 @@ package org.beancp;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import org.beancp.convention.MappingConvention;
 
 class MapperImpl implements Mapper {
 
     private final Collection<MappingExecutor<?, ?>> mappingExecutors;
 
-    MapperImpl(final List<MappingExecutor<?, ?>> mappingExecutors) {
+    private MappingConvention mapAnyConvention;
+
+    MapperImpl(final List<MappingExecutor<?, ?>> mappingExecutors,
+            final MappingConvention mapAnyConvention) {
         this.mappingExecutors = Collections.unmodifiableCollection(mappingExecutors);
+        this.mapAnyConvention = mapAnyConvention;
     }
 
     @Override
@@ -71,9 +76,16 @@ class MapperImpl implements Mapper {
                         mappingExecutors);
 
         if (mappingExecutor == null) {
-            throw new MappingException(
-                    String.format("No suitable mapping found from %s to %s.",
-                            sourceClass, destinationClass));
+            if (mapAnyConvention != null) {
+                D destination = constructDestinationObject(destinationClass);
+                mapAnyConvention.execute(this, source, destination);
+                
+                return destination;
+            } else {
+                throw new MappingException(
+                        String.format("No suitable mapping found from %s to %s.",
+                                sourceClass, destinationClass));
+            }
         }
 
         return mappingExecutor.execute(this, source, destinationClass);
@@ -81,8 +93,16 @@ class MapperImpl implements Mapper {
 
     @Override
     public boolean isAvailable(final Class sourceClass, final Class destinationClass) {
-        return MapperSelector.mappingExecutorIsAvailable(
+        return MapperSelector.isMappingAvailable(
                 sourceClass, destinationClass,
-                mappingExecutors);
+                mappingExecutors, mapAnyConvention);
+    }
+
+    private <D> D constructDestinationObject(final Class<D> destinationClass) throws MappingException {
+        try {
+            return (D) destinationClass.newInstance();
+        } catch (InstantiationException | IllegalAccessException ex) {
+            throw new MappingException("Cannot create destination instance.", ex);
+        }
     }
 }

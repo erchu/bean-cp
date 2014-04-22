@@ -30,6 +30,8 @@ import java.util.function.Supplier;
 public final class MapperBuilder implements MappingsInfo {
 
     private final List<MappingExecutor<?, ?>> mappingExecutors = new LinkedList<>();
+    
+    private MappingConvention mapAnyConvention;
 
     private boolean mapperBuilded = false;
 
@@ -172,8 +174,9 @@ public final class MapperBuilder implements MappingsInfo {
      */
     public MapperBuilder mapAnyByConvention(final MappingConvention convention)
             throws MapperConfigurationException {
-        //TODO: Not supported yet
-        throw new UnsupportedOperationException("Not supported yet.");
+        this.mapAnyConvention = convention;
+        
+        return this;
     }
 
     /**
@@ -185,13 +188,13 @@ public final class MapperBuilder implements MappingsInfo {
     public Mapper buildMapper() {
         this.mapperBuilded = true;
 
-        return new MapperImpl(mappingExecutors);
+        return new MapperImpl(mappingExecutors, mapAnyConvention);
     }
 
     @Override
     public boolean isAvailable(Class sourceClass, Class destinationClass) {
-        return MapperSelector.mappingExecutorIsAvailable(sourceClass, destinationClass,
-                Collections.unmodifiableCollection(mappingExecutors));
+        return MapperSelector.isMappingAvailable(sourceClass, destinationClass,
+                Collections.unmodifiableCollection(mappingExecutors), mapAnyConvention);
     }
 
     private <S, D> void validateNewMappingAddAction(final Class<S> sourceClass,
