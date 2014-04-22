@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library.
  */
-package org.beancp.convention;
+package org.beancp;
 
 import org.beancp.Mapper;
 import org.beancp.MapperConfigurationException;

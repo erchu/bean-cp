@@ -17,6 +17,7 @@
  */
 package org.beancp.convention;
 
+import org.beancp.conventions.NameBasedMappingConvention;
 import org.beancp.Mapper;
 import org.beancp.MapperBuilder;
 import static org.junit.Assert.assertEquals;

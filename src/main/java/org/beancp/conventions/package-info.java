@@ -16,8 +16,8 @@
  * License along with this library.
  */
 
+
 /**
- * Mapping using conventions for bean-cp library, including name-based conventions and converters
- * for popular use cases.
+ * Conventions and converters for popular use cases.
  */
-package org.beancp.convention;
+package org.beancp.conventions;
