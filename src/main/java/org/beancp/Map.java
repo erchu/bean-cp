@@ -94,22 +94,25 @@ public interface Map<S, D> {
             final BindingOption<S, D, DI>... options);
 
     /**
-     * Adds mappings using convention. Convention mappings are performed before
-     * other mappings defined by
+     * Adds mappings using convention. Convention mappings are performed before other mappings
+     * defined by
      * {@link #bind(java.util.function.Supplier, java.util.function.Consumer, org.beancp.BindingOption...)}
      * and
      * {@link #bindConstant(java.lang.Object, java.util.function.Consumer, org.beancp.BindingOption...)}.
      *
+     * @param source source object.
+     * @param destination destination object.
      * @param mappingConvention convention to use.
+     *
      * @return this (for method chaining)
      */
-    Map<S, D> useConvention(final MappingConvention mappingConvention);
+    Map<S, D> map(final S source, final D destination, final MappingConvention mappingConvention);
 
     /**
      * Action to be performed after mappings.
      *
      * @param action action to be executed after mappings, must be thread-safe.
-     * 
+     *
      * @return this (for method chaining)
      */
     Map<S, D> beforeMap(final Action action);
@@ -118,7 +121,7 @@ public interface Map<S, D> {
      * Action to be performed before mappings.
      *
      * @param action action to be executed before mappings, must be thread-safe.
-     * 
+     *
      * @return this (for method chaining)
      */
     Map<S, D> afterMap(final Action action);

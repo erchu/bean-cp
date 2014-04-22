@@ -20,6 +20,7 @@ package org.beancp.convention;
 import org.beancp.Mapper;
 import org.beancp.MapperConfigurationException;
 import org.beancp.MappingException;
+import org.beancp.MappingsInfo;
 
 /**
  * Mapping convention.
@@ -30,11 +31,14 @@ public interface MappingConvention {
      * Indicates that mapping configuration is defined, so convention may populate its internal
      * configuration.
      *
-     * @param mapper mapper which will use this convention.
+     * @param mappingInfo mapper which will use this convention.
      * @param sourceClass source object class.
      * @param destinationClass destination object class.
+     * 
+     * @see org.beancp.Map#useConvention(org.beancp.convention.MappingConvention)
+     * @see org.beancp.MapperBuilder#mapAnyByConvention(org.beancp.convention.MappingConvention)
      */
-    void build(Mapper mapper, Class sourceClass, Class destinationClass)
+    void build(MappingsInfo mappingInfo, Class sourceClass, Class destinationClass)
             throws MapperConfigurationException;
 
     /**
@@ -51,7 +55,7 @@ public interface MappingConvention {
      * </ol>
      *
      * <p>
-     * Implementation must be thread-safe in both of those scenarios.Implementation cannot produce
+     * Implementation must be thread-safe in both of those scenarios. Implementation cannot produce
      * state that is shared state between calls, but may use data produced by
      * {@link #build(org.beancp.Mapper, java.lang.Class, java.lang.Class)} method. Acquiring locks
      * is not permitted.
@@ -60,6 +64,9 @@ public interface MappingConvention {
      * @param mapper mapper delegating mapping to this convention.
      * @param source source object.
      * @param destination destination object.
+     * 
+     * @see org.beancp.Map#useConvention(org.beancp.convention.MappingConvention)
+     * @see org.beancp.MapperBuilder#mapAnyByConvention(org.beancp.convention.MappingConvention)
      */
     void execute(Mapper mapper, Object source, Object destination) throws MappingException;
 }

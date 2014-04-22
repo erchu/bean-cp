@@ -31,6 +31,8 @@ package org.beancp;
  *
  * @param <S> mapping source
  * @param <D> mapping destination
+ * 
+ * @see MapperBuilder#addMap(java.lang.Class, java.lang.Class, org.beancp.MapSetup)
  */
 @FunctionalInterface
 public interface MapSetup<S, D> {

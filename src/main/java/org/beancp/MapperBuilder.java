@@ -17,6 +17,7 @@
  */
 package org.beancp;
 
+import java.util.Collections;
 import org.beancp.convention.MappingConvention;
 import java.util.LinkedList;
 import java.util.List;
@@ -26,7 +27,7 @@ import java.util.function.Supplier;
 /**
  * Builds mapper implementation. This class do not guarantee to be thread-safe.
  */
-public final class MapperBuilder {
+public final class MapperBuilder implements MappingsInfo {
 
     private final List<MappingExecutor<?, ?>> mappingExecutors = new LinkedList<>();
 
@@ -54,7 +55,7 @@ public final class MapperBuilder {
         validateNewMappingAddAction(sourceClass, destinationClass);
 
         MapImpl map = new MapImpl(sourceClass, destinationClass, mapConfiguration);
-        map.configure();
+        map.configure(this);
 
         mappingExecutors.add(map);
 
@@ -169,7 +170,8 @@ public final class MapperBuilder {
      *
      * @return this (for method chaining)
      */
-    public MapperBuilder mapAnyByConvention(final MappingConvention convention) throws MapperConfigurationException {
+    public MapperBuilder mapAnyByConvention(final MappingConvention convention)
+            throws MapperConfigurationException {
         //TODO: Not supported yet
         throw new UnsupportedOperationException("Not supported yet.");
     }
@@ -184,6 +186,12 @@ public final class MapperBuilder {
         this.mapperBuilded = true;
 
         return new MapperImpl(mappingExecutors);
+    }
+
+    @Override
+    public boolean isAvailable(Class sourceClass, Class destinationClass) {
+        return MapperSelector.mappingExecutorIsAvailable(sourceClass, destinationClass,
+                Collections.unmodifiableCollection(mappingExecutors));
     }
 
     private <S, D> void validateNewMappingAddAction(final Class<S> sourceClass,

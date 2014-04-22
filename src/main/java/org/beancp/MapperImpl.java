@@ -18,37 +18,15 @@
 package org.beancp;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 class MapperImpl implements Mapper {
 
-    private final List<MappingExecutor<?, ?>> mappingExecutors;
+    private final Collection<MappingExecutor<?, ?>> mappingExecutors;
 
     MapperImpl(final List<MappingExecutor<?, ?>> mappingExecutors) {
-        this.mappingExecutors = mappingExecutors;
-    }
-
-    private MappingExecutor<?, ?> getMappingExecutor(
-            final Class sourceClass, final Class destinationClass)
-            throws MappingException {
-        List<MappingExecutor<?, ?>> validMappers = mappingExecutors.stream().filter(
-                n -> canBeMapped(sourceClass, n.getSourceClass())
-                && canBeMapped(destinationClass, n.getDestinationClass()))
-                .collect(Collectors.toList());
-
-        if (validMappers.isEmpty()) {
-            throw new MappingException(
-                    String.format("No suitable mapping found from %s to %s.",
-                            sourceClass, destinationClass));
-        }
-
-        MappingExecutor<?, ?> mapper =
-                getBestMatchingMappingExecutor(sourceClass, destinationClass, validMappers);
-
-        return mapper;
+        this.mappingExecutors = Collections.unmodifiableCollection(mappingExecutors);
     }
 
     @Override
@@ -61,8 +39,16 @@ class MapperImpl implements Mapper {
             throw new NullParameterException("destination");
         }
 
-        MappingExecutor<S, D> mappingExecutor =
-                (MappingExecutor<S, D>) getMappingExecutor(source.getClass(), destination.getClass());
+        MappingExecutor<S, D> mappingExecutor
+                = (MappingExecutor<S, D>) MapperSelector.getMappingExecutor(
+                        source.getClass(), destination.getClass(),
+                        mappingExecutors);
+
+        if (mappingExecutor == null) {
+            throw new MappingException(
+                    String.format("No suitable mapping found from %s to %s.",
+                            source.getClass(), destination.getClass()));
+        }
 
         mappingExecutor.execute(this, source, destination);
     }
@@ -77,47 +63,26 @@ class MapperImpl implements Mapper {
             throw new NullParameterException("destinationClass");
         }
 
-        MappingExecutor<S, D> mappingExecutor =
-                (MappingExecutor<S, D>) getMappingExecutor(source.getClass(), destinationClass);
+        Class sourceClass = source.getClass();
+
+        MappingExecutor<S, D> mappingExecutor
+                = (MappingExecutor<S, D>) MapperSelector.getMappingExecutor(
+                        sourceClass, destinationClass,
+                        mappingExecutors);
+
+        if (mappingExecutor == null) {
+            throw new MappingException(
+                    String.format("No suitable mapping found from %s to %s.",
+                            sourceClass, destinationClass));
+        }
 
         return mappingExecutor.execute(this, source, destinationClass);
     }
 
-    private MappingExecutor<?, ?> getBestMatchingMappingExecutor(
-            final Class sourceClass,
-            final Class destinationClass,
-            final List<MappingExecutor<?, ?>> validMappers) {
-        return coalesce(
-                firstOrNull(validMappers, (n
-                        -> sourceClass.equals(n.getSourceClass())
-                        && destinationClass.equals(n.getDestinationClass()))),
-                firstOrNull(validMappers, (n
-                        -> destinationClass.equals(n.getDestinationClass()))),
-                firstOrNull(validMappers, (n
-                        -> sourceClass.equals(n.getSourceClass()))),
-                validMappers.get(0));
-    }
-
-    private <T> T firstOrNull(Collection<T> collection, Predicate<T> filter) {
-        Optional<T> findFirst = collection
-                .stream()
-                .filter(filter)
-                .findFirst();
-
-        return (findFirst.isPresent() ? findFirst.get() : null);
-    }
-
-    private <T> T coalesce(T... args) {
-        for (T i : args) {
-            if (i != null) {
-                return i;
-            }
-        }
-
-        return null;
-    }
-
-    private boolean canBeMapped(final Class objectClazz, final Class asMappingSideClass) {
-        return asMappingSideClass.isAssignableFrom(objectClazz);
+    @Override
+    public boolean isAvailable(final Class sourceClass, final Class destinationClass) {
+        return MapperSelector.mappingExecutorIsAvailable(
+                sourceClass, destinationClass,
+                mappingExecutors);
     }
 }
