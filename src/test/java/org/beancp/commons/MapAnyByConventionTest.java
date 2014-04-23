@@ -15,15 +15,15 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library.
  */
-package org.beancp.convention;
+package org.beancp.commons;
 
-import org.beancp.conventions.NameBasedMappingConvention;
 import org.beancp.Mapper;
 import org.beancp.MapperBuilder;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import org.junit.Test;
-import static org.junit.Assert.*;
 
-public class PlainOneToOneMappingTest {
+public class MapAnyByConventionTest {
 
     public static class InnerClass {
 
@@ -45,7 +45,7 @@ public class PlainOneToOneMappingTest {
         private int z;
 
         private int a;
-        
+
         private InnerClass inner;
 
         public int getX() {
@@ -163,7 +163,7 @@ public class PlainOneToOneMappingTest {
     }
 
     @Test
-    public void when_source_and_destination_classes_has_properties_of_the_same_name_and_type_then_should_be_mapped() {
+    public void when_source_and_destination_classes_has_properties_of_the_same_name_and_type_then_should_be_mapped_also_when_is_not_declared_implicity() {
         // GIVEN
         SimpleSourceWithProperties sourceInstance = new SimpleSourceWithProperties();
         sourceInstance.setA(7);
@@ -174,10 +174,8 @@ public class PlainOneToOneMappingTest {
 
         // WHEN
         Mapper mapper = new MapperBuilder()
-                .addMap(SimpleSourceWithProperties.class, SimpleDestinationWithProperties.class,
-                        (config, source, destination)
-                        -> config.useConvention(NameBasedMappingConvention.getStrictMatch())
-                ).buildMapper();
+                .mapAnyByConvention(NameBasedMappingConvention.getStrictMatch())
+                .buildMapper();
 
         SimpleDestinationWithProperties result = mapper.map(sourceInstance, SimpleDestinationWithProperties.class);
 
@@ -197,7 +195,7 @@ public class PlainOneToOneMappingTest {
     }
 
     @Test
-    public void when_source_and_destination_classes_has_fields_of_the_same_name_and_type_then_should_be_mapped() {
+    public void when_source_and_destination_classes_has_fields_of_the_same_name_and_type_then_should_be_mapped_also_when_is_not_declared_implicity() {
         // GIVEN
         SimpleSourceWithFields sourceInstance = new SimpleSourceWithFields();
         sourceInstance.a = 7;
@@ -208,10 +206,8 @@ public class PlainOneToOneMappingTest {
 
         // WHEN
         Mapper mapper = new MapperBuilder()
-                .addMap(SimpleSourceWithFields.class, SimpleDestinationWithFields.class,
-                        (config, source, destination)
-                        -> config.useConvention(NameBasedMappingConvention.getStrictMatch())
-                ).buildMapper();
+                .mapAnyByConvention(NameBasedMappingConvention.getStrictMatch())
+                .buildMapper();
 
         SimpleDestinationWithFields result = mapper.map(sourceInstance, SimpleDestinationWithFields.class);
 
@@ -224,74 +220,6 @@ public class PlainOneToOneMappingTest {
         assertEquals("Invalid 'y' field value.", sourceInstance.y, result.y);
         assertNotNull("'inner' field is null", result.inner);
         assertEquals("Invalid 'inner' field value.", sourceInstance.inner.getValue(), result.inner.getValue());
-
-        // 'z' exists in source and in destination, but have different data types - it will be not
-        // mapped by StrictMatch convention
-        assertEquals("Invalid 'z' field value.", 0, result.z);
-    }
-
-    @Test
-    public void convention_should_be_able_to_map_from_fields_to_properties() {
-        // GIVEN
-        SimpleSourceWithFields sourceInstance = new SimpleSourceWithFields();
-        sourceInstance.a = 7;
-        sourceInstance.x = 8;
-        sourceInstance.y = 9;
-        sourceInstance.z = 10;
-        sourceInstance.inner = new InnerClass("hello");
-
-        // WHEN
-        Mapper mapper = new MapperBuilder()
-                .addMap(SimpleSourceWithFields.class, SimpleDestinationWithProperties.class,
-                        (config, source, destination)
-                        -> config.useConvention(NameBasedMappingConvention.getStrictMatch())
-                ).buildMapper();
-
-        SimpleDestinationWithProperties result = mapper.map(sourceInstance, SimpleDestinationWithProperties.class);
-
-        // THEN
-        // 'b' has no corresponding - it will be not mapped by convention
-        assertEquals("Invalid 'b' property value.", 0, result.getB());
-
-        // 'x' and 'y' should be mapped by convention
-        assertEquals("Invalid 'x' property value.", sourceInstance.x, result.getX());
-        assertEquals("Invalid 'y' property value.", sourceInstance.y, result.getY());
-        assertNotNull("'inner' property is null", result.getInner());
-        assertEquals("Invalid 'inner' property value.", sourceInstance.inner.getValue(), result.getInner().getValue());
-
-        // 'z' exists in source and in destination, but have different data types - it will be not
-        // mapped by StrictMatch convention
-        assertEquals("Invalid 'z' property value.", 0, result.getZ());
-    }
-
-    @Test
-    public void convention_should_be_able_to_map_from_properties_to_fields() {
-        // GIVEN
-        SimpleSourceWithProperties sourceInstance = new SimpleSourceWithProperties();
-        sourceInstance.setA(7);
-        sourceInstance.setX(8);
-        sourceInstance.setY(9);
-        sourceInstance.setZ(10);
-        sourceInstance.setInner(new InnerClass("hello"));
-
-        // WHEN
-        Mapper mapper = new MapperBuilder()
-                .addMap(SimpleSourceWithProperties.class, SimpleDestinationWithFields.class,
-                        (config, source, destination)
-                        -> config.useConvention(NameBasedMappingConvention.getStrictMatch())
-                ).buildMapper();
-
-        SimpleDestinationWithFields result = mapper.map(sourceInstance, SimpleDestinationWithFields.class);
-
-        // THEN
-        // 'b' has no corresponding - it will be not mapped by convention
-        assertEquals("Invalid 'b' field value.", 0, result.b);
-
-        // 'x' and 'y' should be mapped by convention
-        assertEquals("Invalid 'x' field value.", sourceInstance.getX(), result.x);
-        assertEquals("Invalid 'y' field value.", sourceInstance.getY(), result.y);
-        assertNotNull("'inner' field is null", result.inner);
-        assertEquals("Invalid 'inner' field value.", sourceInstance.getInner().getValue(), result.inner.getValue());
 
         // 'z' exists in source and in destination, but have different data types - it will be not
         // mapped by StrictMatch convention

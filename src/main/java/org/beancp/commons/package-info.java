@@ -20,4 +20,4 @@
 /**
  * Conventions and converters for popular use cases.
  */
-package org.beancp.conventions;
+package org.beancp.commons;

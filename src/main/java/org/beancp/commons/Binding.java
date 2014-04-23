@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library.
  */
-package org.beancp.conventions;
+package org.beancp.commons;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -23,7 +23,6 @@ import java.lang.reflect.Member;
 import java.lang.reflect.Method;
 import org.beancp.Mapper;
 import org.beancp.MappingException;
-import org.beancp.NullParameterException;
 import static org.beancp.NullParameterException.failIfNull;
 
 class Binding {

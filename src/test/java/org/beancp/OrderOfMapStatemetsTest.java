@@ -17,7 +17,7 @@
  */
 package org.beancp;
 
-import org.beancp.conventions.NameBasedMappingConvention;
+import org.beancp.commons.NameBasedMappingConvention;
 import org.junit.Test;
 
 public class OrderOfMapStatemetsTest {

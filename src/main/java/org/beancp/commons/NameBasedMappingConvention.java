@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library.
  */
-package org.beancp.conventions;
+package org.beancp.commons;
 
 import org.beancp.MappingConvention;
 import java.beans.BeanInfo;
