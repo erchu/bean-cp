@@ -20,7 +20,7 @@ package org.beancp;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-public class MapObjectGraphTest {
+public class MapInnerTest {
 
     public static class SourceSecondInner {
 
@@ -177,19 +177,19 @@ public class MapObjectGraphTest {
                 .addMap(SourceInner.class, DestinationInner.class,
                         (config, source, destination) -> config
                         .bind(source::getX, destination::setA)
-                        .map(
+                        .mapInner(
                                 source::getSecondInner,
                                 destination::setSecondDestinationInner,
                                 destination::getSecondDestinationInner,
                                 DestinationSecondInner.class))
                 .addMap(SourceOuter.class, DestinationOuter.class,
                         (config, source, destination) -> config
-                        .map(
+                        .mapInner(
                                 source::getInnerProperty,
                                 destination::setInnerDestinationProperty,
                                 destination::getInnerDestinationProperty,
                                 DestinationInner.class)
-                        .map(() -> source.innerField, (DestinationInner v) -> {
+                        .mapInner(() -> source.innerField, (DestinationInner v) -> {
                             destination.innerDestinationField = v;
                         }, DestinationInner.class))
                 .buildMapper();
@@ -260,19 +260,19 @@ public class MapObjectGraphTest {
                 .addMap(SourceInner.class, DestinationInner.class,
                         (config, source, destination) -> config
                         .bind(source::getX, destination::setA)
-                        .map(
+                        .mapInner(
                                 source::getSecondInner,
                                 destination::setSecondDestinationInner,
                                 destination::getSecondDestinationInner,
                                 DestinationSecondInner.class))
                 .addMap(SourceOuter.class, DestinationOuter.class,
                         (config, source, destination) -> config
-                        .map(
+                        .mapInner(
                                 source::getInnerProperty,
                                 destination::setInnerDestinationProperty,
                                 destination::getInnerDestinationProperty,
                                 DestinationInner.class)
-                        .map(() -> source.innerField, (DestinationInner v) -> {
+                        .mapInner(() -> source.innerField, (DestinationInner v) -> {
                             destination.innerDestinationField = v;
                         }, DestinationInner.class))
                 .buildMapper();

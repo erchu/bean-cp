@@ -35,6 +35,9 @@ final class MapImpl<S, D> extends MappingExecutor<S, D> implements Map<S, D> {
         EXECUTION
     }
 
+    private final String INVALID_STATEMENT_ORDER_MESSAGE = "Invalid statement order. Check "
+            + Map.class.getSimpleName() + " interface API documentation for details.";
+
     private final Class<S> sourceClass;
 
     private final Class<D> destinationClass;
@@ -109,11 +112,6 @@ final class MapImpl<S, D> extends MappingExecutor<S, D> implements Map<S, D> {
 
     @Override
     D execute(final Mapper caller, final S source, final Class<D> destinationClass) {
-        if (mode != MapMode.EXECUTION) {
-            throw new IllegalStateException(
-                    "Map is not configure. Use configure() first.");
-        }
-
         D destination = constructDestinationObject(destinationClass);
 
         execute(caller, source, destination);
@@ -125,7 +123,7 @@ final class MapImpl<S, D> extends MappingExecutor<S, D> implements Map<S, D> {
     void execute(final Mapper caller, final S source, final D destination) {
         if (mode != MapMode.EXECUTION) {
             throw new IllegalStateException(
-                    "Map is not configure. Use configure() first.");
+                    "Map is not configured. Use configure() first.");
         }
 
         this.executionPhaseMapper = caller;
@@ -166,8 +164,7 @@ final class MapImpl<S, D> extends MappingExecutor<S, D> implements Map<S, D> {
 
         if (mode == MapMode.CONFIGURATION) {
             if (afterMapExecuted) {
-                throw new MapperConfigurationException("Invalid statement order. Check Map "
-                        + "interface API documentation for details.");
+                throw new MapperConfigurationException(INVALID_STATEMENT_ORDER_MESSAGE);
             }
 
             bindBindConstantOrMapExecuted = true;
@@ -206,8 +203,7 @@ final class MapImpl<S, D> extends MappingExecutor<S, D> implements Map<S, D> {
 
         if (mode == MapMode.CONFIGURATION) {
             if (afterMapExecuted) {
-                throw new MapperConfigurationException("Invalid statement order. Check Map "
-                        + "interface API documentation for details.");
+                throw new MapperConfigurationException(INVALID_STATEMENT_ORDER_MESSAGE);
             }
 
             bindBindConstantOrMapExecuted = true;
@@ -234,15 +230,15 @@ final class MapImpl<S, D> extends MappingExecutor<S, D> implements Map<S, D> {
     }
 
     @Override
-    public <SI, DI> Map<S, D> map(final Supplier<SI> supplierFunction,
+    public <SI, DI> Map<S, D> mapInner(final Supplier<SI> supplierFunction,
             final Consumer<DI> toMember,
             final Class<DI> toMemberClass,
             final BindingOption<S, D, DI>... options) {
-        return map(supplierFunction, toMember, null, toMemberClass, options);
+        return mapInner(supplierFunction, toMember, null, toMemberClass, options);
     }
 
     @Override
-    public <SI, DI> Map<S, D> map(final Supplier<SI> supplierFunction,
+    public <SI, DI> Map<S, D> mapInner(final Supplier<SI> supplierFunction,
             final Consumer<DI> toMember,
             final Supplier<DI> toMemberGetter,
             final Class<DI> toMemberClass,
@@ -257,8 +253,7 @@ final class MapImpl<S, D> extends MappingExecutor<S, D> implements Map<S, D> {
 
         if (mode == MapMode.CONFIGURATION) {
             if (afterMapExecuted) {
-                throw new MapperConfigurationException("Invalid statement order. Check Map "
-                        + "interface API documentation for details.");
+                throw new MapperConfigurationException(INVALID_STATEMENT_ORDER_MESSAGE);
             }
 
             bindBindConstantOrMapExecuted = true;
@@ -303,8 +298,7 @@ final class MapImpl<S, D> extends MappingExecutor<S, D> implements Map<S, D> {
             }
 
             if (bindBindConstantOrMapExecuted || afterMapExecuted) {
-                throw new MapperConfigurationException("Invalid statement order. Check Map "
-                        + "interface API documentation for details.");
+                throw new MapperConfigurationException(INVALID_STATEMENT_ORDER_MESSAGE);
             }
 
             // Build and cache result
@@ -327,8 +321,7 @@ final class MapImpl<S, D> extends MappingExecutor<S, D> implements Map<S, D> {
     public Map<S, D> beforeMap(final Action action) {
         if (mode == MapMode.CONFIGURATION) {
             if (useConventionExecuted || bindBindConstantOrMapExecuted || afterMapExecuted) {
-                throw new MapperConfigurationException("Invalid statement order. Check Map "
-                        + "interface API documentation for details.");
+                throw new MapperConfigurationException(INVALID_STATEMENT_ORDER_MESSAGE);
             }
 
             beforeMapExecuted = true;
@@ -364,8 +357,7 @@ final class MapImpl<S, D> extends MappingExecutor<S, D> implements Map<S, D> {
         if (mode == MapMode.CONFIGURATION) {
             if (beforeMapExecuted || useConventionExecuted || bindBindConstantOrMapExecuted
                     || afterMapExecuted) {
-                throw new MapperConfigurationException("Invalid statement order. Check Map "
-                        + "interface API documentation for details.");
+                throw new MapperConfigurationException(INVALID_STATEMENT_ORDER_MESSAGE);
             }
 
             if (constructDestinationObjectUsingExecuted) {

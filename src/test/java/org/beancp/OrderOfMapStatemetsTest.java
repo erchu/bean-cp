@@ -20,12 +20,12 @@ package org.beancp;
 import org.beancp.conventions.NameBasedMappingConvention;
 import org.junit.Test;
 
-public class MapStatemetsOrderTest {
+public class OrderOfMapStatemetsTest {
 
     public static class Source {
 
         private String x, y;
-        
+
         private InnerSource inner = new InnerSource();
 
         public InnerSource getInner() {
@@ -56,7 +56,7 @@ public class MapStatemetsOrderTest {
     public static class Destination {
 
         private String a, b, c;
-        
+
         private InnerDestination inner = new InnerDestination();
 
         public InnerDestination getInner() {
@@ -92,12 +92,12 @@ public class MapStatemetsOrderTest {
         }
     }
 
-    private static class InnerSource {
+    public static class InnerSource {
     }
-    
-    private static class InnerDestination {
+
+    public static class InnerDestination {
     }
-    
+
     @Test(expected = MapperConfigurationException.class)
     public void beforeMap_line_must_be_beforeConstant_bind_lines() {
         // GIVEN: source and destination class
@@ -144,6 +144,22 @@ public class MapStatemetsOrderTest {
     }
 
     @Test(expected = MapperConfigurationException.class)
+    public void beforeMap_line_must_be_before_mapInner_line() {
+        // GIVEN: source and destination class
+
+        // WHEN
+        new MapperBuilder()
+                .addMap(InnerSource.class, InnerDestination.class, (config, source, destination) -> {})
+                .addMap(Source.class, Destination.class, (config, source, destination) -> config
+                        .mapInner(source::getInner, destination::setInner, InnerDestination.class)
+                        .beforeMap(() -> destination.setC(destination.getA() + destination.getB()))
+                        .bindConstant("1", destination::setA)
+                        .afterMap(() -> destination.setC(destination.getA() + destination.getB())));
+
+        // THEN: expect exception
+    }
+
+    @Test(expected = MapperConfigurationException.class)
     public void afterMap_line_must_be_after_bind_lines() {
         // GIVEN: source and destination class
 
@@ -169,6 +185,22 @@ public class MapStatemetsOrderTest {
                         .bind(source::getY, destination::setB)
                         .afterMap(() -> destination.setC(destination.getA() + destination.getB()))
                         .bindConstant("1", destination::setA));
+
+        // THEN: expect exception
+    }
+
+    @Test(expected = MapperConfigurationException.class)
+    public void afterMap_line_must_be_after_mapInner_lines() {
+        // GIVEN: source and destination class
+
+        // WHEN
+        new MapperBuilder()
+                .addMap(InnerSource.class, InnerDestination.class, (config, source, destination) -> {})
+                .addMap(Source.class, Destination.class, (config, source, destination) -> config
+                        .beforeMap(() -> destination.setC(destination.getA() + destination.getB()))
+                        .bind(source::getY, destination::setB)
+                        .afterMap(() -> destination.setC(destination.getA() + destination.getB()))
+                        .mapInner(source::getInner, destination::setInner, InnerDestination.class));
 
         // THEN: expect exception
     }
@@ -212,6 +244,22 @@ public class MapStatemetsOrderTest {
                 .addMap(Source.class, Destination.class, (config, source, destination) -> config
                         .beforeMap(() -> destination.setC(destination.getA() + destination.getB()))
                         .bindConstant("1", destination::setA)
+                        .useConvention(NameBasedMappingConvention.getStrictMatch())
+                        .afterMap(() -> destination.setC(destination.getA() + destination.getB())));
+
+        // THEN: expect exception
+    }
+
+    @Test(expected = MapperConfigurationException.class)
+    public void useConvention_line_must_be_before_mapInner_line() {
+        // GIVEN: source and destination class
+
+        // WHEN
+        new MapperBuilder()
+                .addMap(InnerSource.class, InnerDestination.class, (config, source, destination) -> {})
+                .addMap(Source.class, Destination.class, (config, source, destination) -> config
+                        .beforeMap(() -> destination.setC(destination.getA() + destination.getB()))
+                        .mapInner(source::getInner, destination::setInner, InnerDestination.class)
                         .useConvention(NameBasedMappingConvention.getStrictMatch())
                         .afterMap(() -> destination.setC(destination.getA() + destination.getB())));
 

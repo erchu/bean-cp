@@ -27,9 +27,9 @@ import java.util.function.Supplier;
  * <li>{@link #constructDestinationObjectUsing(java.util.function.Supplier)} zero or one time</li>
  * <li>{@link #beforeMap(org.beancp.Action)} zero or many times</li>
  * <li>{@link #useConvention(org.beancp.MappingConvention) } zero or one time</li>
- * <li>{@link #bind(java.util.function.Supplier, java.util.function.Consumer, org.beancp.BindingOption...)}, {@link #bindConstant(java.lang.Object, java.util.function.Consumer, org.beancp.BindingOption...)}, {@link #map(java.util.function.Supplier, java.util.function.Consumer, java.lang.Class, org.beancp.BindingOption...)}
+ * <li>{@link #bind(java.util.function.Supplier, java.util.function.Consumer, org.beancp.BindingOption...)}, {@link #bindConstant(java.lang.Object, java.util.function.Consumer, org.beancp.BindingOption...)}, {@link #mapInner(java.util.function.Supplier, java.util.function.Consumer, java.lang.Class, org.beancp.BindingOption[])}
  * and
- * {@link #map(java.util.function.Supplier, java.util.function.Consumer, java.util.function.Supplier, java.lang.Class, org.beancp.BindingOption...)}
+ * {@link #mapInner(java.util.function.Supplier, java.util.function.Consumer, java.util.function.Supplier, java.lang.Class, org.beancp.BindingOption[])}
  * methods zero or many times in any order</li>
  * <li>{@link #afterMap(org.beancp.Action)} zero or many times</li>
  * </ol>
@@ -38,6 +38,36 @@ import java.util.function.Supplier;
  * @param <D> destination class
  */
 public interface Map<S, D> {
+
+    /**
+     * Operation used to build destination object.
+     *
+     * @param destinationObjectBuilder destination object builder, must be thread-safe.
+     * @return this (for method chaining)
+     */
+    Map<S, D> constructDestinationObjectUsing(final Supplier<D> destinationObjectBuilder);
+
+    /**
+     * Action to be performed after mappings.
+     *
+     * @param action action to be executed after mappings, must be thread-safe.
+     *
+     * @return this (for method chaining)
+     */
+    Map<S, D> beforeMap(final Action action);
+
+    /**
+     * Adds mappings using convention. Convention mappings are performed before other mappings
+     * defined by
+     * {@link #bind(java.util.function.Supplier, java.util.function.Consumer, org.beancp.BindingOption...)}
+     * and
+     * {@link #bindConstant(java.lang.Object, java.util.function.Consumer, org.beancp.BindingOption...)}.
+     *
+     * @param mappingConvention convention to use.
+     *
+     * @return this (for method chaining)
+     */
+    Map<S, D> useConvention(final MappingConvention mappingConvention);
 
     /**
      * Adds calculated member binding to destination member or members.
@@ -49,7 +79,8 @@ public interface Map<S, D> {
      *
      * @return this (for method chaining)
      */
-    <T> Map<S, D> bind(final Supplier<T> fromFunction,
+    <T> Map<S, D> bind(
+            final Supplier<T> fromFunction,
             final Consumer<T> toMember,
             final BindingOption<S, D, T>... options);
 
@@ -63,7 +94,8 @@ public interface Map<S, D> {
      *
      * @return this (for method chaining)
      */
-    <T> Map<S, D> bindConstant(final T constantValue,
+    <T> Map<S, D> bindConstant(
+            final T constantValue,
             final Consumer<T> toMember,
             final BindingOption<S, D, T>... options);
 
@@ -72,15 +104,16 @@ public interface Map<S, D> {
      *
      * @param <SI> source value data type
      * @param <DI> destination value data type
-     * @param supplierFunction calculated member function, must be thread-safe.
+     * @param fromFunction calculated member function, must be thread-safe.
      * @param toMember destination class member setter, must be thread-safe.
-     * @param toMemberGetter destination class member get, must be thread-safe.ter
+     * @param toMemberGetter destination class member get, must be thread-safe.
      * @param toMemberClass destination class member type
      * @param options additional mapping options
      *
      * @return this (for method chaining)
      */
-    <SI, DI> Map<S, D> map(final Supplier<SI> supplierFunction,
+    <SI, DI> Map<S, D> mapInner(
+            final Supplier<SI> fromFunction,
             final Consumer<DI> toMember,
             final Supplier<DI> toMemberGetter,
             final Class<DI> toMemberClass,
@@ -98,32 +131,11 @@ public interface Map<S, D> {
      *
      * @return this (for method chaining)
      */
-    <SI, DI> Map<S, D> map(final Supplier<SI> supplierFunction,
+    <SI, DI> Map<S, D> mapInner(
+            final Supplier<SI> supplierFunction,
             final Consumer<DI> toMember,
             final Class<DI> toMemberClass,
             final BindingOption<S, D, DI>... options);
-
-    /**
-     * Adds mappings using convention. Convention mappings are performed before other mappings
-     * defined by
-     * {@link #bind(java.util.function.Supplier, java.util.function.Consumer, org.beancp.BindingOption...)}
-     * and
-     * {@link #bindConstant(java.lang.Object, java.util.function.Consumer, org.beancp.BindingOption...)}.
-     *
-     * @param mappingConvention convention to use.
-     *
-     * @return this (for method chaining)
-     */
-    Map<S, D> useConvention(final MappingConvention mappingConvention);
-
-    /**
-     * Action to be performed after mappings.
-     *
-     * @param action action to be executed after mappings, must be thread-safe.
-     *
-     * @return this (for method chaining)
-     */
-    Map<S, D> beforeMap(final Action action);
 
     /**
      * Action to be performed before mappings.
@@ -133,12 +145,4 @@ public interface Map<S, D> {
      * @return this (for method chaining)
      */
     Map<S, D> afterMap(final Action action);
-
-    /**
-     * Operation used to build destination object.
-     *
-     * @param destinationObjectBuilder destination object builder, must be thread-safe.
-     * @return this (for method chaining)
-     */
-    Map<S, D> constructDestinationObjectUsing(final Supplier<D> destinationObjectBuilder);
 }
