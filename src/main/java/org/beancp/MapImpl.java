@@ -51,9 +51,13 @@ final class MapImpl<S, D> extends MappingExecutor<S, D> implements Map<S, D> {
 
     private Mapper executionPhaseMapper;
 
-    private MappingsInfo configurationPhaseMappingsInfo;
+    private MappingConvention executionPhaseMappingConvention;
 
-    private MappingConvention mappingConvention;
+    private ThreadLocal<S> executionPhaseSourceReference = new ThreadLocal<S>();
+
+    private ThreadLocal<D> executionPhaseDestinationReference = new ThreadLocal<D>();
+
+    private MappingsInfo configurationPhaseMappingsInfo;
 
     public MapImpl(final Class<S> sourceClass, final Class<D> destinationClass,
             final MapSetup<S, D> configuration) {
@@ -106,11 +110,9 @@ final class MapImpl<S, D> extends MappingExecutor<S, D> implements Map<S, D> {
                     "Map is not configure. Use configure() first.");
         }
 
-        executionPhaseMapper = caller;
-
         D destination = constructDestinationObject(destinationClass);
-
-        configuration.apply(this, source, destination);
+        
+        execute(caller, source, destination);
 
         return destination;
     }
@@ -121,10 +123,18 @@ final class MapImpl<S, D> extends MappingExecutor<S, D> implements Map<S, D> {
             throw new IllegalStateException(
                     "Map is not configure. Use configure() first.");
         }
+        
+        this.executionPhaseMapper = caller;
 
-        executionPhaseMapper = caller;
+        try {
+            this.executionPhaseSourceReference.set(source);
+            this.executionPhaseDestinationReference.set(destination);
 
-        configuration.apply(this, source, destination);
+            configuration.apply(this, source, destination);
+        } finally {
+            this.executionPhaseSourceReference.set(null);
+            this.executionPhaseDestinationReference.set(null);
+        }
     }
 
     @Override
@@ -280,8 +290,7 @@ final class MapImpl<S, D> extends MappingExecutor<S, D> implements Map<S, D> {
     }
 
     @Override
-    public MapImpl<S, D> useConvention(final S source, final D destination,
-            final MappingConvention mappingConvention) {
+    public MapImpl<S, D> useConvention(final MappingConvention mappingConvention) {
         if (mappingConvention == null) {
             throw new NullParameterException("mappingConvention");
         }
@@ -295,14 +304,15 @@ final class MapImpl<S, D> extends MappingExecutor<S, D> implements Map<S, D> {
 
             // Build and cache result
             mappingConvention.build(configurationPhaseMappingsInfo, sourceClass, destinationClass);
-            this.mappingConvention = mappingConvention;
-            
+            this.executionPhaseMappingConvention = mappingConvention;
+
             bindAndBindConstantConventionOrMapExecuted = true;
         }
 
         if (mode == MapMode.EXECUTION) {
             // use cached convention
-            this.mappingConvention.execute(executionPhaseMapper, source, destination);
+            this.executionPhaseMappingConvention.execute(executionPhaseMapper,
+                    executionPhaseSourceReference.get(), executionPhaseDestinationReference.get());
         }
 
         return this;

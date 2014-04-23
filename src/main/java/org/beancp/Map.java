@@ -99,13 +99,11 @@ public interface Map<S, D> {
      * and
      * {@link #bindConstant(java.lang.Object, java.util.function.Consumer, org.beancp.BindingOption...)}.
      *
-     * @param source source object.
-     * @param destination destination object.
      * @param mappingConvention convention to use.
      *
      * @return this (for method chaining)
      */
-    Map<S, D> useConvention(final S source, final D destination, final MappingConvention mappingConvention);
+    Map<S, D> useConvention(final MappingConvention mappingConvention);
 
     /**
      * Action to be performed after mappings.

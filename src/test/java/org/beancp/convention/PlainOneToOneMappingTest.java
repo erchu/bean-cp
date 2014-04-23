@@ -176,7 +176,7 @@ public class PlainOneToOneMappingTest {
         Mapper mapper = new MapperBuilder()
                 .addMap(SimpleSourceWithProperties.class, SimpleDestinationWithProperties.class,
                         (config, source, destination)
-                        -> config.useConvention(source, destination, NameBasedMappingConvention.getStrictMatch())
+                        -> config.useConvention(NameBasedMappingConvention.getStrictMatch())
                 ).buildMapper();
 
         SimpleDestinationWithProperties result = mapper.map(sourceInstance, SimpleDestinationWithProperties.class);
@@ -210,7 +210,7 @@ public class PlainOneToOneMappingTest {
         Mapper mapper = new MapperBuilder()
                 .addMap(SimpleSourceWithFields.class, SimpleDestinationWithFields.class,
                         (config, source, destination)
-                        -> config.useConvention(source, destination, NameBasedMappingConvention.getStrictMatch())
+                        -> config.useConvention(NameBasedMappingConvention.getStrictMatch())
                 ).buildMapper();
 
         SimpleDestinationWithFields result = mapper.map(sourceInstance, SimpleDestinationWithFields.class);
@@ -244,7 +244,7 @@ public class PlainOneToOneMappingTest {
         Mapper mapper = new MapperBuilder()
                 .addMap(SimpleSourceWithFields.class, SimpleDestinationWithProperties.class,
                         (config, source, destination)
-                        -> config.useConvention(source, destination, NameBasedMappingConvention.getStrictMatch())
+                        -> config.useConvention(NameBasedMappingConvention.getStrictMatch())
                 ).buildMapper();
 
         SimpleDestinationWithProperties result = mapper.map(sourceInstance, SimpleDestinationWithProperties.class);
@@ -278,7 +278,7 @@ public class PlainOneToOneMappingTest {
         Mapper mapper = new MapperBuilder()
                 .addMap(SimpleSourceWithProperties.class, SimpleDestinationWithFields.class,
                         (config, source, destination)
-                        -> config.useConvention(source, destination, NameBasedMappingConvention.getStrictMatch())
+                        -> config.useConvention(NameBasedMappingConvention.getStrictMatch())
                 ).buildMapper();
 
         SimpleDestinationWithFields result = mapper.map(sourceInstance, SimpleDestinationWithFields.class);
