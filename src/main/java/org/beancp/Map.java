@@ -105,7 +105,7 @@ public interface Map<S, D> {
      *
      * @return this (for method chaining)
      */
-    Map<S, D> map(final S source, final D destination, final MappingConvention mappingConvention);
+    Map<S, D> useConvention(final S source, final D destination, final MappingConvention mappingConvention);
 
     /**
      * Action to be performed after mappings.

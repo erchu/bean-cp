@@ -50,8 +50,10 @@ final class MapImpl<S, D> extends MappingExecutor<S, D> implements Map<S, D> {
     private boolean afterMapExecuted;
 
     private Mapper executionPhaseMapper;
-    
+
     private MappingsInfo configurationPhaseMappingsInfo;
+
+    private MappingConvention mappingConvention;
 
     public MapImpl(final Class<S> sourceClass, final Class<D> destinationClass,
             final MapSetup<S, D> configuration) {
@@ -90,7 +92,7 @@ final class MapImpl<S, D> extends MappingExecutor<S, D> implements Map<S, D> {
         // non-null value, so we need to create proxy instance. Unfortunatelly
         // this enforces constraint on source and destination classes as in javadoc.
         configuration.apply(this, sourceObject, destinationObject);
-        
+
         // release reference
         this.configurationPhaseMappingsInfo = null;
 
@@ -278,7 +280,7 @@ final class MapImpl<S, D> extends MappingExecutor<S, D> implements Map<S, D> {
     }
 
     @Override
-    public MapImpl<S, D> map(final S source, final D destination,
+    public MapImpl<S, D> useConvention(final S source, final D destination,
             final MappingConvention mappingConvention) {
         if (mappingConvention == null) {
             throw new NullParameterException("mappingConvention");
@@ -290,18 +292,19 @@ final class MapImpl<S, D> extends MappingExecutor<S, D> implements Map<S, D> {
                         "afterMap() must be defined after bind(), bindConstant(), useConvention() "
                         + "and map().");
             }
-            
-            // TODO: build conventaion...
-            //    mappingConvention.build(configurationPhaseMappingsInfo, sourceClass, destinationClass);
-            // ... and cache result
 
+            // Build and cache result
+            mappingConvention.build(configurationPhaseMappingsInfo, sourceClass, destinationClass);
+            this.mappingConvention = mappingConvention;
+            
             bindAndBindConstantConventionOrMapExecuted = true;
         }
 
         if (mode == MapMode.EXECUTION) {
-            mappingConvention.execute(executionPhaseMapper, source, destination);
+            // use cached convention
+            this.mappingConvention.execute(executionPhaseMapper, source, destination);
         }
-        
+
         return this;
     }
 
