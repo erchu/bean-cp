@@ -21,7 +21,18 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 /**
- * Map configuration.
+ * Map configuration. Interface methods must be executed in following order:
+ *
+ * <ol>
+ * <li>{@link #constructDestinationObjectUsing(java.util.function.Supplier)} zero or one time</li>
+ * <li>{@link #beforeMap(org.beancp.Action)} zero or many times</li>
+ * <li>{@link #useConvention(org.beancp.MappingConvention) } zero or one time</li>
+ * <li>{@link #bind(java.util.function.Supplier, java.util.function.Consumer, org.beancp.BindingOption...)}, {@link #bindConstant(java.lang.Object, java.util.function.Consumer, org.beancp.BindingOption...)}, {@link #map(java.util.function.Supplier, java.util.function.Consumer, java.lang.Class, org.beancp.BindingOption...)}
+ * and
+ * {@link #map(java.util.function.Supplier, java.util.function.Consumer, java.util.function.Supplier, java.lang.Class, org.beancp.BindingOption...)}
+ * methods zero or many times in any order</li>
+ * <li>{@link #afterMap(org.beancp.Action)} zero or many times</li>
+ * </ol>
  *
  * @param <S> source class
  * @param <D> destination class

@@ -43,9 +43,13 @@ final class MapImpl<S, D> extends MappingExecutor<S, D> implements Map<S, D> {
 
     private MapMode mode = MapMode.CONFIGURATION;
 
+    private boolean constructDestinationObjectUsingExecuted;
+
     private boolean beforeMapExecuted;
 
-    private boolean bindAndBindConstantConventionOrMapExecuted;
+    private boolean useConventionExecuted;
+
+    private boolean bindBindConstantOrMapExecuted;
 
     private boolean afterMapExecuted;
 
@@ -88,7 +92,7 @@ final class MapImpl<S, D> extends MappingExecutor<S, D> implements Map<S, D> {
         S sourceObject = proxyBuilder.createFakeObject(sourceClass);
         D destinationObject = proxyBuilder.createFakeObject(destinationClass);
 
-        beforeMapExecuted = bindAndBindConstantConventionOrMapExecuted = afterMapExecuted = false;
+        beforeMapExecuted = bindBindConstantOrMapExecuted = afterMapExecuted = false;
         this.configurationPhaseMappingsInfo = configurationPhaseMappingsInfo;
 
         // Source and destination object instances are not required by MapImpl 
@@ -111,7 +115,7 @@ final class MapImpl<S, D> extends MappingExecutor<S, D> implements Map<S, D> {
         }
 
         D destination = constructDestinationObject(destinationClass);
-        
+
         execute(caller, source, destination);
 
         return destination;
@@ -123,7 +127,7 @@ final class MapImpl<S, D> extends MappingExecutor<S, D> implements Map<S, D> {
             throw new IllegalStateException(
                     "Map is not configure. Use configure() first.");
         }
-        
+
         this.executionPhaseMapper = caller;
 
         try {
@@ -162,12 +166,11 @@ final class MapImpl<S, D> extends MappingExecutor<S, D> implements Map<S, D> {
 
         if (mode == MapMode.CONFIGURATION) {
             if (afterMapExecuted) {
-                throw new MapperConfigurationException(
-                        "afterMap() must be defined after bind(), bindConstant(), useConvention()"
-                        + " and map().");
+                throw new MapperConfigurationException("Invalid statement order. Check Map "
+                        + "interface API documentation for details.");
             }
 
-            bindAndBindConstantConventionOrMapExecuted = true;
+            bindBindConstantOrMapExecuted = true;
         }
 
         if (mode == MapMode.EXECUTION) {
@@ -203,12 +206,11 @@ final class MapImpl<S, D> extends MappingExecutor<S, D> implements Map<S, D> {
 
         if (mode == MapMode.CONFIGURATION) {
             if (afterMapExecuted) {
-                throw new MapperConfigurationException(
-                        "afterMap() must be defined after bind(), bindConstant(), useConvention() "
-                        + "and map().");
+                throw new MapperConfigurationException("Invalid statement order. Check Map "
+                        + "interface API documentation for details.");
             }
 
-            bindAndBindConstantConventionOrMapExecuted = true;
+            bindBindConstantOrMapExecuted = true;
         }
 
         if (mode == MapMode.CONFIGURATION) {
@@ -255,12 +257,11 @@ final class MapImpl<S, D> extends MappingExecutor<S, D> implements Map<S, D> {
 
         if (mode == MapMode.CONFIGURATION) {
             if (afterMapExecuted) {
-                throw new MapperConfigurationException(
-                        "afterMap() must be defined after bind(), bindConstant(), useConvention() "
-                        + "and map().");
+                throw new MapperConfigurationException("Invalid statement order. Check Map "
+                        + "interface API documentation for details.");
             }
 
-            bindAndBindConstantConventionOrMapExecuted = true;
+            bindBindConstantOrMapExecuted = true;
         }
 
         if (mode == MapMode.EXECUTION) {
@@ -296,17 +297,21 @@ final class MapImpl<S, D> extends MappingExecutor<S, D> implements Map<S, D> {
         }
 
         if (mode == MapMode.CONFIGURATION) {
-            if (afterMapExecuted) {
-                throw new MapperConfigurationException(
-                        "afterMap() must be defined after bind(), bindConstant(), useConvention() "
-                        + "and map().");
+            if (useConventionExecuted) {
+                throw new MapperConfigurationException("useConventionExecuted() cannot be called "
+                        + "more than once.");
+            }
+
+            if (bindBindConstantOrMapExecuted || afterMapExecuted) {
+                throw new MapperConfigurationException("Invalid statement order. Check Map "
+                        + "interface API documentation for details.");
             }
 
             // Build and cache result
             mappingConvention.build(configurationPhaseMappingsInfo, sourceClass, destinationClass);
             this.executionPhaseMappingConvention = mappingConvention;
 
-            bindAndBindConstantConventionOrMapExecuted = true;
+            useConventionExecuted = true;
         }
 
         if (mode == MapMode.EXECUTION) {
@@ -321,15 +326,9 @@ final class MapImpl<S, D> extends MappingExecutor<S, D> implements Map<S, D> {
     @Override
     public Map<S, D> beforeMap(final Action action) {
         if (mode == MapMode.CONFIGURATION) {
-            if (bindAndBindConstantConventionOrMapExecuted) {
-                throw new MapperConfigurationException(
-                        "beforeMap() must be defined before bind(), bindConstant(), "
-                        + "useConvention() and map().");
-            }
-
-            if (afterMapExecuted) {
-                throw new MapperConfigurationException(
-                        "beforeMap() must be defined before afterMap().");
+            if (useConventionExecuted || bindBindConstantOrMapExecuted || afterMapExecuted) {
+                throw new MapperConfigurationException("Invalid statement order. Check Map "
+                        + "interface API documentation for details.");
             }
 
             beforeMapExecuted = true;
@@ -363,23 +362,18 @@ final class MapImpl<S, D> extends MappingExecutor<S, D> implements Map<S, D> {
         }
 
         if (mode == MapMode.CONFIGURATION) {
-            if (beforeMapExecuted) {
-                throw new MapperConfigurationException(
-                        "constructDestinationObjectUsing() must be defined before beforeMap().");
+            if (beforeMapExecuted || useConventionExecuted || bindBindConstantOrMapExecuted
+                    || afterMapExecuted) {
+                throw new MapperConfigurationException("Invalid statement order. Check Map "
+                        + "interface API documentation for details.");
             }
 
-            if (bindAndBindConstantConventionOrMapExecuted) {
-                throw new MapperConfigurationException(
-                        "constructDestinationObjectUsing() must be defined before bind(), "
-                        + "bindConstant(), useConvention() and map().");
+            if (constructDestinationObjectUsingExecuted) {
+                throw new MapperConfigurationException("constructDestinationObjectUsing() cannot "
+                        + "be called more than once.");
             }
 
-            if (afterMapExecuted) {
-                throw new MapperConfigurationException(
-                        "constructDestinationObjectUsing() must be defined before afterMap().");
-            }
-
-            beforeMapExecuted = true;
+            constructDestinationObjectUsingExecuted = true;
         }
 
         setDestinationObjectBuilder(destinationObjectBuilder);

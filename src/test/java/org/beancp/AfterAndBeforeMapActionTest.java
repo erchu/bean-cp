@@ -123,34 +123,4 @@ public class AfterAndBeforeMapActionTest {
         assertEquals("Invalid 'b' property value.", "xyz", destinationObject.getB());
         assertEquals("Invalid 'c' property value.", "abcxyz", destinationObject.getC());
     }
-
-    @Test(expected = MapperConfigurationException.class)
-    public void beforeMap_line_must_be_before_binding_lines() {
-        // GIVEN: source and destination class
-
-        // WHEN
-        new MapperBuilder()
-                .addMap(Source.class, Destination.class, (config, source, destination) -> config
-                        .bindConstant("1", destination::setA)
-                        .beforeMap(() -> destination.setC(destination.getA() + destination.getB()))
-                        .bind(source::getY, destination::setB)
-                        .afterMap(() -> destination.setC(destination.getA() + destination.getB())));
-
-        // THEN: expect exception
-    }
-
-    @Test(expected = MapperConfigurationException.class)
-    public void afterMap_line_must_be_after_binding_lines() {
-        // GIVEN: source and destination class
-
-        // WHEN
-        new MapperBuilder()
-                .addMap(Source.class, Destination.class, (config, source, destination) -> config
-                        .beforeMap(() -> destination.setC(destination.getA() + destination.getB()))
-                        .bindConstant("1", destination::setA)
-                        .afterMap(() -> destination.setC(destination.getA() + destination.getB()))
-                        .bind(source::getY, destination::setB));
-
-        // THEN: expect exception
-    }
 }

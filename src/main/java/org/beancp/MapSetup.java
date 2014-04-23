@@ -20,8 +20,7 @@ package org.beancp;
 /**
  * Interface for lambda expression used to configure map.
  *
- * Example shows how to use this interface, to bind <code>getX()</code> to
- * <code>setA()</code>:
+ * Example shows how to use this interface, to bind <code>getX()</code> to <code>setA()</code>:
  *
  * <pre>
  * {@code
@@ -31,16 +30,15 @@ package org.beancp;
  *
  * @param <S> mapping source
  * @param <D> mapping destination
- * 
+ *
  * @see MapperBuilder#addMap(java.lang.Class, java.lang.Class, org.beancp.MapSetup)
  */
 @FunctionalInterface
 public interface MapSetup<S, D> {
 
     /**
-     * Defines new map configuration. Implementation must be thread safe and has
-     * no side effects other that binding definition. Method could be called
-     * more than once.
+     * Defines new map configuration. Implementation must be thread safe and has no side effects
+     * other that binding definition. Method could be called more than once.
      *
      * @param config configuration
      * @param source source and destination object

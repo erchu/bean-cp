@@ -34,9 +34,9 @@ public interface MappingConvention {
      * @param mappingInfo mapper which will use this convention.
      * @param sourceClass source object class.
      * @param destinationClass destination object class.
-     * 
-     * @see org.beancp.Map#useConvention(org.beancp.convention.MappingConvention)
-     * @see org.beancp.MapperBuilder#mapAnyByConvention(org.beancp.convention.MappingConvention)
+     *
+     * @see org.beancp.Map#useConvention(org.beancp.MappingConvention)
+     * @see org.beancp.MapperBuilder#mapAnyByConvention(org.beancp.MappingConvention)
      */
     void build(MappingsInfo mappingInfo, Class sourceClass, Class destinationClass)
             throws MapperConfigurationException;
@@ -46,27 +46,28 @@ public interface MappingConvention {
      *
      * <ol>
      * <li>when for particular instance
-     * {@link #build(org.beancp.Mapper, java.lang.Class, java.lang.Class)} <b>is not executed</b>
+     * {@link #build(org.beancp.MappingsInfo, java.lang.Class, java.lang.Class)} <b>is not
+     * executed</b>
      * before first execution of this method</li>
      * <li>when for particular instance
-     * {@link #build(org.beancp.Mapper, java.lang.Class, java.lang.Class)} <b>is executed</b> before
-     * first execution of this method (but <b>never</b> concurrently or after first call on this
-     * method)</li>
+     * {@link #build(org.beancp.MappingsInfo, java.lang.Class, java.lang.Class) } <b>is executed</b>
+     * before first execution of this method (but <b>never</b> concurrently or after first call on
+     * this method)</li>
      * </ol>
      *
      * <p>
      * Implementation must be thread-safe in both of those scenarios. Implementation cannot produce
      * state that is shared state between calls, but may use data produced by
-     * {@link #build(org.beancp.Mapper, java.lang.Class, java.lang.Class)} method. Acquiring locks
-     * is not permitted.
+     * {@link #build(org.beancp.MappingsInfo, java.lang.Class, java.lang.Class)} method. Acquiring
+     * locks is not permitted.
      * </p>
      *
      * @param mapper mapper delegating mapping to this convention.
      * @param source source object.
      * @param destination destination object.
-     * 
-     * @see org.beancp.Map#useConvention(org.beancp.convention.MappingConvention)
-     * @see org.beancp.MapperBuilder#mapAnyByConvention(org.beancp.convention.MappingConvention)
+     *
+     * @see org.beancp.Map#useConvention(org.beancp.MappingConvention)
+     * @see org.beancp.MapperBuilder#mapAnyByConvention(org.beancp.MappingConvention)
      */
     void execute(Mapper mapper, Object source, Object destination) throws MappingException;
 }
