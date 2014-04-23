@@ -34,6 +34,7 @@ import org.beancp.Mapper;
 import org.beancp.MappingException;
 import org.beancp.MappingsInfo;
 import org.beancp.NullParameterException;
+import static org.beancp.Util.*;
 
 /**
  * Standard mapping conventions provided by bean-cp library. Convention matches fields by name.
@@ -485,15 +486,5 @@ public class NameBasedMappingConvention implements MappingConvention {
                 .findFirst();
 
         return (result.isPresent()) ? result.get() : null;
-    }
-
-    private <T> T firstNotNull(T... args) {
-        for (T i : args) {
-            if (i != null) {
-                return i;
-            }
-        }
-
-        return null;
     }
 }

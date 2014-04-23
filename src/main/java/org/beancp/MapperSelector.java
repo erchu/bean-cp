@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import static org.beancp.Util.*;
 
 class MapperSelector {
 
@@ -82,15 +83,5 @@ class MapperSelector {
                 .findFirst();
 
         return (findFirst.isPresent() ? findFirst.get() : null);
-    }
-
-    private static <T> T firstNotNull(T... args) {
-        for (T i : args) {
-            if (i != null) {
-                return i;
-            }
-        }
-
-        return null;
     }
 }
