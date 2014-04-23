@@ -23,6 +23,18 @@ package org.beancp;
 public class NullParameterException extends RuntimeException {
 
     /**
+     * Will throw {@link NullParameterException} if {@code parameterValue} is null.
+     *
+     * @param parameterValue parameter value to check.
+     * @param parameterName parameter name.
+     */
+    public static void failIfNull(Object parameterValue, String parameterName) {
+        if (parameterValue == null) {
+            throw new NullParameterException(parameterName);
+        }
+    }
+
+    /**
      * Constructs an instance of <code>MapDefinitionException</code> with the specified parameter
      * name.
      *

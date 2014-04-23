@@ -18,6 +18,7 @@
 package org.beancp;
 
 import java.util.function.Supplier;
+import static org.beancp.NullParameterException.failIfNull;
 
 final class Converter<S, D> extends MappingExecutor<S, D> {
 
@@ -30,17 +31,9 @@ final class Converter<S, D> extends MappingExecutor<S, D> {
     public Converter(final Class<S> sourceClass, final Class<D> destinationClass,
             final TriConsumer<Mapper, S, D> convertionAction,
             final Supplier<D> destinationObjectBuilder) {
-        if (sourceClass == null) {
-            throw new NullParameterException("sourceClass");
-        }
-
-        if (destinationClass == null) {
-            throw new NullParameterException("destinationClass");
-        }
-
-        if (convertionAction == null) {
-            throw new NullParameterException("convertionAction");
-        }
+        failIfNull(sourceClass, "sourceClass");
+        failIfNull(destinationClass, "destinationClass");
+        failIfNull(convertionAction, "convertionAction");
 
         this.sourceClass = sourceClass;
         this.destinationClass = destinationClass;

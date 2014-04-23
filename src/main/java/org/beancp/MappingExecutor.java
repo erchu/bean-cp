@@ -18,6 +18,7 @@
 package org.beancp;
 
 import java.util.function.Supplier;
+import static org.beancp.NullParameterException.failIfNull;
 
 abstract class MappingExecutor<S, D> {
 
@@ -36,9 +37,7 @@ abstract class MappingExecutor<S, D> {
     }
 
     protected void setDestinationObjectBuilder(final Supplier<D> destinationObjectBuilder) {
-        if (destinationObjectBuilder == null) {
-            throw new NullParameterException("destinationObjectBuilder");
-        }
+        failIfNull(destinationObjectBuilder, "destinationObjectBuilder");
         
         this.destinationObjectBuilder = destinationObjectBuilder;
     }

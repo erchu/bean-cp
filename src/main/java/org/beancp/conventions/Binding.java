@@ -21,11 +21,10 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Member;
 import java.lang.reflect.Method;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.beancp.Mapper;
 import org.beancp.MappingException;
 import org.beancp.NullParameterException;
+import static org.beancp.NullParameterException.failIfNull;
 
 class Binding {
 
@@ -38,13 +37,8 @@ class Binding {
     private final Field toMemberField;
 
     public Binding(final Member[] fromMember, final Member toMember) {
-        if (fromMember == null) {
-            throw new NullParameterException("fromMember");
-        }
-
-        if (toMember == null) {
-            throw new NullParameterException("toMember");
-        }
+        failIfNull(fromMember, "fromMember");
+        failIfNull(toMember, "toMember");
 
         this.fromMember = fromMember;
         this.toMember = toMember;

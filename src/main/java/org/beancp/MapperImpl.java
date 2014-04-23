@@ -20,6 +20,7 @@ package org.beancp;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import static org.beancp.NullParameterException.failIfNull;
 
 class MapperImpl implements Mapper {
 
@@ -35,13 +36,8 @@ class MapperImpl implements Mapper {
 
     @Override
     public <S, D> void map(S source, D destination) {
-        if (source == null) {
-            throw new NullParameterException("source");
-        }
-
-        if (destination == null) {
-            throw new NullParameterException("destination");
-        }
+        failIfNull(source, "source");
+        failIfNull(destination, "destination");
 
         MappingExecutor<S, D> mappingExecutor
                 = (MappingExecutor<S, D>) MapperSelector.getMappingExecutor(
@@ -59,13 +55,8 @@ class MapperImpl implements Mapper {
 
     @Override
     public <S, D> D map(final S source, final Class<D> destinationClass) {
-        if (source == null) {
-            throw new NullParameterException("source");
-        }
-
-        if (destinationClass == null) {
-            throw new NullParameterException("destinationClass");
-        }
+        failIfNull(source, "source");
+        failIfNull(destinationClass, "v");
 
         Class sourceClass = source.getClass();
 

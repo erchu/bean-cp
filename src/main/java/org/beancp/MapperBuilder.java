@@ -22,6 +22,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.Supplier;
+import static org.beancp.NullParameterException.failIfNull;
 
 /**
  * Builds mapper implementation. This class do not guarantee to be thread-safe.
@@ -198,16 +199,11 @@ public final class MapperBuilder implements MappingsInfo {
 
     private <S, D> void validateNewMappingAddAction(final Class<S> sourceClass,
             final Class<D> destinationClass) {
+        failIfNull(sourceClass, "sourceClass");
+        failIfNull(destinationClass, "destinationClass");
+        
         if (this.mapperBuilded) {
             throw new MapperConfigurationException("Mapper already builded. No changes allowed.");
-        }
-
-        if (sourceClass == null) {
-            throw new NullParameterException("sourceClass");
-        }
-
-        if (destinationClass == null) {
-            throw new NullParameterException("destinationClass");
         }
 
         for (MappingExecutor<?, ?> i : mappingExecutors) {

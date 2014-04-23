@@ -19,6 +19,7 @@ package org.beancp;
 
 import java.util.function.Consumer;
 import java.util.function.Supplier;
+import static org.beancp.NullParameterException.failIfNull;
 
 /**
  * Defines mapping between source and destination class. Class is not thread safe. Source and
@@ -154,13 +155,8 @@ final class MapImpl<S, D> extends MappingExecutor<S, D> implements Map<S, D> {
             final Supplier<T> fromFunction,
             final Consumer<T> toMember,
             final BindingOption<S, D, T>... options) {
-        if (fromFunction == null) {
-            throw new NullParameterException("fromFunction");
-        }
-
-        if (toMember == null) {
-            throw new NullParameterException("toMember");
-        }
+        failIfNull(fromFunction, "fromFunction");
+        failIfNull(toMember, "toMember");
 
         if (mode == MapMode.CONFIGURATION) {
             if (afterMapExecuted) {
@@ -197,9 +193,7 @@ final class MapImpl<S, D> extends MappingExecutor<S, D> implements Map<S, D> {
             final T constantValue,
             final Consumer<T> toMember,
             final BindingOption<S, D, T>... options) {
-        if (toMember == null) {
-            throw new NullParameterException("toMember");
-        }
+        failIfNull(toMember, "toMember");
 
         if (mode == MapMode.CONFIGURATION) {
             if (afterMapExecuted) {
@@ -243,13 +237,8 @@ final class MapImpl<S, D> extends MappingExecutor<S, D> implements Map<S, D> {
             final Supplier<DI> toMemberGetter,
             final Class<DI> toMemberClass,
             final BindingOption<S, D, DI>... options) {
-        if (supplierFunction == null) {
-            throw new NullParameterException("supplierFunction");
-        }
-
-        if (toMember == null) {
-            throw new NullParameterException("toMember");
-        }
+        failIfNull(supplierFunction, "supplierFunction");
+        failIfNull(toMember, "toMember");
 
         if (mode == MapMode.CONFIGURATION) {
             if (afterMapExecuted) {
@@ -287,9 +276,7 @@ final class MapImpl<S, D> extends MappingExecutor<S, D> implements Map<S, D> {
 
     @Override
     public MapImpl<S, D> useConvention(final MappingConvention mappingConvention) {
-        if (mappingConvention == null) {
-            throw new NullParameterException("mappingConvention");
-        }
+        failIfNull(mappingConvention, "mappingConvention");
 
         if (mode == MapMode.CONFIGURATION) {
             if (useConventionExecuted) {
@@ -350,9 +337,7 @@ final class MapImpl<S, D> extends MappingExecutor<S, D> implements Map<S, D> {
     @Override
     public Map<S, D> constructDestinationObjectUsing(
             final Supplier<D> destinationObjectBuilder) {
-        if (destinationObjectBuilder == null) {
-            throw new NullParameterException("destinationObjectBuilder");
-        }
+        failIfNull(destinationObjectBuilder, "destinationObjectBuilder");
 
         if (mode == MapMode.CONFIGURATION) {
             if (beforeMapExecuted || useConventionExecuted || bindBindConstantOrMapExecuted

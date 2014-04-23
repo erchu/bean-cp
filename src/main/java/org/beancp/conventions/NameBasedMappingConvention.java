@@ -34,7 +34,8 @@ import org.beancp.Mapper;
 import org.beancp.MappingException;
 import org.beancp.MappingsInfo;
 import org.beancp.NullParameterException;
-import static org.beancp.Util.*;
+import static org.beancp.Util.firstNotNull;
+import static org.beancp.NullParameterException.failIfNull;
 
 /**
  * Standard mapping conventions provided by bean-cp library. Convention matches fields by name.
@@ -141,9 +142,7 @@ public class NameBasedMappingConvention implements MappingConvention {
      * @return this (for method chaining)
      */
     public NameBasedMappingConvention includeDestinationMembers(String... members) {
-        if (members == null) {
-            throw new NullParameterException("members");
-        }
+        failIfNull(members, "members");
 
         this.includeDestinationMembers = members;
 
@@ -166,9 +165,7 @@ public class NameBasedMappingConvention implements MappingConvention {
      * @return this (for method chaining)
      */
     public NameBasedMappingConvention excludeDestinationMembers(String... members) {
-        if (members == null) {
-            throw new NullParameterException("members");
-        }
+        failIfNull(members, "members");
 
         this.excludeDestinationMembers = members;
 
@@ -316,17 +313,9 @@ public class NameBasedMappingConvention implements MappingConvention {
 
     @Override
     public void build(final MappingsInfo mappingInfo, final Class sourceClass, final Class destinationClass) {
-        if (mappingInfo == null) {
-            throw new NullParameterException("mapper");
-        }
-
-        if (sourceClass == null) {
-            throw new NullParameterException("sourceClass");
-        }
-
-        if (destinationClass == null) {
-            throw new NullParameterException("destinationClass");
-        }
+        failIfNull(mappingInfo, "mappingInfo");
+        failIfNull(sourceClass, "sourceClass");
+        failIfNull(destinationClass, "destinationClass");
 
         //TODO: Proxy generation using javassist would be faster?
         this.bindings = getBindings(mappingInfo, sourceClass, destinationClass);
@@ -334,17 +323,9 @@ public class NameBasedMappingConvention implements MappingConvention {
 
     @Override
     public void execute(final Mapper mapper, final Object source, final Object destination) {
-        if (mapper == null) {
-            throw new NullParameterException("mapper");
-        }
-
-        if (source == null) {
-            throw new NullParameterException("source");
-        }
-
-        if (destination == null) {
-            throw new NullParameterException("destination");
-        }
+        failIfNull(mapper, "mapper");
+        failIfNull(source, "source");
+        failIfNull(destination, "destination");
 
         // According to API specification build() method but never concurrently or after first of
         // this method, so we can safely get bindings field value without acquiring any locks or
