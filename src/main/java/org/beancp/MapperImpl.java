@@ -20,13 +20,13 @@ package org.beancp;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import static org.beancp.Util.failIfNull;
+import static org.beancp.ConstraintUtils.failIfNull;
 
 class MapperImpl implements Mapper {
 
     private final Collection<MappingExecutor<?, ?>> mappingExecutors;
 
-    private MappingConvention mapAnyConvention;
+    private final MappingConvention mapAnyConvention;
 
     MapperImpl(final List<MappingExecutor<?, ?>> mappingExecutors,
             final MappingConvention mapAnyConvention) {

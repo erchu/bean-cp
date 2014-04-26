@@ -18,7 +18,7 @@
 package org.beancp;
 
 import java.util.function.Supplier;
-import static org.beancp.Util.failIfNull;
+import static org.beancp.ConstraintUtils.failIfNull;
 
 final class Converter<S, D> extends MappingExecutor<S, D> {
 

@@ -17,9 +17,12 @@
  */
 package org.beancp;
 
-public class Util {
+/**
+ * Validations for common constraints.
+ */
+public class ConstraintUtils {
 
-    private Util() {
+    private ConstraintUtils() {
         throw new IllegalStateException("Not allowed to create instance of this class");
     }
 
@@ -59,25 +62,5 @@ public class Util {
         if (constraint == false) {
             throw new IllegalArgumentException(String.format(message, args));
         }
-    }
-
-    /**
-     * Returns first value from {@code args} which is not equal to null. If all arguments are equal
-     * to null then will return null.
-     *
-     * @param <T> result type.
-     * @param args arguments used to find not null value.
-     *
-     * @return first value from {@code args} which is not equal to null or null if all arguments are
-     * equal to null
-     */
-    public static <T> T firstNotNullOrNull(T... args) {
-        for (T i : args) {
-            if (i != null) {
-                return i;
-            }
-        }
-
-        return null;
     }
 }

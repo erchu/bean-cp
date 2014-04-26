@@ -18,7 +18,6 @@
 package org.beancp.commons;
 
 import java.lang.reflect.Field;
-import java.util.Optional;
 import org.beancp.MappingException;
 
 final class FieldBindingSide implements BindingSide {

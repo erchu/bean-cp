@@ -18,7 +18,7 @@
 package org.beancp.commons;
 
 import org.beancp.Mapper;
-import static org.beancp.Util.failIfNull;
+import static org.beancp.ConstraintUtils.failIfNull;
 
 class BindingWithValueMapping extends Binding {
 

@@ -19,7 +19,7 @@ package org.beancp;
 
 import java.util.function.Consumer;
 import java.util.function.Supplier;
-import static org.beancp.Util.failIfNull;
+import static org.beancp.ConstraintUtils.failIfNull;
 
 /**
  * Defines mapping between source and destination class. Class is not thread safe. Source and
@@ -61,9 +61,9 @@ final class MapImpl<S, D> extends MappingExecutor<S, D> implements Map<S, D> {
 
     private MappingConvention executionPhaseMappingConvention;
 
-    private ThreadLocal<S> executionPhaseSourceReference = new ThreadLocal<S>();
+    private final ThreadLocal<S> executionPhaseSourceReference = new ThreadLocal<>();
 
-    private ThreadLocal<D> executionPhaseDestinationReference = new ThreadLocal<D>();
+    private final ThreadLocal<D> executionPhaseDestinationReference = new ThreadLocal<>();
 
     private MappingsInfo configurationPhaseMappingsInfo;
 

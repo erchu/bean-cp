@@ -27,7 +27,7 @@ interface BindingSide {
 
     void setValue(final Object object, final Object value);
 
-    public boolean isGetterAvailable();
+    boolean isGetterAvailable();
 
-    public boolean isSetterAvailable();
+    boolean isSetterAvailable();
 }

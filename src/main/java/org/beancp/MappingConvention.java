@@ -17,11 +17,6 @@
  */
 package org.beancp;
 
-import org.beancp.Mapper;
-import org.beancp.MapperConfigurationException;
-import org.beancp.MappingException;
-import org.beancp.MappingsInfo;
-
 /**
  * Mapping convention.
  */

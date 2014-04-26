@@ -32,8 +32,8 @@ import java.util.Optional;
 import org.beancp.Mapper;
 import org.beancp.MappingException;
 import org.beancp.MappingsInfo;
-import static org.beancp.Util.firstNotNullOrNull;
-import static org.beancp.Util.failIfNull;
+import static org.beancp.CollectionUtils.*;
+import static org.beancp.ConstraintUtils.*;
 
 /**
  * Standard mapping conventions provided by bean-cp library. Convention matches fields by name.

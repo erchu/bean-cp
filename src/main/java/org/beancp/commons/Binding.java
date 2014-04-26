@@ -17,10 +17,9 @@
  */
 package org.beancp.commons;
 
-import java.util.Optional;
 import org.beancp.Mapper;
 import org.beancp.MappingException;
-import static org.beancp.Util.failIfNull;
+import static org.beancp.ConstraintUtils.failIfNull;
 
 class Binding {
 

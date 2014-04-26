@@ -19,9 +19,8 @@ package org.beancp.commons;
 
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Method;
-import java.util.Optional;
 import org.beancp.MappingException;
-import static org.beancp.Util.failIfTrue;
+import static org.beancp.ConstraintUtils.failIfTrue;
 
 class PropertyBindingSide implements BindingSide {
 
