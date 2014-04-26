@@ -25,7 +25,6 @@ import java.beans.PropertyDescriptor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Member;
 import java.lang.reflect.Method;
-import java.lang.reflect.Type;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
@@ -33,8 +32,8 @@ import java.util.Optional;
 import org.beancp.Mapper;
 import org.beancp.MappingException;
 import org.beancp.MappingsInfo;
-import static org.beancp.Util.firstNotNull;
-import static org.beancp.NullParameterException.failIfNull;
+import static org.beancp.Util.firstNotNullOrNull;
+import static org.beancp.Util.failIfNull;
 
 /**
  * Standard mapping conventions provided by bean-cp library. Convention matches fields by name.
@@ -396,12 +395,16 @@ public class NameBasedMappingConvention implements MappingConvention {
             Method destinationMember = destinationProperty.getWriteMethod();
 
             if (destinationMember != null) {
-                Member sourceMember = getMatchingSourceMember(sourceBeanInfo, sourceClass,
-                        destinationProperty.getName(), MemberAccessType.PROPERTY);
+                BindingSide sourceBindingSide
+                        = getMatchingSourceMember(sourceBeanInfo, sourceClass,
+                                destinationProperty.getName(), MemberAccessType.PROPERTY);
 
-                if (sourceMember != null) {
+                if (sourceBindingSide != null) {
+                    BindingSide destinationBindingSide
+                            = new PropertyBindingSide(destinationProperty);
+
                     Binding binding = getBidingIfAvailable(
-                            mappingsInfo, sourceMember, destinationMember);
+                            mappingsInfo, sourceBindingSide, destinationBindingSide);
 
                     if (binding != null) {
                         result.add(binding);
@@ -411,12 +414,13 @@ public class NameBasedMappingConvention implements MappingConvention {
         }
 
         for (Field destinationMember : destinationClass.getFields()) {
-            Member sourceMember = getMatchingSourceMember(sourceBeanInfo, sourceClass,
+            BindingSide sourceBindingSide = getMatchingSourceMember(sourceBeanInfo, sourceClass,
                     destinationMember.getName(), MemberAccessType.FIELD);
 
-            if (sourceMember != null) {
+            if (sourceBindingSide != null) {
+                BindingSide destinationBindingSide = new FieldBindingSide(destinationMember);
                 Binding binding = getBidingIfAvailable(
-                        mappingsInfo, sourceMember, destinationMember);
+                        mappingsInfo, sourceBindingSide, destinationBindingSide);
 
                 if (binding != null) {
                     result.add(binding);
@@ -427,28 +431,31 @@ public class NameBasedMappingConvention implements MappingConvention {
         return result;
     }
 
-    private Member getMatchingSourceMember(
+    private BindingSide getMatchingSourceMember(
             final BeanInfo sourceBeanInfo,
             final Class sourceClass,
             final String atDestinationName,
             final MemberAccessType destinationMemberAccessType) {
-        Member matchingSourcePropertyReadMethod = getMatchingSourcePropertyReadMethod(
-                sourceBeanInfo, atDestinationName);
+        BindingSide matchingSourcePropertyBindingSide
+                = getMatchingPropertyBindingSide(sourceBeanInfo, atDestinationName);
 
-        Member matchingSourceField = getMatchingSourceField(sourceClass, atDestinationName);
+        BindingSide matchingSourceFieldBindingSide
+                = getMatchingFieldBindingSide(sourceClass, atDestinationName);
 
         switch (destinationMemberAccessType) {
             case FIELD:
-                return firstNotNull(matchingSourceField, matchingSourcePropertyReadMethod);
+                return firstNotNullOrNull(
+                        matchingSourceFieldBindingSide, matchingSourcePropertyBindingSide);
             case PROPERTY:
-                return firstNotNull(matchingSourcePropertyReadMethod, matchingSourceField);
+                return firstNotNullOrNull(
+                        matchingSourcePropertyBindingSide, matchingSourceFieldBindingSide);
             default:
                 throw new IllegalArgumentException(String.format("Unknow member access type: %s",
                         destinationMemberAccessType));
         }
     }
 
-    private Member getMatchingSourcePropertyReadMethod(
+    private PropertyBindingSide getMatchingPropertyBindingSide(
             final BeanInfo sourceBeanInfo,
             final String atDestinationName) {
         Optional<PropertyDescriptor> result
@@ -456,33 +463,31 @@ public class NameBasedMappingConvention implements MappingConvention {
                 .filter(i -> i.getName().equals(atDestinationName))
                 .findFirst();
 
-        return (result.isPresent()) ? result.get().getReadMethod() : null;
+        return (result.isPresent()) ? new PropertyBindingSide(result.get()) : null;
     }
 
-    private Member getMatchingSourceField(final Class sourceClass, final String atDestinationName) {
+    private FieldBindingSide getMatchingFieldBindingSide(
+            final Class sourceClass, final String atDestinationName) {
         Optional<Field> result
                 = Arrays.stream(sourceClass.getFields())
                 .filter(i -> i.getName().equals(atDestinationName))
                 .findFirst();
 
-        return (result.isPresent()) ? result.get() : null;
+        return (result.isPresent()) ? new FieldBindingSide(result.get()) : null;
     }
 
     private Binding getBidingIfAvailable(
             final MappingsInfo mappingsInfo,
-            final Member sourceMember,
-            final Member destinationMember) {
+            final BindingSide sourceBindingSide,
+            final BindingSide destinationBindingSide) {
         //TODO: Type casting
-        
-        Class sourceMemberClass = getMemberClass(sourceMember);
-        Class destinationMemberClass = getMemberClass(destinationMember);
 
-        if (sourceMemberClass.equals(destinationMemberClass)) {
-            return new Binding(sourceMember, destinationMember, false);
+        if (sourceBindingSide.getValueClass().equals(destinationBindingSide.getValueClass())) {
+            return new Binding(sourceBindingSide, destinationBindingSide);
         } else {
-            if (castOrMapIfPossible &&
-                    mappingsInfo.isAvailable(sourceMemberClass, destinationMemberClass)) {
-                return new Binding(sourceMember, destinationMember, true);
+            if (castOrMapIfPossible && mappingsInfo.isAvailable(
+                    sourceBindingSide.getValueClass(), destinationBindingSide.getValueClass())) {
+                return new BindingWithValueMapping(sourceBindingSide, destinationBindingSide);
             } else {
                 return null;
             }

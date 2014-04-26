@@ -20,7 +20,7 @@ package org.beancp;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import static org.beancp.NullParameterException.failIfNull;
+import static org.beancp.Util.failIfNull;
 
 class MapperImpl implements Mapper {
 

@@ -33,6 +33,7 @@ class MapperSelector {
     public static boolean isMappingAvailable(final Class sourceClass,
             final Class destinationClass, final Collection<MappingExecutor<?, ?>> inCollection,
             final MappingConvention mapAnyConvention) {
+        //TODO: What about primitive types? They cannot be mapped by convention
         return (mapAnyConvention != null) || MapperSelector.getMappingExecutor(
                 sourceClass, destinationClass,
                 inCollection) != null;
@@ -61,7 +62,7 @@ class MapperSelector {
             final Class sourceClass,
             final Class destinationClass,
             final List<MappingExecutor<?, ?>> validMappers) {
-        return firstNotNull(
+        return firstNotNullOrNull(
                 firstOrNull(validMappers, (n
                         -> sourceClass.equals(n.getSourceClass())
                         && destinationClass.equals(n.getDestinationClass()))),

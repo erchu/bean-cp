@@ -22,7 +22,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.Supplier;
-import static org.beancp.NullParameterException.failIfNull;
+import static org.beancp.Util.failIfNull;
 
 /**
  * Builds mapper implementation. This class do not guarantee to be thread-safe.

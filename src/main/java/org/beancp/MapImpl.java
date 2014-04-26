@@ -19,7 +19,7 @@ package org.beancp;
 
 import java.util.function.Consumer;
 import java.util.function.Supplier;
-import static org.beancp.NullParameterException.failIfNull;
+import static org.beancp.Util.failIfNull;
 
 /**
  * Defines mapping between source and destination class. Class is not thread safe. Source and

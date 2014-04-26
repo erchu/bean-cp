@@ -18,7 +18,7 @@
 package org.beancp;
 
 import java.util.function.Supplier;
-import static org.beancp.NullParameterException.failIfNull;
+import static org.beancp.Util.failIfNull;
 
 abstract class MappingExecutor<S, D> {
 

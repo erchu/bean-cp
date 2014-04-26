@@ -17,112 +17,64 @@
  */
 package org.beancp.commons;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Member;
-import java.lang.reflect.Method;
+import java.util.Optional;
 import org.beancp.Mapper;
 import org.beancp.MappingException;
-import static org.beancp.NullParameterException.failIfNull;
+import static org.beancp.Util.failIfNull;
 
 class Binding {
 
-    private final Member[] fromMember;
+    private final BindingSide[] fromBindingSide;
 
-    private final Member toMember;
+    private final BindingSide toBindingSide;
 
-    private final Method toMemberMethod;
+    public Binding(final BindingSide[] fromBindingSide, final BindingSide toBindingSide) {
+        failIfNull(fromBindingSide, "fromBindingSide");
+        failIfNull(toBindingSide, "toBindingSide");
 
-    private final Field toMemberField;
-
-    public Binding(final Member[] fromMember, final Member toMember) {
-        failIfNull(fromMember, "fromMember");
-        failIfNull(toMember, "toMember");
-
-        this.fromMember = fromMember;
-        this.toMember = toMember;
-
-        this.toMemberMethod = (toMember instanceof Method) ? (Method) toMember : null;
-        this.toMemberField = (toMember instanceof Field) ? (Field) toMember : null;
-
-        if (this.toMemberMethod == null && this.toMemberField == null) {
-            throw new MappingException(
-                    String.format("Not supported member type: %s", toMember.getClass()));
-        }
+        this.fromBindingSide = fromBindingSide;
+        this.toBindingSide = toBindingSide;
     }
 
-    public Binding(final Member fromMember, final Member toMember) {
-        this(new Member[]{fromMember}, toMember);
+    public Binding(final BindingSide fromBindingSide, final BindingSide toBindingSide) {
+        this(new BindingSide[] { fromBindingSide }, toBindingSide);
     }
 
-    public Member[] getFromMember() {
-        return (Member[]) fromMember.clone();
+    public BindingSide[] getFromBindingSide() {
+        return fromBindingSide;
     }
 
-    public Member getToMember() {
-        return toMember;
+    public BindingSide getToBindingSide() {
+        return toBindingSide;
     }
 
-    public void execute(final Mapper mapper, final Object source, final Object destination) {
+    public void execute(final Mapper mapper, final Object source, final Object destination)
+            throws MappingException {
         Object value = source;
 
-        for (Member i : fromMember) {
-            if (i instanceof Field) {
-                Field iField = (Field) i;
-
-                try {
-                    value = iField.get(value);
-                } catch (IllegalAccessException ex) {
-                    throw new MappingException(
-                            String.format("Failed to get value from %s.%s when binding it to %s.%s",
-                                    i.getDeclaringClass(), i.getName(),
-                                    toMember.getDeclaringClass().getName(), toMember.getName()),
-                            ex);
-                }
-
-                if (value == null) {
-                    setDestinationValue(destination, value);
-                }
-            } else if (i instanceof Method) {
-                Method iMethod = (Method) i;
-
-                try {
-                    value = iMethod.invoke(value);
-
-                    if (value == null) {
-                        setDestinationValue(destination, value);
-                    }
-                } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
-                    throw new MappingException(
-                            String.format("Failed to get value from %s.%s when binding it to %s.%s",
-                                    i.getDeclaringClass(), i.getName(),
-                                    toMember.getDeclaringClass().getName(), toMember.getName()),
-                            ex);
-                }
-            } else {
-                throw new MappingException(
-                        String.format("Not supported member type: %s", i.getClass()));
+        for (BindingSide i : fromBindingSide) {
+            if (value == null) {
+                setValueAtDestination(mapper, destination, null);
             }
+
+            value = getValue(i, value);
         }
 
-        setDestinationValue(destination, value);
+        setValueAtDestination(mapper, destination, value);
     }
 
-    private void setDestinationValue(final Object destination, final Object value) {
-        try {
-            if (toMemberField != null) {
-                toMemberField.set(destination, value);
-            } else if (toMemberMethod != null) {
-                toMemberMethod.invoke(destination, value);
-            } else {
-                // This shouldn't happend is constructor of this class is written correctly
-                throw new IllegalArgumentException("Why did we get here?");
-            }
-        } catch (IllegalArgumentException | IllegalAccessException | InvocationTargetException ex) {
-            throw new MappingException(
-                    String.format("Failed to set value to %s.%s",
-                            toMember.getDeclaringClass().getName(), toMember.getName()),
-                    ex);
+    protected void setValueAtDestination(
+            final Mapper mapper, final Object destination, final Object value) {
+        toBindingSide.setValue(destination, value);
+    }
+
+    private Object getValue(final BindingSide bindingSide, final Object object) {
+        if (toBindingSide.isGetterAvailable() == false) {
+            throw new MappingException("Getter not available for " + bindingSide);
         }
+        
+        Object getValueResult = bindingSide.getValue(object);
+
+        return getValueResult;
     }
 }
