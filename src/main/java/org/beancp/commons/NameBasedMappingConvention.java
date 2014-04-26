@@ -33,7 +33,6 @@ import java.util.Optional;
 import org.beancp.Mapper;
 import org.beancp.MappingException;
 import org.beancp.MappingsInfo;
-import org.beancp.NullParameterException;
 import static org.beancp.Util.firstNotNull;
 import static org.beancp.NullParameterException.failIfNull;
 
@@ -347,7 +346,9 @@ public class NameBasedMappingConvention implements MappingConvention {
         });
     }
 
-    private List<Binding> getBindings(final MappingsInfo MappingInfo, final Class sourceClass,
+    private List<Binding> getBindings(
+            final MappingsInfo mappingsInfo,
+            final Class sourceClass,
             final Class destinationClass) {
         if (excludeDestinationMembers.length > 0) {
             // TODO: Implement excludeDestinationMembers option support
@@ -374,11 +375,6 @@ public class NameBasedMappingConvention implements MappingConvention {
             throw new UnsupportedOperationException("flateningEnabled option not supported yet.");
         }
 
-        if (castOrMapIfPossible) {
-            // TODO: Implement castOrMapIfPossible option support
-            throw new UnsupportedOperationException("castOrMapIfPossible option not supported yet.");
-        }
-
         List<Binding> result = new LinkedList<>();
         BeanInfo sourceBeanInfo, destinationBeanInfo;
 
@@ -401,36 +397,45 @@ public class NameBasedMappingConvention implements MappingConvention {
 
             if (destinationMember != null) {
                 Member sourceMember = getMatchingSourceMember(sourceBeanInfo, sourceClass,
-                        destinationProperty.getName(), destinationProperty.getPropertyType(),
-                        MemberAccessType.PROPERTY);
+                        destinationProperty.getName(), MemberAccessType.PROPERTY);
 
                 if (sourceMember != null) {
-                    result.add(new Binding(sourceMember, destinationMember));
+                    Binding binding = getBidingIfAvailable(
+                            mappingsInfo, sourceMember, destinationMember);
+
+                    if (binding != null) {
+                        result.add(binding);
+                    }
                 }
             }
         }
 
         for (Field destinationMember : destinationClass.getFields()) {
             Member sourceMember = getMatchingSourceMember(sourceBeanInfo, sourceClass,
-                    destinationMember.getName(), destinationMember.getType(),
-                    MemberAccessType.FIELD);
+                    destinationMember.getName(), MemberAccessType.FIELD);
 
             if (sourceMember != null) {
-                result.add(new Binding(sourceMember, destinationMember));
+                Binding binding = getBidingIfAvailable(
+                        mappingsInfo, sourceMember, destinationMember);
+
+                if (binding != null) {
+                    result.add(binding);
+                }
             }
         }
 
         return result;
     }
 
-    private Member getMatchingSourceMember(final BeanInfo sourceBeanInfo, final Class sourceClass,
-            final String atDestinationName, final Type atDestinationType,
+    private Member getMatchingSourceMember(
+            final BeanInfo sourceBeanInfo,
+            final Class sourceClass,
+            final String atDestinationName,
             final MemberAccessType destinationMemberAccessType) {
         Member matchingSourcePropertyReadMethod = getMatchingSourcePropertyReadMethod(
-                sourceBeanInfo, atDestinationName, atDestinationType);
+                sourceBeanInfo, atDestinationName);
 
-        Member matchingSourceField = getMatchingSourceField(
-                sourceClass, atDestinationName, atDestinationType);
+        Member matchingSourceField = getMatchingSourceField(sourceClass, atDestinationName);
 
         switch (destinationMemberAccessType) {
             case FIELD:
@@ -438,34 +443,76 @@ public class NameBasedMappingConvention implements MappingConvention {
             case PROPERTY:
                 return firstNotNull(matchingSourcePropertyReadMethod, matchingSourceField);
             default:
-                throw new IllegalArgumentException(String.format("Unknow member access type: %S",
+                throw new IllegalArgumentException(String.format("Unknow member access type: %s",
                         destinationMemberAccessType));
         }
     }
 
-    private Member getMatchingSourcePropertyReadMethod(final BeanInfo sourceBeanInfo,
-            final String atDestinationName, final Type atDestinationType) {
+    private Member getMatchingSourcePropertyReadMethod(
+            final BeanInfo sourceBeanInfo,
+            final String atDestinationName) {
         Optional<PropertyDescriptor> result
                 = Arrays.stream(sourceBeanInfo.getPropertyDescriptors())
-                .filter(i
-                        -> i.getName().equals(atDestinationName)
-                        && i.getPropertyType().equals(atDestinationType)
-                )
+                .filter(i -> i.getName().equals(atDestinationName))
                 .findFirst();
 
         return (result.isPresent()) ? result.get().getReadMethod() : null;
     }
 
-    private Member getMatchingSourceField(final Class sourceClass,
-            final String atDestinationName, final Type atDestinationType) {
+    private Member getMatchingSourceField(final Class sourceClass, final String atDestinationName) {
         Optional<Field> result
                 = Arrays.stream(sourceClass.getFields())
-                .filter(i
-                        -> i.getName().equals(atDestinationName)
-                        && i.getType().equals(atDestinationType)
-                )
+                .filter(i -> i.getName().equals(atDestinationName))
                 .findFirst();
 
         return (result.isPresent()) ? result.get() : null;
+    }
+
+    private Binding getBidingIfAvailable(
+            final MappingsInfo mappingsInfo,
+            final Member sourceMember,
+            final Member destinationMember) {
+        //TODO: Type casting
+        
+        Class sourceMemberClass = getMemberClass(sourceMember);
+        Class destinationMemberClass = getMemberClass(destinationMember);
+
+        if (sourceMemberClass.equals(destinationMemberClass)) {
+            return new Binding(sourceMember, destinationMember, false);
+        } else {
+            if (castOrMapIfPossible &&
+                    mappingsInfo.isAvailable(sourceMemberClass, destinationMemberClass)) {
+                return new Binding(sourceMember, destinationMember, true);
+            } else {
+                return null;
+            }
+        }
+    }
+
+    private Class getMemberClass(final Member sourceMember) {
+        if (sourceMember instanceof Field) {
+            return ((Field) sourceMember).getType();
+        } else if (sourceMember instanceof Method) {
+            Method sourceMemberMethod = (Method) sourceMember;
+
+            if (sourceMemberMethod.getParameterCount() == 0
+                    && sourceMemberMethod.getReturnType().equals(Void.TYPE) == false) {
+                // this is getter method
+                return sourceMemberMethod.getReturnType();
+            } else if (sourceMemberMethod.getParameterCount() == 1
+                    && sourceMemberMethod.getReturnType().equals(Void.TYPE)) {
+                // this is setter method
+                return sourceMemberMethod.getParameterTypes()[0];
+            } else {
+                throw new IllegalArgumentException(
+                        String.format("Method %s.%s is not setter and not getter",
+                                sourceMember.getDeclaringClass(), sourceMemberMethod.getName()));
+            }
+        } else {
+            throw new IllegalArgumentException(
+                    String.format("%s.%s - unsupported member type: %s",
+                            sourceMember.getDeclaringClass(), sourceMember.getName(),
+                            sourceMember.getClass()));
+        }
     }
 }
