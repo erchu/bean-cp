@@ -23,6 +23,7 @@ import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import static org.beancp.CollectionUtils.*;
+import static org.beancp.ConstraintUtils.*;
 
 class MapperSelector {
 
@@ -30,59 +31,53 @@ class MapperSelector {
         throw new IllegalStateException("Not allowed to create instance of this class");
     }
 
-    public static boolean isMappingAvailable(final Class sourceClass,
-            final Class destinationClass, final Collection<MappingExecutor<?, ?>> inCollection,
-            final MappingConvention mapAnyConvention) {
-        //TODO: What about primitive types? They cannot be mapped by convention
-        return (mapAnyConvention != null) || MapperSelector.getMappingExecutor(
-                sourceClass, destinationClass,
-                inCollection) != null;
+    public static boolean isMappingAvailable(
+            final MappingsInfo mappingsInfo,
+            final Class sourceClass,
+            final Class destinationClass,
+            final Collection<MapExecutor<?, ?>> mapExecutors,
+            final Collection<MappingConvention> mapAnyConventions) {
+        failIfNull(sourceClass, "sourceClass");
+        failIfNull(destinationClass, "destinationClass");
+        failIfNull(mapExecutors, "inCollection");
+
+        if (getBestMatchingMapExecutor(sourceClass, destinationClass, mapExecutors) != null) {
+            return true;
+        }
+
+        return mapAnyConventions.stream()
+                .anyMatch(i -> i.canMap(mappingsInfo, sourceClass, destinationClass));
     }
 
-    public static MappingExecutor<?, ?> getMappingExecutor(
-            final Class sourceClass, final Class destinationClass,
-            final Collection<MappingExecutor<?, ?>> inCollection)
+    public static MapExecutor<?, ?> getBestMatchingMapExecutor(
+            final Class sourceClass,
+            final Class destinationClass,
+            final Collection<MapExecutor<?, ?>> mapExecutors)
             throws MappingException {
-        List<MappingExecutor<?, ?>> validMappers = inCollection.stream().filter(
-                n -> canBeMapped(sourceClass, n.getSourceClass())
-                && canBeMapped(destinationClass, n.getDestinationClass()))
+        List<MapExecutor<?, ?>> validMappers = mapExecutors.stream().filter(
+                i -> canBeMapped(sourceClass, i.getSourceClass())
+                && canBeMapped(destinationClass, i.getDestinationClass()))
                 .collect(Collectors.toList());
 
         if (validMappers.isEmpty()) {
             return null;
         }
 
-        MappingExecutor<?, ?> mapper
-                = getBestMatchingMappingExecutor(sourceClass, destinationClass, validMappers);
+        MapExecutor<?, ?> mapper
+                = firstNotNullOrNull(
+                        firstOrNull(validMappers,
+                                (i -> sourceClass.equals(i.getSourceClass())
+                                && destinationClass.equals(i.getDestinationClass()))),
+                        firstOrNull(validMappers,
+                                (i -> destinationClass.equals(i.getDestinationClass()))),
+                        firstOrNull(validMappers,
+                                (i -> sourceClass.equals(i.getSourceClass()))),
+                        validMappers.get(0));
 
         return mapper;
     }
 
-    private static MappingExecutor<?, ?> getBestMatchingMappingExecutor(
-            final Class sourceClass,
-            final Class destinationClass,
-            final List<MappingExecutor<?, ?>> validMappers) {
-        return firstNotNullOrNull(
-                firstOrNull(validMappers, (n
-                        -> sourceClass.equals(n.getSourceClass())
-                        && destinationClass.equals(n.getDestinationClass()))),
-                firstOrNull(validMappers, (n
-                        -> destinationClass.equals(n.getDestinationClass()))),
-                firstOrNull(validMappers, (n
-                        -> sourceClass.equals(n.getSourceClass()))),
-                validMappers.get(0));
-    }
-
     private static boolean canBeMapped(final Class objectClazz, final Class asMappingSideClass) {
         return asMappingSideClass.isAssignableFrom(objectClazz);
-    }
-
-    private static <T> T firstOrNull(Collection<T> collection, Predicate<T> filter) {
-        Optional<T> findFirst = collection
-                .stream()
-                .filter(filter)
-                .findFirst();
-
-        return (findFirst.isPresent() ? findFirst.get() : null);
     }
 }

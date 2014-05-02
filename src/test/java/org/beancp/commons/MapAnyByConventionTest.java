@@ -174,7 +174,7 @@ public class MapAnyByConventionTest {
 
         // WHEN
         Mapper mapper = new MapperBuilder()
-                .mapAnyByConvention(NameBasedMappingConvention.getStrictMatch())
+                .addMapAnyByConvention(NameBasedMappingConvention.getStrictMatch())
                 .buildMapper();
 
         SimpleDestinationWithProperties result = mapper.map(sourceInstance, SimpleDestinationWithProperties.class);
@@ -206,7 +206,7 @@ public class MapAnyByConventionTest {
 
         // WHEN
         Mapper mapper = new MapperBuilder()
-                .mapAnyByConvention(NameBasedMappingConvention.getStrictMatch())
+                .addMapAnyByConvention(NameBasedMappingConvention.getStrictMatch())
                 .buildMapper();
 
         SimpleDestinationWithFields result = mapper.map(sourceInstance, SimpleDestinationWithFields.class);

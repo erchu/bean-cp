@@ -20,7 +20,7 @@ package org.beancp;
 import java.util.function.Supplier;
 import static org.beancp.ConstraintUtils.failIfNull;
 
-final class Converter<S, D> extends MappingExecutor<S, D> {
+final class Converter<S, D> extends MapExecutor<S, D> {
 
     private final Class<S> sourceClass;
 
@@ -47,15 +47,6 @@ final class Converter<S, D> extends MappingExecutor<S, D> {
     public Converter(final Class<S> source, final Class<D> destination,
             final TriConsumer<Mapper, S, D> convertionAction) {
         this(source, destination, convertionAction, null);
-    }
-
-    @Override
-    public D execute(Mapper caller, S source, Class<D> destinationClass) {
-        D destination = constructDestinationObject(destinationClass);
-
-        execute(caller, source, destination);
-
-        return destination;
     }
 
     @Override

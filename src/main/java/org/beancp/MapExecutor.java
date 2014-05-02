@@ -20,11 +20,9 @@ package org.beancp;
 import java.util.function.Supplier;
 import static org.beancp.ConstraintUtils.failIfNull;
 
-abstract class MappingExecutor<S, D> {
+abstract class MapExecutor<S, D> {
 
     private Supplier<D> destinationObjectBuilder;
-
-    abstract D execute(final Mapper caller, final S source, final Class<D> destinationClass);
 
     abstract void execute(final Mapper caller, final S source, final D destination);
 
@@ -38,28 +36,7 @@ abstract class MappingExecutor<S, D> {
 
     protected void setDestinationObjectBuilder(final Supplier<D> destinationObjectBuilder) {
         failIfNull(destinationObjectBuilder, "destinationObjectBuilder");
-        
+
         this.destinationObjectBuilder = destinationObjectBuilder;
-    }
-
-    protected D constructDestinationObject(final Class<D> destinationClass) throws MappingException {
-        try {
-            D destination;
-
-            if (destinationObjectBuilder != null) {
-                destination = destinationObjectBuilder.get();
-                if (destinationClass.isAssignableFrom(destination.getClass()) == false) {
-                    throw new MappingException(String.format("Destination object class %s returned "
-                            + "by constructDestinationObjectUsing cannot be assigned to expected "
-                            + "class %s.", destination.getClass(), destinationClass));
-                }
-            } else {
-                destination = (D) destinationClass.newInstance();
-            }
-
-            return destination;
-        } catch (InstantiationException | IllegalAccessException ex) {
-            throw new MappingException("Cannot create destination instance.", ex);
-        }
     }
 }

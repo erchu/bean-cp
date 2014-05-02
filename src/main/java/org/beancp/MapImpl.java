@@ -28,7 +28,7 @@ import static org.beancp.ConstraintUtils.failIfNull;
  * @param <S> source class
  * @param <D> destination class
  */
-final class MapImpl<S, D> extends MappingExecutor<S, D> implements Map<S, D> {
+final class MapImpl<S, D> extends MapExecutor<S, D> implements Map<S, D> {
 
     private static enum MapMode {
 
@@ -109,15 +109,6 @@ final class MapImpl<S, D> extends MappingExecutor<S, D> implements Map<S, D> {
         this.configurationPhaseMappingsInfo = null;
 
         mode = MapMode.EXECUTION;
-    }
-
-    @Override
-    D execute(final Mapper caller, final S source, final Class<D> destinationClass) {
-        D destination = constructDestinationObject(destinationClass);
-
-        execute(caller, source, destination);
-
-        return destination;
     }
 
     @Override
@@ -297,7 +288,7 @@ final class MapImpl<S, D> extends MappingExecutor<S, D> implements Map<S, D> {
 
         if (mode == MapMode.EXECUTION) {
             // use cached convention
-            this.executionPhaseMappingConvention.execute(executionPhaseMapper,
+            this.executionPhaseMappingConvention.map(executionPhaseMapper,
                     executionPhaseSourceReference.get(), executionPhaseDestinationReference.get());
         }
 

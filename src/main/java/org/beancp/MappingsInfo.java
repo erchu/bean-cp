@@ -31,5 +31,5 @@ public interface MappingsInfo {
      * 
      * @return {@code true} if mapping is available, {@code false} otherwise.
      */
-    boolean isAvailable(Class sourceClass, Class destinationClass);
+    boolean isMapperAvailable(Class sourceClass, Class destinationClass);
 }

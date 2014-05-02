@@ -17,6 +17,10 @@
  */
 package org.beancp;
 
+import java.util.Collection;
+import java.util.Optional;
+import java.util.function.Predicate;
+
 /**
  * Common functions for collections.
  */
@@ -36,7 +40,7 @@ public class CollectionUtils {
      * @return first value from {@code args} which is not equal to null or null if all arguments are
      * equal to null
      */
-    public static <T> T firstNotNullOrNull(T... args) {
+    public static <T> T firstNotNullOrNull(final T... args) {
         for (T i : args) {
             if (i != null) {
                 return i;
@@ -44,5 +48,14 @@ public class CollectionUtils {
         }
 
         return null;
+    }
+
+    public static <T> T firstOrNull(Collection<T> collection, Predicate<T> filter) {
+        Optional<T> findFirst = collection
+                .stream()
+                .filter(filter)
+                .findFirst();
+
+        return (findFirst.isPresent() ? findFirst.get() : null);
     }
 }

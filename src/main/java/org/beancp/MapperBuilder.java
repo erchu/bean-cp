@@ -17,6 +17,7 @@
  */
 package org.beancp;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -29,9 +30,9 @@ import static org.beancp.ConstraintUtils.failIfNull;
  */
 public final class MapperBuilder implements MappingsInfo {
 
-    private final List<MappingExecutor<?, ?>> mappingExecutors = new LinkedList<>();
-    
-    private MappingConvention mapAnyConvention;
+    private final List<MapExecutor<?, ?>> mapExecutors = new LinkedList<>();
+
+    private final List<MappingConvention> mapAnyConvention = new LinkedList<>();
 
     private boolean mapperBuilded = false;
 
@@ -54,12 +55,12 @@ public final class MapperBuilder implements MappingsInfo {
      */
     public <S, D> MapperBuilder addMap(final Class<S> sourceClass, final Class<D> destinationClass,
             final MapSetup<S, D> mapConfiguration) throws MapperConfigurationException {
-        validateNewMappingAddAction(sourceClass, destinationClass);
+        validateAddMappingAction(sourceClass, destinationClass);
 
         MapImpl map = new MapImpl(sourceClass, destinationClass, mapConfiguration);
         map.configure(this);
 
-        mappingExecutors.add(map);
+        mapExecutors.add(map);
 
         return this;
     }
@@ -78,7 +79,7 @@ public final class MapperBuilder implements MappingsInfo {
     public <S, D> MapperBuilder addConverter(final Class<S> sourceClass,
             final Class<D> destinationClass,
             final BiConsumer<S, D> convertionAction) throws MapperConfigurationException {
-        validateNewMappingAddAction(sourceClass, destinationClass);
+        validateAddMappingAction(sourceClass, destinationClass);
 
         TriConsumer<Mapper, S, D> convertActionWrapper
                 = (Mapper mapper, S source, D destination)
@@ -105,7 +106,7 @@ public final class MapperBuilder implements MappingsInfo {
             final Class<D> destinationClass,
             final BiConsumer<S, D> convertionAction,
             final Supplier<D> destinationObjectBuilder) throws MapperConfigurationException {
-        validateNewMappingAddAction(sourceClass, destinationClass);
+        validateAddMappingAction(sourceClass, destinationClass);
 
         TriConsumer<Mapper, S, D> convertActionWrapper
                 = (Mapper mapper, S source, D destination)
@@ -130,7 +131,7 @@ public final class MapperBuilder implements MappingsInfo {
     public <S, D> MapperBuilder addConverter(final Class<S> sourceClass,
             final Class<D> destinationClass,
             final TriConsumer<Mapper, S, D> convertionAction) throws MapperConfigurationException {
-        validateNewMappingAddAction(sourceClass, destinationClass);
+        validateAddMappingAction(sourceClass, destinationClass);
 
         addConverter(sourceClass, destinationClass, convertionAction, null);
 
@@ -153,12 +154,12 @@ public final class MapperBuilder implements MappingsInfo {
             final Class<D> destinationClass,
             final TriConsumer<Mapper, S, D> convertionAction,
             final Supplier<D> destinationObjectBuilder) throws MapperConfigurationException {
-        validateNewMappingAddAction(sourceClass, destinationClass);
+        validateAddMappingAction(sourceClass, destinationClass);
 
         Converter converter = new Converter(
                 sourceClass, destinationClass, convertionAction, destinationObjectBuilder);
 
-        mappingExecutors.add(converter);
+        mapExecutors.add(converter);
 
         return this;
     }
@@ -168,14 +169,14 @@ public final class MapperBuilder implements MappingsInfo {
      * {@link #addMap(java.lang.Class, java.lang.Class, org.beancp.MapSetup)} or any of
      * {@code addConverter} methods then this convention will be used.
      *
-     * @param convention convention to be used.
+     * @param conventions convention to add.
      *
      * @return this (for method chaining)
      */
-    public MapperBuilder mapAnyByConvention(final MappingConvention convention)
+    public MapperBuilder addMapAnyByConvention(final MappingConvention... conventions)
             throws MapperConfigurationException {
-        this.mapAnyConvention = convention;
-        
+        this.mapAnyConvention.addAll(Arrays.asList(conventions));
+
         return this;
     }
 
@@ -188,25 +189,29 @@ public final class MapperBuilder implements MappingsInfo {
     public Mapper buildMapper() {
         this.mapperBuilded = true;
 
-        return new MapperImpl(mappingExecutors, mapAnyConvention);
+        return new MapperImpl(mapExecutors, mapAnyConvention);
     }
 
     @Override
-    public boolean isAvailable(Class sourceClass, Class destinationClass) {
-        return MapperSelector.isMappingAvailable(sourceClass, destinationClass,
-                Collections.unmodifiableCollection(mappingExecutors), mapAnyConvention);
+    public boolean isMapperAvailable(final Class sourceClass, final Class destinationClass) {
+        return MapperSelector.isMappingAvailable(
+                this,
+                sourceClass,
+                destinationClass,
+                Collections.unmodifiableCollection(mapExecutors),
+                Collections.unmodifiableCollection(mapAnyConvention));
     }
 
-    private <S, D> void validateNewMappingAddAction(final Class<S> sourceClass,
+    private <S, D> void validateAddMappingAction(final Class<S> sourceClass,
             final Class<D> destinationClass) {
         failIfNull(sourceClass, "sourceClass");
         failIfNull(destinationClass, "destinationClass");
-        
+
         if (this.mapperBuilded) {
             throw new MapperConfigurationException("Mapper already builded. No changes allowed.");
         }
 
-        for (MappingExecutor<?, ?> i : mappingExecutors) {
+        for (MapExecutor<?, ?> i : mapExecutors) {
             if (i.getSourceClass().equals(sourceClass)
                     && i.getDestinationClass().equals(destinationClass)) {
                 throw new MapperConfigurationException(String.format(

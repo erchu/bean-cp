@@ -320,11 +320,43 @@ public class NameBasedMappingConvention implements MappingConvention {
     }
 
     @Override
-    public void execute(final Mapper mapper, final Object source, final Object destination) {
+    public void map(final Mapper mapper, final Object source, final Object destination) {
+        if (tryMap(mapper, source, destination) == false) {
+            throw new MappingException(String.format("I don't know how to map %s to %s",
+                    source.getClass(), destination.getClass()));
+        }
+    }
+
+    @Override
+    public boolean tryMap(final Mapper mapper, final Object source, final Object destination) {
         failIfNull(mapper, "mapper");
         failIfNull(source, "source");
         failIfNull(destination, "destination");
 
+        List<Binding> bindingsToExecute = getBindingsToExecute(mapper, source, destination);
+
+        if (bindingsToExecute.isEmpty()) {
+            return false;
+        } else {
+            executeBindings(bindingsToExecute, mapper, source, destination);
+
+            return true;
+        }
+    }
+
+    @Override
+    public boolean canMap(MappingsInfo mappingsInfo, Object source, Object destination) {
+        failIfNull(mappingsInfo, "mappingsInfo");
+        failIfNull(source, "source");
+        failIfNull(destination, "destination");
+
+        List<Binding> bindingsToExecute = getBindingsToExecute(mappingsInfo, source, destination);
+
+        return (bindingsToExecute.isEmpty());
+    }
+
+    private List<Binding> getBindingsToExecute(
+            final MappingsInfo mappingsInfo, final Object source, final Object destination) {
         // According to API specification build() method but never concurrently or after first of
         // this method, so we can safely get bindings field value without acquiring any locks or
         // defining fields as volatile.
@@ -333,9 +365,9 @@ public class NameBasedMappingConvention implements MappingConvention {
                 // According to API specification it is build() method may be not executed before
                 // this method call. In this situation we generate bindings on the fly. Moreover API
                 // prohibits produce state that is shared state between calls, so next call
-                : getBindings(mapper, source.getClass(), destination.getClass());
+                : getBindings(mappingsInfo, source.getClass(), destination.getClass());
 
-        executeBindings(bindingsToExecute, mapper, source, destination);
+        return bindingsToExecute;
     }
 
     private void executeBindings(final List<Binding> bindingsToExecute, final Mapper mapper,
@@ -485,39 +517,12 @@ public class NameBasedMappingConvention implements MappingConvention {
         if (sourceBindingSide.getValueClass().equals(destinationBindingSide.getValueClass())) {
             return new Binding(sourceBindingSide, destinationBindingSide);
         } else {
-            if (castOrMapIfPossible && mappingsInfo.isAvailable(
+            if (castOrMapIfPossible && mappingsInfo.isMapperAvailable(
                     sourceBindingSide.getValueClass(), destinationBindingSide.getValueClass())) {
                 return new BindingWithValueMapping(sourceBindingSide, destinationBindingSide);
             } else {
                 return null;
             }
-        }
-    }
-
-    private Class getMemberClass(final Member sourceMember) {
-        if (sourceMember instanceof Field) {
-            return ((Field) sourceMember).getType();
-        } else if (sourceMember instanceof Method) {
-            Method sourceMemberMethod = (Method) sourceMember;
-
-            if (sourceMemberMethod.getParameterCount() == 0
-                    && sourceMemberMethod.getReturnType().equals(Void.TYPE) == false) {
-                // this is getter method
-                return sourceMemberMethod.getReturnType();
-            } else if (sourceMemberMethod.getParameterCount() == 1
-                    && sourceMemberMethod.getReturnType().equals(Void.TYPE)) {
-                // this is setter method
-                return sourceMemberMethod.getParameterTypes()[0];
-            } else {
-                throw new IllegalArgumentException(
-                        String.format("Method %s.%s is not setter and not getter",
-                                sourceMember.getDeclaringClass(), sourceMemberMethod.getName()));
-            }
-        } else {
-            throw new IllegalArgumentException(
-                    String.format("%s.%s - unsupported member type: %s",
-                            sourceMember.getDeclaringClass(), sourceMember.getName(),
-                            sourceMember.getClass()));
         }
     }
 }

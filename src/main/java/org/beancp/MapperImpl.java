@@ -20,79 +20,141 @@ package org.beancp;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
+import java.util.function.Supplier;
 import static org.beancp.ConstraintUtils.failIfNull;
 
 class MapperImpl implements Mapper {
 
-    private final Collection<MappingExecutor<?, ?>> mappingExecutors;
+    private final Collection<MapExecutor<?, ?>> mapExecutors;
 
-    private final MappingConvention mapAnyConvention;
+    private final List<MappingConvention> mapAnyConventions;
 
-    MapperImpl(final List<MappingExecutor<?, ?>> mappingExecutors,
-            final MappingConvention mapAnyConvention) {
-        this.mappingExecutors = Collections.unmodifiableCollection(mappingExecutors);
-        this.mapAnyConvention = mapAnyConvention;
+    MapperImpl(final List<MapExecutor<?, ?>> mapExecutors,
+            final List<MappingConvention> mapAnyConvention) {
+        this.mapExecutors = Collections.unmodifiableCollection(mapExecutors);
+        this.mapAnyConventions = mapAnyConvention;
     }
 
     @Override
-    public <S, D> void map(S source, D destination) {
-        failIfNull(source, "source");
-        failIfNull(destination, "destination");
-
-        MappingExecutor<S, D> mappingExecutor
-                = (MappingExecutor<S, D>) MapperSelector.getMappingExecutor(
-                        source.getClass(), destination.getClass(),
-                        mappingExecutors);
-
-        if (mappingExecutor == null) {
+    public <S, D> void map(final S source, final D destination) throws MappingException {
+        if (mapIfMapperAvailable(source, destination) == false) {
             throw new MappingException(
                     String.format("No suitable mapping found from %s to %s.",
                             source.getClass(), destination.getClass()));
         }
+    }
 
-        mappingExecutor.execute(this, source, destination);
+    @Override
+    public <S, D> boolean mapIfMapperAvailable(
+            final S source, final D destination) throws MappingException {
+        failIfNull(source, "source");
+        failIfNull(destination, "destination");
+
+        MapExecutor<S, D> mapExecutor
+                = (MapExecutor<S, D>) MapperSelector.getBestMatchingMapExecutor(
+                        source.getClass(), destination.getClass(),
+                        mapExecutors);
+
+        return mapIfMapperAvailable(mapExecutor, source, destination);
     }
 
     @Override
     public <S, D> D map(final S source, final Class<D> destinationClass) {
         failIfNull(source, "source");
-        failIfNull(destinationClass, "v");
+        failIfNull(destinationClass, "destinationClass");
 
-        Class sourceClass = source.getClass();
+        Optional<D> result = mapIfMapperAvailable(source, destinationClass);
 
-        MappingExecutor<S, D> mappingExecutor
-                = (MappingExecutor<S, D>) MapperSelector.getMappingExecutor(
-                        sourceClass, destinationClass,
-                        mappingExecutors);
-
-        if (mappingExecutor == null) {
-            if (mapAnyConvention != null) {
-                D destination = constructDestinationObject(destinationClass);
-                mapAnyConvention.execute(this, source, destination);
-                
-                return destination;
-            } else {
-                throw new MappingException(
-                        String.format("No suitable mapping found from %s to %s.",
-                                sourceClass, destinationClass));
-            }
+        if (result.isPresent() == false) {
+            throw new MappingException(
+                    String.format("No suitable mapping found from %s to %s.",
+                            source.getClass(), destinationClass));
+        } else {
+            return result.get();
         }
-
-        return mappingExecutor.execute(this, source, destinationClass);
     }
 
     @Override
-    public boolean isAvailable(final Class sourceClass, final Class destinationClass) {
-        return MapperSelector.isMappingAvailable(
-                sourceClass, destinationClass,
-                mappingExecutors, mapAnyConvention);
+    public <S, D> Optional<D> mapIfMapperAvailable(
+            final S source, final Class<D> destinationClass) throws MappingException {
+        failIfNull(source, "source");
+        failIfNull(destinationClass, "destinationClass");
+
+        MapExecutor<S, D> mapExecutor
+                = (MapExecutor<S, D>) MapperSelector.getBestMatchingMapExecutor(
+                        source.getClass(), destinationClass,
+                        mapExecutors);
+
+        D destination = null;
+
+        if (mapExecutor != null && mapExecutor.getDestinationObjectBuilder() != null) {
+            destination = constructObjectUsingDestinationObjectBuilder(
+                    mapExecutor.getDestinationObjectBuilder(), destinationClass);
+        }
+
+        // if mapExecutor is not available or has no specific destination object builder
+        if (destination == null) {
+            destination = constructObjectUsingDefaultConstructor(destinationClass);
+        }
+
+        if (mapIfMapperAvailable(source, destination)) {
+            return Optional.of(destination);
+        } else {
+            return Optional.empty();
+        }
     }
 
-    private <D> D constructDestinationObject(final Class<D> destinationClass) throws MappingException {
+    @Override
+    public boolean isMapperAvailable(final Class sourceClass, final Class destinationClass) {
+        return MapperSelector.isMappingAvailable(
+                this,
+                sourceClass,
+                destinationClass,
+                mapExecutors,
+                mapAnyConventions);
+    }
+
+    private <D, S> boolean mapIfMapperAvailable(
+            final MapExecutor<S, D> mapExecutor, final S source, final D destination) {
+        if (mapExecutor != null) {
+            mapExecutor.execute(this, source, destination);
+
+            return true;
+        }
+
+        for (MappingConvention i : mapAnyConventions) {
+            if (i.tryMap(this, source, destination)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private <D> D constructObjectUsingDefaultConstructor(
+            final Class<D> destinationClass) throws MappingException {
         try {
             return (D) destinationClass.newInstance();
         } catch (InstantiationException | IllegalAccessException ex) {
             throw new MappingException("Cannot create destination instance.", ex);
         }
+    }
+
+    private <D> D constructObjectUsingDestinationObjectBuilder(
+            final Supplier<D> destinationObjectBuilder,
+            final Class<D> destinationClass) throws MappingException {
+        failIfNull(destinationObjectBuilder, "destinationObjectBuilder");
+        failIfNull(destinationClass, "destinationClass");
+
+        D destination = destinationObjectBuilder.get();
+
+        if (destinationClass.isAssignableFrom(destination.getClass()) == false) {
+            throw new MappingException(String.format("Destination object class %s returned "
+                    + "by constructDestinationObjectUsing cannot be assigned to expected "
+                    + "class %s.", destination.getClass(), destinationClass));
+        }
+
+        return destination;
     }
 }
