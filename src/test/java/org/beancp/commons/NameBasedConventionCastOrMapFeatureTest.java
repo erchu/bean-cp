@@ -24,7 +24,7 @@ import org.beancp.MapperBuilder;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-public class NameBasedCastOrMapFeatureTest {
+public class NameBasedConventionCastOrMapFeatureTest {
 
     public static class InnerSource {
 

@@ -108,7 +108,7 @@ public class BindTest {
         }
     }
 
-    @Test(expected = NullParameterException.class)
+    @Test(expected = NullPointerException.class)
     public void mapper_should_not_allow_null_as_source_expression() {
         new MapperBuilder()
                 .addMap(SourceWithProperties.class, DestinationWithProperties.class,
@@ -116,7 +116,7 @@ public class BindTest {
                         .bind(null, destination::setA));
     }
 
-    @Test(expected = NullParameterException.class)
+    @Test(expected = NullPointerException.class)
     public void mapper_should_not_allow_null_as_destination_expression() {
         new MapperBuilder()
                 .addMap(SourceWithProperties.class, DestinationWithProperties.class,

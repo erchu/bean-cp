@@ -22,13 +22,42 @@ import org.beancp.Mapper;
 import org.beancp.MapperConfigurationException;
 import org.beancp.MappingConvention;
 import org.beancp.MappingException;
-import org.beancp.MappingsInfo;
+import org.beancp.MappingInfo;
 
-public class PrimitiveTypeCastConvention implements MappingConvention {
+/**
+ * Conversions between primitive number types and its wrappers:
+ * <ul>
+ * <li>byte</li>
+ * <li>short</li>
+ * <li>int</li>
+ * <li>long</li>
+ * <li>float</li>
+ * <li>double</li>
+ * <li>java.lang.Byte</li>
+ * <li>java.lang.Short</li>
+ * <li>java.lang.Integer</li>
+ * <li>java.lang.Long</li>
+ * <li>java.lang.Float</li>
+ * <li>java.lang.Double</li>
+ * </ul>
+ */
+public class NumberConvention implements MappingConvention {
+
+    private NumberConvention() {
+    }
+
+    /**
+     * Returns convention instance.
+     *
+     * @return convention instance.
+     */
+    public static NumberConvention get() {
+        return new NumberConvention();
+    }
 
     @Override
     public void build(
-            final MappingsInfo mappingInfo, final Class sourceClass, final Class destinationClass)
+            final MappingInfo mappingInfo, final Class sourceClass, final Class destinationClass)
             throws MapperConfigurationException {
         //TODO: Not supported yet
         throw new UnsupportedOperationException("Not supported yet.");
@@ -51,7 +80,7 @@ public class PrimitiveTypeCastConvention implements MappingConvention {
 
     @Override
     public boolean canMap(
-            final MappingsInfo mappingsInfo,
+            final MappingInfo mappingsInfo,
             final Class sourceClass,
             final Class destinationClass) {
         //TODO: Not supported yet

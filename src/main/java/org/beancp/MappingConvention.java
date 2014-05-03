@@ -31,9 +31,9 @@ public interface MappingConvention {
      * @param destinationClass destination object class.
      *
      * @see org.beancp.Map#useConvention(org.beancp.MappingConvention)
-     * @see org.beancp.MapperBuilder#mapAnyByConvention(org.beancp.MappingConvention)
+     * @see org.beancp.MapperBuilder#addMapAnyByConvention(org.beancp.MappingConvention...)
      */
-    void build(MappingsInfo mappingInfo, Class sourceClass, Class destinationClass)
+    void build(MappingInfo mappingInfo, Class sourceClass, Class destinationClass)
             throws MapperConfigurationException;
 
     /**
@@ -66,7 +66,7 @@ public interface MappingConvention {
      * @param destination destination object.
      *
      * @see org.beancp.Map#useConvention(org.beancp.MappingConvention)
-     * @see org.beancp.MapperBuilder#mapAnyByConvention(org.beancp.MappingConvention)
+     * @see org.beancp.MapperBuilder#addMapAnyByConvention(org.beancp.MappingConvention...)
      */
     void map(Mapper mapper, Object source, Object destination) throws MappingException;
 
@@ -103,7 +103,7 @@ public interface MappingConvention {
      * {@code}true{code}.
      *
      * @see org.beancp.Map#useConvention(org.beancp.MappingConvention)
-     * @see org.beancp.MapperBuilder#mapAnyByConvention(org.beancp.MappingConvention)
+     * @see org.beancp.MapperBuilder#addMapAnyByConvention(org.beancp.MappingConvention...)
      */
     boolean tryMap(Mapper mapper, Object source, Object destination)
             throws MapperConfigurationException;
@@ -118,5 +118,5 @@ public interface MappingConvention {
      * @return {@code}true{code} if mapping is supported for passed object types, otherwise
      * {@code}true{code}.
      */
-    boolean canMap(MappingsInfo mappingsInfo, Class sourceClass, Class destinationClass);
+    boolean canMap(MappingInfo mappingsInfo, Class sourceClass, Class destinationClass);
 }

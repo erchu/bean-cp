@@ -18,7 +18,7 @@
 package org.beancp;
 
 import java.util.function.Supplier;
-import static org.beancp.ConstraintUtils.failIfNull;
+import static org.apache.commons.lang3.Validate.*;
 
 final class Converter<S, D> extends MapExecutor<S, D> {
 
@@ -31,9 +31,9 @@ final class Converter<S, D> extends MapExecutor<S, D> {
     public Converter(final Class<S> sourceClass, final Class<D> destinationClass,
             final TriConsumer<Mapper, S, D> convertionAction,
             final Supplier<D> destinationObjectBuilder) {
-        failIfNull(sourceClass, "sourceClass");
-        failIfNull(destinationClass, "destinationClass");
-        failIfNull(convertionAction, "convertionAction");
+        notNull(sourceClass, "sourceClass");
+        notNull(destinationClass, "destinationClass");
+        notNull(convertionAction, "convertionAction");
 
         this.sourceClass = sourceClass;
         this.destinationClass = destinationClass;

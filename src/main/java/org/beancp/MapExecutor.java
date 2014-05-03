@@ -18,7 +18,7 @@
 package org.beancp;
 
 import java.util.function.Supplier;
-import static org.beancp.ConstraintUtils.failIfNull;
+import static org.apache.commons.lang3.Validate.*;
 
 abstract class MapExecutor<S, D> {
 
@@ -35,7 +35,7 @@ abstract class MapExecutor<S, D> {
     }
 
     protected void setDestinationObjectBuilder(final Supplier<D> destinationObjectBuilder) {
-        failIfNull(destinationObjectBuilder, "destinationObjectBuilder");
+        notNull(destinationObjectBuilder, "destinationObjectBuilder");
 
         this.destinationObjectBuilder = destinationObjectBuilder;
     }

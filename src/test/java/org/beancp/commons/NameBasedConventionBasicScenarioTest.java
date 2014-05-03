@@ -22,7 +22,7 @@ import org.beancp.MapperBuilder;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-public class NameBasedBasicScenarioTest {
+public class NameBasedConventionBasicScenarioTest {
 
     public static class InnerClass {
 

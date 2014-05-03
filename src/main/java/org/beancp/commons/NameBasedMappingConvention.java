@@ -30,9 +30,9 @@ import java.util.List;
 import java.util.Optional;
 import org.beancp.Mapper;
 import org.beancp.MappingException;
-import org.beancp.MappingsInfo;
-import static org.beancp.CollectionUtils.*;
-import static org.beancp.ConstraintUtils.*;
+import org.beancp.MappingInfo;
+import static org.apache.commons.lang3.ObjectUtils.*;
+import static org.apache.commons.lang3.Validate.*;
 
 /**
  * Standard mapping conventions provided by bean-cp library. Convention matches fields by name.
@@ -61,7 +61,8 @@ public class NameBasedMappingConvention implements MappingConvention {
     /**
      * Constructs instance.
      */
-    protected NameBasedMappingConvention() {}
+    protected NameBasedMappingConvention() {
+    }
 
     /**
      * Returns mapping convention with following configuration
@@ -105,7 +106,7 @@ public class NameBasedMappingConvention implements MappingConvention {
      * @return this (for method chaining)
      */
     public NameBasedMappingConvention includeDestinationMembers(String... members) {
-        failIfNull(members, "members");
+        notNull(members, "members");
 
         this.includeDestinationMembers = members;
 
@@ -128,7 +129,7 @@ public class NameBasedMappingConvention implements MappingConvention {
      * @return this (for method chaining)
      */
     public NameBasedMappingConvention excludeDestinationMembers(String... members) {
-        failIfNull(members, "members");
+        notNull(members, "members");
 
         this.excludeDestinationMembers = members;
 
@@ -229,10 +230,10 @@ public class NameBasedMappingConvention implements MappingConvention {
     }
 
     @Override
-    public void build(final MappingsInfo mappingInfo, final Class sourceClass, final Class destinationClass) {
-        failIfNull(mappingInfo, "mappingInfo");
-        failIfNull(sourceClass, "sourceClass");
-        failIfNull(destinationClass, "destinationClass");
+    public void build(final MappingInfo mappingInfo, final Class sourceClass, final Class destinationClass) {
+        notNull(mappingInfo, "mappingInfo");
+        notNull(sourceClass, "sourceClass");
+        notNull(destinationClass, "destinationClass");
 
         //TODO: Proxy generation using javassist would be faster?
         this.bindings = getBindings(mappingInfo, sourceClass, destinationClass);
@@ -248,9 +249,9 @@ public class NameBasedMappingConvention implements MappingConvention {
 
     @Override
     public boolean tryMap(final Mapper mapper, final Object source, final Object destination) {
-        failIfNull(mapper, "mapper");
-        failIfNull(source, "source");
-        failIfNull(destination, "destination");
+        notNull(mapper, "mapper");
+        notNull(source, "source");
+        notNull(destination, "destination");
 
         List<Binding> bindingsToExecute = getBindingsToExecute(
                 mapper, source.getClass(), destination.getClass());
@@ -266,10 +267,10 @@ public class NameBasedMappingConvention implements MappingConvention {
 
     @Override
     public boolean canMap(
-            final MappingsInfo mappingsInfo, final Class sourceClass, final Class destinationClass) {
-        failIfNull(mappingsInfo, "mappingsInfo");
-        failIfNull(sourceClass, "source");
-        failIfNull(destinationClass, "destination");
+            final MappingInfo mappingsInfo, final Class sourceClass, final Class destinationClass) {
+        notNull(mappingsInfo, "mappingsInfo");
+        notNull(sourceClass, "source");
+        notNull(destinationClass, "destination");
 
         List<Binding> bindingsToExecute = getBindingsToExecute(
                 mappingsInfo, sourceClass, destinationClass);
@@ -278,7 +279,7 @@ public class NameBasedMappingConvention implements MappingConvention {
     }
 
     private List<Binding> getBindingsToExecute(
-            final MappingsInfo mappingsInfo, final Class sourceClass, final Class destinationClass) {
+            final MappingInfo mappingsInfo, final Class sourceClass, final Class destinationClass) {
         // According to API specification build() method but never concurrently or after first of
         // this method, so we can safely get bindings field value without acquiring any locks or
         // defining fields as volatile.
@@ -300,7 +301,7 @@ public class NameBasedMappingConvention implements MappingConvention {
     }
 
     private List<Binding> getBindings(
-            final MappingsInfo mappingsInfo,
+            final MappingInfo mappingsInfo,
             final Class sourceClass,
             final Class destinationClass) {
         if (excludeDestinationMembers.length > 0) {
@@ -399,10 +400,10 @@ public class NameBasedMappingConvention implements MappingConvention {
 
         switch (destinationMemberAccessType) {
             case FIELD:
-                return firstNotNullOrNull(
+                return firstNonNull(
                         matchingSourceFieldBindingSide, matchingSourcePropertyBindingSide);
             case PROPERTY:
-                return firstNotNullOrNull(
+                return firstNonNull(
                         matchingSourcePropertyBindingSide, matchingSourceFieldBindingSide);
             default:
                 throw new IllegalArgumentException(String.format("Unknow member access type: %s",
@@ -432,7 +433,7 @@ public class NameBasedMappingConvention implements MappingConvention {
     }
 
     private Binding getBidingIfAvailable(
-            final MappingsInfo mappingsInfo,
+            final MappingInfo mappingsInfo,
             final BindingSide sourceBindingSide,
             final BindingSide destinationBindingSide) {
         Class sourceValueClass = sourceBindingSide.getValueClass();

@@ -20,7 +20,7 @@ package org.beancp.commons;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Method;
 import org.beancp.MappingException;
-import static org.beancp.ConstraintUtils.failIfTrue;
+import static org.apache.commons.lang3.Validate.*;
 
 class PropertyBindingSide implements BindingSide {
 
@@ -40,8 +40,9 @@ class PropertyBindingSide implements BindingSide {
     }
 
     @Override
+    @SuppressWarnings({"TooBroadCatch", "UseSpecificCatch"})
     public Object getValue(final Object object) {
-        failIfTrue(readMethod == null, "Getter is not available.");
+        isTrue(readMethod != null, "Getter is not available.");
 
         try {
             return readMethod.invoke(object);
@@ -52,8 +53,9 @@ class PropertyBindingSide implements BindingSide {
     }
 
     @Override
+    @SuppressWarnings({"TooBroadCatch", "UseSpecificCatch"})
     public void setValue(final Object object, final Object value) {
-        failIfTrue(writeMethod == null, "Setter is not available.");
+        isTrue(writeMethod != null, "Setter is not available.");
 
         try {
             writeMethod.invoke(object, value);

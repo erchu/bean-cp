@@ -23,12 +23,12 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.Supplier;
-import static org.beancp.ConstraintUtils.failIfNull;
+import static org.apache.commons.lang3.Validate.*;
 
 /**
  * Builds mapper implementation. This class do not guarantee to be thread-safe.
  */
-public final class MapperBuilder implements MappingsInfo {
+public final class MapperBuilder implements MappingInfo {
 
     private final List<MapExecutor<?, ?>> mapExecutors = new LinkedList<>();
 
@@ -204,8 +204,8 @@ public final class MapperBuilder implements MappingsInfo {
 
     private <S, D> void validateAddMappingAction(final Class<S> sourceClass,
             final Class<D> destinationClass) {
-        failIfNull(sourceClass, "sourceClass");
-        failIfNull(destinationClass, "destinationClass");
+        notNull(sourceClass, "sourceClass");
+        notNull(destinationClass, "destinationClass");
 
         if (this.mapperBuilded) {
             throw new MapperConfigurationException("Mapper already builded. No changes allowed.");

@@ -17,7 +17,6 @@
  */
 
 /**
- * Object to object mapping library for Java 8+. For more information
- * <a href="http://erchu.github.io/bean-cp/">checkout project home page</a>.
+ * Object to object mapping library.
  */
 package org.beancp;

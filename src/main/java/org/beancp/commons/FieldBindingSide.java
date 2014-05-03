@@ -29,6 +29,7 @@ final class FieldBindingSide implements BindingSide {
     }
 
     @Override
+    @SuppressWarnings({"TooBroadCatch", "UseSpecificCatch"})
     public Object getValue(final Object object) {
         try {
             return field.get(object);
@@ -38,6 +39,7 @@ final class FieldBindingSide implements BindingSide {
     }
 
     @Override
+    @SuppressWarnings({"TooBroadCatch", "UseSpecificCatch"})
     public void setValue(final Object object, final Object value) {
         try {
             field.set(object, value);

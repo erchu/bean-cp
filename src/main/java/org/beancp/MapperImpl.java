@@ -22,7 +22,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Supplier;
-import static org.beancp.ConstraintUtils.failIfNull;
+import org.apache.commons.lang3.ClassUtils;
+import static org.apache.commons.lang3.Validate.*;
 
 class MapperImpl implements Mapper {
 
@@ -48,8 +49,8 @@ class MapperImpl implements Mapper {
     @Override
     public <S, D> boolean mapIfMapperAvailable(
             final S source, final D destination) throws MappingException {
-        failIfNull(source, "source");
-        failIfNull(destination, "destination");
+        notNull(source, "source");
+        notNull(destination, "destination");
 
         MapExecutor<S, D> mapExecutor
                 = (MapExecutor<S, D>) MapperSelector.getBestMatchingMapExecutor(
@@ -61,8 +62,8 @@ class MapperImpl implements Mapper {
 
     @Override
     public <S, D> D map(final S source, final Class<D> destinationClass) {
-        failIfNull(source, "source");
-        failIfNull(destinationClass, "destinationClass");
+        notNull(source, "source");
+        notNull(destinationClass, "destinationClass");
 
         Optional<D> result = mapIfMapperAvailable(source, destinationClass);
 
@@ -76,10 +77,11 @@ class MapperImpl implements Mapper {
     }
 
     @Override
+    @SuppressWarnings("TooBroadCatch")
     public <S, D> Optional<D> mapIfMapperAvailable(
             final S source, final Class<D> destinationClass) throws MappingException {
-        failIfNull(source, "source");
-        failIfNull(destinationClass, "destinationClass");
+        notNull(source, "source");
+        notNull(destinationClass, "destinationClass");
 
         try {
             MapExecutor<S, D> mapExecutor
@@ -143,7 +145,11 @@ class MapperImpl implements Mapper {
     private <D> D constructObjectUsingDefaultConstructor(
             final Class<D> destinationClass) throws MappingException {
         try {
-            return (D) destinationClass.newInstance();
+            if (destinationClass.isPrimitive()) {
+                return (D) ClassUtils.primitiveToWrapper(destinationClass);
+            } else {
+                return (D) destinationClass.newInstance();
+            }
         } catch (InstantiationException | IllegalAccessException ex) {
             throw new MappingException("Cannot create destination instance.", ex);
         }
@@ -152,8 +158,8 @@ class MapperImpl implements Mapper {
     private <D> D constructObjectUsingDestinationObjectBuilder(
             final Supplier<D> destinationObjectBuilder,
             final Class<D> destinationClass) throws MappingException {
-        failIfNull(destinationObjectBuilder, "destinationObjectBuilder");
-        failIfNull(destinationClass, "destinationClass");
+        notNull(destinationObjectBuilder, "destinationObjectBuilder");
+        notNull(destinationClass, "destinationClass");
 
         D destination = destinationObjectBuilder.get();
 

@@ -19,9 +19,11 @@ package org.beancp;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
-import static org.beancp.CollectionUtils.*;
-import static org.beancp.ConstraintUtils.*;
+import static org.apache.commons.lang3.ObjectUtils.*;
+import static org.apache.commons.lang3.Validate.*;
 
 class MapperSelector {
 
@@ -30,14 +32,14 @@ class MapperSelector {
     }
 
     public static boolean isMappingAvailable(
-            final MappingsInfo mappingsInfo,
+            final MappingInfo mappingsInfo,
             final Class sourceClass,
             final Class destinationClass,
             final Collection<MapExecutor<?, ?>> mapExecutors,
             final Collection<MappingConvention> mapAnyConventions) {
-        failIfNull(sourceClass, "sourceClass");
-        failIfNull(destinationClass, "destinationClass");
-        failIfNull(mapExecutors, "inCollection");
+        notNull(sourceClass, "sourceClass");
+        notNull(destinationClass, "destinationClass");
+        notNull(mapExecutors, "inCollection");
 
         if (getBestMatchingMapExecutor(sourceClass, destinationClass, mapExecutors) != null) {
             return true;
@@ -62,7 +64,7 @@ class MapperSelector {
         }
 
         MapExecutor<?, ?> mapper
-                = firstNotNullOrNull(
+                = firstNonNull(
                         firstOrNull(validMappers,
                                 (i -> sourceClass.equals(i.getSourceClass())
                                 && destinationClass.equals(i.getDestinationClass()))),
@@ -73,6 +75,25 @@ class MapperSelector {
                         validMappers.get(0));
 
         return mapper;
+    }
+
+    /**
+     * Returns first value in {@code collection} which is not equal to null and matches filter. If
+     * there is not such element then will return null.
+     *
+     * @param <T> result type.
+     * @param collection collection to search in.
+     * @param filter filter predicate.
+     * @return first value in {@code collection} which is not equal to null and matches filter, if
+     * there is not such element then will return null.
+     */
+    private static <T> T firstOrNull(final Collection<T> collection, final Predicate<T> filter) {
+        Optional<T> findFirst = collection
+                .stream()
+                .filter(filter)
+                .findFirst();
+
+        return (findFirst.isPresent() ? findFirst.get() : null);
     }
 
     private static boolean canBeMapped(final Class objectClazz, final Class asMappingSideClass) {

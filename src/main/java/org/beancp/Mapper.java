@@ -22,7 +22,7 @@ import java.util.Optional;
 /**
  * Object to object mapper. Implementation must be thread-safe.
  */
-public interface Mapper extends MappingsInfo {
+public interface Mapper extends MappingInfo {
 
     /**
      * Copies data from source object to destination object.
@@ -39,7 +39,7 @@ public interface Mapper extends MappingsInfo {
      * <li>source class inherits from mapper source class and destination class inherits from mapper
      * destination class</li>
      * <li>convention defined by
-     * {@link MapperBuilder#mapAnyByConvention(org.beancp.MappingConvention)}</li>
+     * {@link MapperBuilder#addMapAnyByConvention(org.beancp.MappingConvention...)}</li>
      * </ol>
      *
      * When there is more than one mapper of the same priority then is used the first one added to
@@ -67,7 +67,7 @@ public interface Mapper extends MappingsInfo {
      * <li>source class inherits from mapper source class and destination class inherits from mapper
      * destination class</li>
      * <li>convention defined by
-     * {@link MapperBuilder#mapAnyByConvention(org.beancp.MappingConvention)}</li>
+     * {@link MapperBuilder#addMapAnyByConvention(org.beancp.MappingConvention...)}</li>
      * </ol>
      *
      * When there is more than one mapper of the same priority then is used the first one added to
@@ -100,7 +100,7 @@ public interface Mapper extends MappingsInfo {
      * <li>source class inherits from mapper source class and destination class inherits from mapper
      * destination class</li>
      * <li>convention defined by
-     * {@link MapperBuilder#mapAnyByConvention(org.beancp.MappingConvention)}</li>
+     * {@link MapperBuilder#addMapAnyByConvention(org.beancp.MappingConvention...)}</li>
      * </ol>
      *
      * When there is more than one mapper of the same priority then is used the first one added to
@@ -132,7 +132,7 @@ public interface Mapper extends MappingsInfo {
      * <li>source class inherits from mapper source class and destination class inherits from mapper
      * destination class</li>
      * <li>convention defined by
-     * {@link MapperBuilder#mapAnyByConvention(org.beancp.MappingConvention)}</li>
+     * {@link MapperBuilder#addMapAnyByConvention(org.beancp.MappingConvention...)}</li>
      * </ol>
      *
      * When there is more than one mapper of the same priority then is used the first one added to

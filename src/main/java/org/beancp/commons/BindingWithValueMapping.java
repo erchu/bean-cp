@@ -18,7 +18,7 @@
 package org.beancp.commons;
 
 import org.beancp.Mapper;
-import static org.beancp.ConstraintUtils.failIfNull;
+import static org.apache.commons.lang3.Validate.*;
 
 class BindingWithValueMapping extends Binding {
 
@@ -35,8 +35,8 @@ class BindingWithValueMapping extends Binding {
     @Override
     protected void setValueAtDestination(
             final Mapper mapper, final Object destination, final Object value) {
-        failIfNull(mapper, "mapper");
-        failIfNull(destination, "destination");
+        notNull(mapper, "mapper");
+        notNull(destination, "destination");
 
         BindingSide toBindingSide = getToBindingSide();
 

@@ -68,7 +68,7 @@ public class BindConstantTest {
         }
     }
 
-    @Test(expected = NullParameterException.class)
+    @Test(expected = NullPointerException.class)
     public void mapper_should_not_allow_null_as_destination_expression() {
         new MapperBuilder()
                 .addMap(Source.class, Destination.class, (config, source, destination) -> config

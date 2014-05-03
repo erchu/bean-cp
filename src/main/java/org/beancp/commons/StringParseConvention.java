@@ -22,13 +22,19 @@ import org.beancp.Mapper;
 import org.beancp.MapperConfigurationException;
 import org.beancp.MappingConvention;
 import org.beancp.MappingException;
-import org.beancp.MappingsInfo;
+import org.beancp.MappingInfo;
 
 public class StringParseConvention implements MappingConvention {
+    
+    private StringParseConvention() {}
+    
+    public static StringParseConvention get() {
+        return new StringParseConvention();
+    }
 
     @Override
     public void build(
-            final MappingsInfo mappingInfo, final Class sourceClass, final Class destinationClass)
+            final MappingInfo mappingInfo, final Class sourceClass, final Class destinationClass)
             throws MapperConfigurationException {
         //TODO: Not supported yet
         throw new UnsupportedOperationException("Not supported yet.");
@@ -51,7 +57,7 @@ public class StringParseConvention implements MappingConvention {
 
     @Override
     public boolean canMap(
-            final MappingsInfo mappingsInfo,
+            final MappingInfo mappingsInfo,
             final Class sourceClass,
             final Class destinationClass) {
         //TODO: Not supported yet

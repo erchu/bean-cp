@@ -19,7 +19,7 @@ package org.beancp.commons;
 
 import org.beancp.Mapper;
 import org.beancp.MappingException;
-import static org.beancp.ConstraintUtils.failIfNull;
+import static org.apache.commons.lang3.Validate.*;
 
 class Binding {
 
@@ -28,8 +28,8 @@ class Binding {
     private final BindingSide toBindingSide;
 
     public Binding(final BindingSide[] fromBindingSide, final BindingSide toBindingSide) {
-        failIfNull(fromBindingSide, "fromBindingSide");
-        failIfNull(toBindingSide, "toBindingSide");
+        notNull(fromBindingSide, "fromBindingSide");
+        notNull(toBindingSide, "toBindingSide");
 
         this.fromBindingSide = fromBindingSide;
         this.toBindingSide = toBindingSide;
