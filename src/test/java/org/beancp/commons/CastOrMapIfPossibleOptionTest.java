@@ -17,6 +17,8 @@
  */
 package org.beancp.commons;
 
+import java.util.Collection;
+import java.util.LinkedList;
 import org.beancp.Mapper;
 import org.beancp.MapperBuilder;
 import org.junit.Test;
@@ -86,6 +88,52 @@ public class CastOrMapIfPossibleOptionTest {
         }
     }
 
+    public static class SourceForCastingTest {
+
+        private LinkedList<String> canBeCastedInherited;
+
+        private Collection<String> haveToBeSkipped;
+
+        public LinkedList<String> getCanBeCastedInherited() {
+            return canBeCastedInherited;
+        }
+
+        public void setCanBeCastedInherited(LinkedList<String> canBeCastedInherited) {
+            this.canBeCastedInherited = canBeCastedInherited;
+        }
+
+        public Collection<String> getHaveToBeSkipped() {
+            return haveToBeSkipped;
+        }
+
+        public void setHaveToBeSkipped(Collection<String> haveToBeSkipped) {
+            this.haveToBeSkipped = haveToBeSkipped;
+        }
+    }
+
+    public static class DestinationForCastingTest {
+
+        private Collection<String> canBeCastedInherited;
+
+        private LinkedList<String> haveToBeSkipped;
+
+        public Collection<String> getCanBeCastedInherited() {
+            return canBeCastedInherited;
+        }
+
+        public void setCanBeCastedInherited(Collection<String> canBeCastedInherited) {
+            this.canBeCastedInherited = canBeCastedInherited;
+        }
+
+        public LinkedList<String> getHaveToBeSkipped() {
+            return haveToBeSkipped;
+        }
+
+        public void setHaveToBeSkipped(LinkedList<String> haveToBeSkipped) {
+            this.haveToBeSkipped = haveToBeSkipped;
+        }
+    }
+
     @Test
     public void when_inner_class_mapping_is_available_then_should_be_used_by_convention() {
         // GIVEN
@@ -144,5 +192,26 @@ public class CastOrMapIfPossibleOptionTest {
 
         // THEN
         assertEquals("Why flag value has been changed?", initialFlagValue, destinationInstance.getInner().getFlag());
+    }
+
+    @Test
+    public void should_cast_to_base_class_wherever_it_is_possible() {
+        // GIVEN
+        SourceForCastingTest sourceInstance = new SourceForCastingTest();
+        sourceInstance.setCanBeCastedInherited(new LinkedList<>());
+        sourceInstance.setHaveToBeSkipped(new LinkedList<>());
+
+        // WHEN
+        Mapper mapper = new MapperBuilder()
+                .addMap(SourceForCastingTest.class, DestinationForCastingTest.class, (config, source, destination) ->
+                        config.useConvention(NameBasedMappingConvention.getStrictMatch().castOrMapIfPossible())
+                )
+                .buildMapper();
+        
+        DestinationForCastingTest result = mapper.map(sourceInstance, DestinationForCastingTest.class);
+        
+        // THEN
+        assertTrue("Invalid 'canBeCastedInherited' value.", sourceInstance.getCanBeCastedInherited() == result.getCanBeCastedInherited());
+        assertNull("Invalid 'haveToBeSkipped' value.", result.getHaveToBeSkipped());
     }
 }

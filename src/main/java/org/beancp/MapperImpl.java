@@ -81,27 +81,35 @@ class MapperImpl implements Mapper {
         failIfNull(source, "source");
         failIfNull(destinationClass, "destinationClass");
 
-        MapExecutor<S, D> mapExecutor
-                = (MapExecutor<S, D>) MapperSelector.getBestMatchingMapExecutor(
-                        source.getClass(), destinationClass,
-                        mapExecutors);
+        try {
+            MapExecutor<S, D> mapExecutor
+                    = (MapExecutor<S, D>) MapperSelector.getBestMatchingMapExecutor(
+                            source.getClass(), destinationClass,
+                            mapExecutors);
 
-        D destination = null;
+            D destination = null;
 
-        if (mapExecutor != null && mapExecutor.getDestinationObjectBuilder() != null) {
-            destination = constructObjectUsingDestinationObjectBuilder(
-                    mapExecutor.getDestinationObjectBuilder(), destinationClass);
-        }
+            if (mapExecutor != null && mapExecutor.getDestinationObjectBuilder() != null) {
+                destination = constructObjectUsingDestinationObjectBuilder(
+                        mapExecutor.getDestinationObjectBuilder(), destinationClass);
+            }
 
-        // if mapExecutor is not available or has no specific destination object builder
-        if (destination == null) {
-            destination = constructObjectUsingDefaultConstructor(destinationClass);
-        }
+            // if mapExecutor is not available or has no specific destination object builder
+            if (destination == null) {
+                destination = constructObjectUsingDefaultConstructor(destinationClass);
+            }
 
-        if (mapIfMapperAvailable(source, destination)) {
-            return Optional.of(destination);
-        } else {
-            return Optional.empty();
+            if (mapIfMapperAvailable(source, destination)) {
+                return Optional.of(destination);
+            } else {
+                return Optional.empty();
+            }
+        } catch (Exception ex) {
+            throw new MappingException(
+                    String.format(
+                            "Failed to map from %s to %s",
+                            source.getClass(), destinationClass),
+                    ex);
         }
     }
 
@@ -149,6 +157,7 @@ class MapperImpl implements Mapper {
 
         D destination = destinationObjectBuilder.get();
 
+        //TODO: Use default constructor in this case
         if (destinationClass.isAssignableFrom(destination.getClass()) == false) {
             throw new MappingException(String.format("Destination object class %s returned "
                     + "by constructDestinationObjectUsing cannot be assigned to expected "

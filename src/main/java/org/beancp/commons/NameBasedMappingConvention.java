@@ -23,7 +23,6 @@ import java.beans.IntrospectionException;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Field;
-import java.lang.reflect.Member;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -61,7 +60,6 @@ public class NameBasedMappingConvention implements MappingConvention {
     private List<Binding> bindings = null;
 
     //TODO: Add clone controling options
-    //TODO: What if not binding found by convention?
     /**
      * Constructs instance.
      */
@@ -403,6 +401,7 @@ public class NameBasedMappingConvention implements MappingConvention {
 
         if (flateningEnabled) {
             // TODO: Implement flateningEnabled option support
+            // TODO: Reverse flattening?
             throw new UnsupportedOperationException("flateningEnabled option not supported yet.");
         }
 
@@ -512,14 +511,22 @@ public class NameBasedMappingConvention implements MappingConvention {
             final MappingsInfo mappingsInfo,
             final BindingSide sourceBindingSide,
             final BindingSide destinationBindingSide) {
-        //TODO: Type casting
+        Class sourceValueClass = sourceBindingSide.getValueClass();
+        Class destinationValueClass = destinationBindingSide.getValueClass();
 
-        if (sourceBindingSide.getValueClass().equals(destinationBindingSide.getValueClass())) {
+        if (sourceValueClass.equals(destinationValueClass)) {
             return new Binding(sourceBindingSide, destinationBindingSide);
         } else {
-            if (castOrMapIfPossible && mappingsInfo.isMapperAvailable(
-                    sourceBindingSide.getValueClass(), destinationBindingSide.getValueClass())) {
-                return new BindingWithValueMapping(sourceBindingSide, destinationBindingSide);
+            if (castOrMapIfPossible) {
+                if (mappingsInfo.isMapperAvailable(sourceValueClass, destinationValueClass)) {
+                    return new BindingWithValueMapping(sourceBindingSide, destinationBindingSide);
+                } else if (destinationValueClass.isAssignableFrom(sourceValueClass)) {
+                    return new Binding(sourceBindingSide, destinationBindingSide);
+                } else if (sourceValueClass.isPrimitive()) {
+                    return null;
+                } else {
+                    return null;
+                }
             } else {
                 return null;
             }

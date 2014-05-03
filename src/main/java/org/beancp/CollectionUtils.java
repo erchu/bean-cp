@@ -50,7 +50,17 @@ public class CollectionUtils {
         return null;
     }
 
-    public static <T> T firstOrNull(Collection<T> collection, Predicate<T> filter) {
+    /**
+     * Returns first value in {@code collection} which is not equal to null and matches filter. If
+     * there is not such element then will return null.
+     *
+     * @param <T> result type.
+     * @param collection collection to search in.
+     * @param filter filter predicate.
+     * @return first value in {@code collection} which is not equal to null and matches filter, if
+     * there is not such element then will return null.
+     */
+    public static <T> T firstOrNull(final Collection<T> collection, final Predicate<T> filter) {
         Optional<T> findFirst = collection
                 .stream()
                 .filter(filter)
