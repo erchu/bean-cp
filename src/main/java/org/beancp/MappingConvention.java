@@ -105,17 +105,18 @@ public interface MappingConvention {
      * @see org.beancp.Map#useConvention(org.beancp.MappingConvention)
      * @see org.beancp.MapperBuilder#mapAnyByConvention(org.beancp.MappingConvention)
      */
-    boolean tryMap(Mapper mapper, Object source, Object destination);
+    boolean tryMap(Mapper mapper, Object source, Object destination)
+            throws MapperConfigurationException;
 
     /**
      * Returns {@code}true{code} mapping is supported for passed object types will return
      * {@code}false{code}, otherwise return {@code}true{code}..
      *
      * @param mappingsInfo available mappings information.
-     * @param source source object.
-     * @param destination destination object.
+     * @param sourceClass source object class.
+     * @param destinationClass destination object class.
      * @return {@code}true{code} if mapping is supported for passed object types, otherwise
      * {@code}true{code}.
      */
-    boolean canMap(MappingsInfo mappingsInfo, Object source, Object destination);
+    boolean canMap(MappingsInfo mappingsInfo, Class sourceClass, Class destinationClass);
 }

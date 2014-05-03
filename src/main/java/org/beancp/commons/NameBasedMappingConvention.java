@@ -55,43 +55,13 @@ public class NameBasedMappingConvention implements MappingConvention {
 
     private boolean failIfNotAllSourceMembersMapped;
 
-    private boolean castOrMapIfPossible;
-
     private List<Binding> bindings = null;
 
     //TODO: Add clone controling options
     /**
      * Constructs instance.
      */
-    protected NameBasedMappingConvention() {
-    }
-
-    /**
-     * Returns mapping convention with following configuration:
-     *
-     * <ul>
-     * <li>No destination members excluded</li>
-     * <li>Maximum possible number of destination members included</li>
-     * <li>Will <b>not</b> fail if not all <b>destination</b> members are mapped</li>
-     * <li>Will <b>not</b> fail if not all <b>source</b> members are mapped</li>
-     * <li>Flattening feature <b>enabled</b></li>
-     * <li>Will cast or map if possible for members of different data type (see
-     * {@link #castOrMapIfPossible()} method)</li>
-     * </ul>
-     *
-     * @return mapping convention.
-     */
-    public static NameBasedMappingConvention getFlexibleMatch() {
-        NameBasedMappingConvention defaultConvention = new NameBasedMappingConvention();
-        defaultConvention.excludeDestinationMembers = new String[0];
-        defaultConvention.includeDestinationMembers = new String[0];
-        defaultConvention.failIfNotAllDestinationMembersMapped = false;
-        defaultConvention.failIfNotAllSourceMembersMapped = false;
-        defaultConvention.flateningEnabled = true;
-        defaultConvention.castOrMapIfPossible = true;
-
-        return defaultConvention;
-    }
+    protected NameBasedMappingConvention() {}
 
     /**
      * Returns mapping convention with following configuration
@@ -102,20 +72,17 @@ public class NameBasedMappingConvention implements MappingConvention {
      * <li>Will <b>not</b> fail if not all <b>destination</b> members are mapped</li>
      * <li>Will <b>not</b> fail if not all <b>source</b> members are mapped</li>
      * <li>Flattening feature <b>disabled</b></li>
-     * <li>Will <b>not</b> cast or map if possible for members of different data type (see
-     * {@link #castOrMapIfPossible()} method)</li>
      * </ul>
      *
      * @return mapping convention.
      */
-    public static NameBasedMappingConvention getStrictMatch() {
+    public static NameBasedMappingConvention get() {
         NameBasedMappingConvention defaultConvention = new NameBasedMappingConvention();
         defaultConvention.excludeDestinationMembers = new String[0];
         defaultConvention.includeDestinationMembers = new String[0];
         defaultConvention.failIfNotAllDestinationMembersMapped = false;
         defaultConvention.failIfNotAllSourceMembersMapped = false;
         defaultConvention.flateningEnabled = false;
-        defaultConvention.castOrMapIfPossible = false;
 
         return defaultConvention;
     }
@@ -261,52 +228,6 @@ public class NameBasedMappingConvention implements MappingConvention {
         return this;
     }
 
-    /**
-     * For matching members names, but of different data types will try cast or map members wherever
-     * it is possible. If matching members are of different types mapper will try one of the
-     * following techniques to perform mapping:
-     *
-     * <ul>
-     * <li>Cast between primitive types</li>
-     * <li>Convert values to string</li>
-     * <li>Convert collection to array</li>
-     * <li>Convert array to collection</li>
-     * <li>Parse string value (only for primitive types)</li>
-     * <li>Map types using available mapper</li>
-     * </ul>
-     *
-     * <p>
-     * This option is opposite to {@link #mapOnlySameTypeMembers()}.
-     * </p>
-     *
-     * <p>
-     * Note than invalid value can result in exception during mapping. For example when parsing
-     * String to int mapping will fail if string value is not valid number.
-     * </p>
-     *
-     * @return this (for method chaining)
-     */
-    public NameBasedMappingConvention castOrMapIfPossible() {
-        this.castOrMapIfPossible = true;
-
-        return this;
-    }
-
-    /**
-     * Members will be not mapped if are not of the same data type.
-     *
-     * <p>
-     * This option is opposite to {@link #castOrMapIfPossible()}.
-     * </p>
-     *
-     * @return this (for method chaining)
-     */
-    public NameBasedMappingConvention mapOnlySameTypeMembers() {
-        this.castOrMapIfPossible = false;
-
-        return this;
-    }
-
     @Override
     public void build(final MappingsInfo mappingInfo, final Class sourceClass, final Class destinationClass) {
         failIfNull(mappingInfo, "mappingInfo");
@@ -331,7 +252,8 @@ public class NameBasedMappingConvention implements MappingConvention {
         failIfNull(source, "source");
         failIfNull(destination, "destination");
 
-        List<Binding> bindingsToExecute = getBindingsToExecute(mapper, source, destination);
+        List<Binding> bindingsToExecute = getBindingsToExecute(
+                mapper, source.getClass(), destination.getClass());
 
         if (bindingsToExecute.isEmpty()) {
             return false;
@@ -343,18 +265,20 @@ public class NameBasedMappingConvention implements MappingConvention {
     }
 
     @Override
-    public boolean canMap(MappingsInfo mappingsInfo, Object source, Object destination) {
+    public boolean canMap(
+            final MappingsInfo mappingsInfo, final Class sourceClass, final Class destinationClass) {
         failIfNull(mappingsInfo, "mappingsInfo");
-        failIfNull(source, "source");
-        failIfNull(destination, "destination");
+        failIfNull(sourceClass, "source");
+        failIfNull(destinationClass, "destination");
 
-        List<Binding> bindingsToExecute = getBindingsToExecute(mappingsInfo, source, destination);
+        List<Binding> bindingsToExecute = getBindingsToExecute(
+                mappingsInfo, sourceClass, destinationClass);
 
-        return (bindingsToExecute.isEmpty());
+        return (bindingsToExecute.isEmpty() == false);
     }
 
     private List<Binding> getBindingsToExecute(
-            final MappingsInfo mappingsInfo, final Object source, final Object destination) {
+            final MappingsInfo mappingsInfo, final Class sourceClass, final Class destinationClass) {
         // According to API specification build() method but never concurrently or after first of
         // this method, so we can safely get bindings field value without acquiring any locks or
         // defining fields as volatile.
@@ -363,7 +287,7 @@ public class NameBasedMappingConvention implements MappingConvention {
                 // According to API specification it is build() method may be not executed before
                 // this method call. In this situation we generate bindings on the fly. Moreover API
                 // prohibits produce state that is shared state between calls, so next call
-                : getBindings(mappingsInfo, source.getClass(), destination.getClass());
+                : getBindings(mappingsInfo, sourceClass, destinationClass);
 
         return bindingsToExecute;
     }
@@ -517,16 +441,10 @@ public class NameBasedMappingConvention implements MappingConvention {
         if (sourceValueClass.equals(destinationValueClass)) {
             return new Binding(sourceBindingSide, destinationBindingSide);
         } else {
-            if (castOrMapIfPossible) {
-                if (mappingsInfo.isMapperAvailable(sourceValueClass, destinationValueClass)) {
-                    return new BindingWithValueMapping(sourceBindingSide, destinationBindingSide);
-                } else if (destinationValueClass.isAssignableFrom(sourceValueClass)) {
-                    return new Binding(sourceBindingSide, destinationBindingSide);
-                } else if (sourceValueClass.isPrimitive()) {
-                    return null;
-                } else {
-                    return null;
-                }
+            if (mappingsInfo.isMapperAvailable(sourceValueClass, destinationValueClass)) {
+                return new BindingWithValueMapping(sourceBindingSide, destinationBindingSide);
+            } else if (destinationValueClass.isAssignableFrom(sourceValueClass)) {
+                return new Binding(sourceBindingSide, destinationBindingSide);
             } else {
                 return null;
             }

@@ -170,7 +170,7 @@ public class MappingObjectGraphByConventionTest {
         
         // WHEN
         Mapper mapper = new MapperBuilder()
-                .addMapAnyByConvention(NameBasedMappingConvention.getStrictMatch().castOrMapIfPossible())
+                .addMapAnyByConvention(NameBasedMappingConvention.get())
                 .buildMapper();
         
         DestinationOuter result = mapper.map(sourceOuter, DestinationOuter.class);

@@ -151,7 +151,7 @@ public class NameBasedCastOrMapFeatureTest {
                 .addMap(InnerSource.class, InnerDestination.class, (config, source, destination)
                         -> config.bind(() -> source.getValue() + source.getValue(), destination::setValueDuplicated))
                 .addMap(Source.class, Destination.class, (config, source, destination)
-                        -> config.useConvention(NameBasedMappingConvention.getStrictMatch().castOrMapIfPossible()))
+                        -> config.useConvention(NameBasedMappingConvention.get()))
                 .buildMapper();
 
         Destination result = mapper.map(sourceInstance, Destination.class);
@@ -185,7 +185,7 @@ public class NameBasedCastOrMapFeatureTest {
                 .addMap(InnerSource.class, InnerDestination.class, (config, source, destination)
                         -> config.bind(source::getValue, destination::setValueDuplicated))
                 .addMap(Source.class, Destination.class, (config, source, destination)
-                        -> config.useConvention(NameBasedMappingConvention.getStrictMatch().castOrMapIfPossible()))
+                        -> config.useConvention(NameBasedMappingConvention.get()))
                 .buildMapper();
 
         mapper.map(sourceInstance, destinationInstance);
@@ -204,7 +204,7 @@ public class NameBasedCastOrMapFeatureTest {
         // WHEN
         Mapper mapper = new MapperBuilder()
                 .addMap(SourceForCastingTest.class, DestinationForCastingTest.class, (config, source, destination) ->
-                        config.useConvention(NameBasedMappingConvention.getStrictMatch().castOrMapIfPossible())
+                        config.useConvention(NameBasedMappingConvention.get())
                 )
                 .buildMapper();
         
