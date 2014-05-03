@@ -16,10 +16,11 @@
  * License along with this library.
  */
 
-package org.beancp.commons;
+package org.beancp;
 
 import org.beancp.Mapper;
 import org.beancp.MapperBuilder;
+import org.beancp.commons.NameBasedMappingConvention;
 import org.junit.Test;
 import static org.junit.Assert.*;
 

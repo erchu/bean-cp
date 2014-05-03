@@ -24,7 +24,7 @@ import org.beancp.MapperBuilder;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-public class CastOrMapIfPossibleOptionTest {
+public class NameBasedCastOrMapFeatureTest {
 
     public static class InnerSource {
 
