@@ -18,6 +18,6 @@
 
 
 /**
- * Conventions and converters for popular use cases.
+ * Mapping conventions for popular use cases.
  */
 package org.beancp.commons;

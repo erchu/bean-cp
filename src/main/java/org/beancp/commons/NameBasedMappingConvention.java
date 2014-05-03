@@ -35,7 +35,7 @@ import static org.apache.commons.lang3.ObjectUtils.*;
 import static org.apache.commons.lang3.Validate.*;
 
 /**
- * Standard mapping conventions provided by bean-cp library. Convention matches fields by name.
+ * Convention matches fields by name.
  */
 public class NameBasedMappingConvention implements MappingConvention {
 
