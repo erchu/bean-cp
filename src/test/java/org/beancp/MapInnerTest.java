@@ -159,7 +159,7 @@ public class MapInnerTest {
         sourceInnerForField.setX(20);
 
         SourceSecondInner sourceSecondInnerForProperty = new SourceSecondInner();
-        sourceSecondInnerForField.setX(30);
+        sourceSecondInnerForProperty.setX(30);
 
         SourceInner sourceInnerForProperty = new SourceInner();
         sourceInnerForProperty.setSecondInner(sourceSecondInnerForProperty);
@@ -230,7 +230,7 @@ public class MapInnerTest {
         sourceInnerForField.setX(20);
 
         SourceSecondInner sourceSecondInnerForProperty = new SourceSecondInner();
-        sourceSecondInnerForField.setX(30);
+        sourceSecondInnerForProperty.setX(30);
 
         SourceInner sourceInnerForProperty = new SourceInner();
         sourceInnerForProperty.setSecondInner(sourceSecondInnerForProperty);
