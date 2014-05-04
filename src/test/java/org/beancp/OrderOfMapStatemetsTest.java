@@ -17,7 +17,7 @@
  */
 package org.beancp;
 
-import org.beancp.commons.NameBasedMappingConvention;
+import org.beancp.commons.NameBasedMapConvention;
 import org.junit.Test;
 
 public class OrderOfMapStatemetsTest {
@@ -135,7 +135,7 @@ public class OrderOfMapStatemetsTest {
         // WHEN
         new MapperBuilder()
                 .addMap(Source.class, Destination.class, (config, source, destination) -> config
-                        .useConvention(NameBasedMappingConvention.get())
+                        .useConvention(NameBasedMapConvention.get())
                         .beforeMap(() -> destination.setC(destination.getA() + destination.getB()))
                         .bindConstant("1", destination::setA)
                         .afterMap(() -> destination.setC(destination.getA() + destination.getB())));
@@ -215,7 +215,7 @@ public class OrderOfMapStatemetsTest {
                         .beforeMap(() -> destination.setC(destination.getA() + destination.getB()))
                         .bind(source::getY, destination::setB)
                         .afterMap(() -> destination.setC(destination.getA() + destination.getB()))
-                        .useConvention(NameBasedMappingConvention.get()));
+                        .useConvention(NameBasedMapConvention.get()));
 
         // THEN: expect exception
     }
@@ -229,7 +229,7 @@ public class OrderOfMapStatemetsTest {
                 .addMap(Source.class, Destination.class, (config, source, destination) -> config
                         .beforeMap(() -> destination.setC(destination.getA() + destination.getB()))
                         .bind(source::getY, destination::setB)
-                        .useConvention(NameBasedMappingConvention.get())
+                        .useConvention(NameBasedMapConvention.get())
                         .afterMap(() -> destination.setC(destination.getA() + destination.getB())));
 
         // THEN: expect exception
@@ -244,7 +244,7 @@ public class OrderOfMapStatemetsTest {
                 .addMap(Source.class, Destination.class, (config, source, destination) -> config
                         .beforeMap(() -> destination.setC(destination.getA() + destination.getB()))
                         .bindConstant("1", destination::setA)
-                        .useConvention(NameBasedMappingConvention.get())
+                        .useConvention(NameBasedMapConvention.get())
                         .afterMap(() -> destination.setC(destination.getA() + destination.getB())));
 
         // THEN: expect exception
@@ -260,7 +260,7 @@ public class OrderOfMapStatemetsTest {
                 .addMap(Source.class, Destination.class, (config, source, destination) -> config
                         .beforeMap(() -> destination.setC(destination.getA() + destination.getB()))
                         .mapInner(source::getInner, destination::setInner, InnerDestination.class)
-                        .useConvention(NameBasedMappingConvention.get())
+                        .useConvention(NameBasedMapConvention.get())
                         .afterMap(() -> destination.setC(destination.getA() + destination.getB())));
 
         // THEN: expect exception
@@ -273,8 +273,8 @@ public class OrderOfMapStatemetsTest {
         // WHEN
         new MapperBuilder()
                 .addMap(Source.class, Destination.class, (config, source, destination) -> config
-                        .useConvention(NameBasedMappingConvention.get())
-                        .useConvention(NameBasedMappingConvention.get()));
+                        .useConvention(NameBasedMapConvention.get())
+                        .useConvention(NameBasedMapConvention.get()));
 
         // THEN: expect exception
     }
@@ -301,7 +301,7 @@ public class OrderOfMapStatemetsTest {
                 .addMap(Source.class, Destination.class, (config, source, destination) -> config
                         .constructDestinationObjectUsing(() -> new Destination())
                         .beforeMap(() -> destination.setC(destination.getA() + destination.getB()))
-                        .useConvention(NameBasedMappingConvention.get())
+                        .useConvention(NameBasedMapConvention.get())
                         .bindConstant("1", destination::setA)
                         .bind(source::getY, destination::setB)
                         .afterMap(() -> destination.setC(destination.getA() + destination.getB()))

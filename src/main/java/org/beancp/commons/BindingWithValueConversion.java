@@ -20,14 +20,14 @@ package org.beancp.commons;
 import org.beancp.Mapper;
 import static org.apache.commons.lang3.Validate.*;
 
-class BindingWithValueMapping extends Binding {
+class BindingWithValueConversion extends Binding {
 
-    public BindingWithValueMapping(
+    public BindingWithValueConversion(
             final BindingSide[] fromBindingSide, final BindingSide toBindingSide) {
         super(fromBindingSide, toBindingSide);
     }
 
-    public BindingWithValueMapping(
+    public BindingWithValueConversion(
             final BindingSide fromBindingSide, final BindingSide toBindingSide) {
         super(fromBindingSide, toBindingSide);
     }
@@ -40,18 +40,7 @@ class BindingWithValueMapping extends Binding {
 
         BindingSide toBindingSide = getToBindingSide();
 
-        if (toBindingSide.isGetterAvailable()) {
-            Object currentValue = toBindingSide.getValue(destination);
-
-            if (currentValue != null) {
-                mapper.map(value, currentValue);
-            } else {
-                Object mapResult = mapper.map(value, toBindingSide.getValueClass());
-                super.setValueAtDestination(mapper, destination, mapResult);
-            }
-        } else {
-            Object mapResult = mapper.map(value, toBindingSide.getValueClass());
-            super.setValueAtDestination(mapper, destination, mapResult);
-        }
+        Object mapResult = mapper.map(value, toBindingSide.getValueClass());
+        super.setValueAtDestination(mapper, destination, mapResult);
     }
 }

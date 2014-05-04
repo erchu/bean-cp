@@ -20,7 +20,7 @@ package org.beancp;
 
 import org.beancp.Mapper;
 import org.beancp.MapperBuilder;
-import org.beancp.commons.NameBasedMappingConvention;
+import org.beancp.commons.NameBasedMapConvention;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
@@ -170,7 +170,7 @@ public class MappingObjectGraphByConventionTest {
         
         // WHEN
         Mapper mapper = new MapperBuilder()
-                .addMapAnyByConvention(NameBasedMappingConvention.get())
+                .addMapAnyByConvention(NameBasedMapConvention.get())
                 .buildMapper();
         
         DestinationOuter result = mapper.map(sourceOuter, DestinationOuter.class);

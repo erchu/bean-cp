@@ -67,6 +67,37 @@ public class ConverterTest {
             this.xySum = xySum;
         }
     }
+    
+    public static class InheritedFromSource extends Source {
+    }
+    
+    public static class InheritedFromDestination extends Destination {
+    }
+    
+    public static class XY {
+        
+        private int x;
+        
+        private int y;
+        
+        private XY() {}
+
+        public int getX() {
+            return x;
+        }
+
+        public int getY() {
+            return y;
+        }
+        
+        public static XY of(final int x) {
+            XY result = new XY();
+            result.x = x;
+            result.y = 0;
+            
+            return result;
+        }
+    }
 
     public static class SourceOuter {
 
@@ -123,32 +154,12 @@ public class ConverterTest {
 
         // WHEN
         Mapper mapper = new MapperBuilder()
-                .addConverter(Source.class, Destination.class, (source, destination) -> {
-                    destination.setXySum(source.getX() + source.getY());
-                })
-                .buildMapper();
-
-        Destination result = mapper.map(sourceInstance, Destination.class);
-
-        // THEN
-        assertEquals("Invalid mapping result.", 3 + 7, result.getXySum());
-    }
-
-    @Test
-    public void mapper_should_allow_define_destination_object_builder_for_converter() {
-        // GIVEN
-        Source sourceInstance = new Source();
-        sourceInstance.setX(3);
-        sourceInstance.setY(7);
-
-        // WHEN
-        Mapper mapper = new MapperBuilder()
-                .addConverter(Source.class, Destination.class, (source, destination) -> {
-                    destination.setXySum(source.getX() + source.getY());
-                }, () -> {
+                .addConverter(Source.class, Destination.class, (source) -> {
                     Destination destination = new Destination();
+                    
+                    destination.setXySum(source.getX() + source.getY());
                     destination.setFlag(8);
-
+                    
                     return destination;
                 })
                 .buildMapper();
@@ -158,6 +169,56 @@ public class ConverterTest {
         // THEN
         assertEquals("Invalid mapping result.", 3 + 7, result.getXySum());
         assertEquals("Destination object not constructed by builder?", 8, result.getFlag());
+    }
+
+    @Test
+    public void mapper_should_convert_inherited_source_classes() {
+        // GIVEN
+        Source sourceInstance = new InheritedFromSource();
+        sourceInstance.setX(3);
+        sourceInstance.setY(7);
+
+        // WHEN
+        Mapper mapper = new MapperBuilder()
+                .addConverter(Source.class, Destination.class, (source) -> {
+                    Destination destination = new Destination();
+                    
+                    destination.setXySum(source.getX() + source.getY());
+                    destination.setFlag(8);
+                    
+                    return destination;
+                })
+                .buildMapper();
+
+        Destination result = mapper.map(sourceInstance, Destination.class);
+
+        // THEN
+        assertEquals("Invalid mapping result.", 3 + 7, result.getXySum());
+        assertEquals("Destination object not constructed by builder?", 8, result.getFlag());
+    }
+
+    @Test(expected = MappingException.class)
+    public void mapper_should_NOT_convert_to_inherited_destination_classes() {
+        // GIVEN
+        Source sourceInstance = new Source();
+        sourceInstance.setX(3);
+        sourceInstance.setY(7);
+
+        // WHEN
+        Mapper mapper = new MapperBuilder()
+                .addConverter(Source.class, Destination.class, (source) -> {
+                    Destination destination = new Destination();
+                    
+                    destination.setXySum(source.getX() + source.getY());
+                    destination.setFlag(8);
+                    
+                    return destination;
+                })
+                .buildMapper();
+
+        mapper.map(sourceInstance, InheritedFromDestination.class);
+
+        // THEN: expect exception
     }
 
     @Test
@@ -173,7 +234,9 @@ public class ConverterTest {
         // WHEN
         Mapper mapper = new MapperBuilder()
                 .addConverter(SourceOuter.class, DestinationOuter.class,
-                        (mapperRef, source, destination) -> {
+                        (mapperRef, source) -> {
+                            DestinationOuter destination = new DestinationOuter();
+                            
                             destination.setC(source.getZ());
 
                             if (destination.getInner() == null) {
@@ -181,6 +244,8 @@ public class ConverterTest {
                             } else {
                                 mapperRef.map(source.getInner(), destination.getInner());
                             }
+                            
+                            return destination;
                         })
                 .addMap(Source.class, Destination.class, (config, source, destination)
                         -> config.bind(source::getX, destination::setFlag)
@@ -193,5 +258,24 @@ public class ConverterTest {
         assertEquals("Invalid 'c' value.", sourceOuterInstance.getZ(), result.getC());
         assertNotNull("Invalid 'getInner()' value.", result.getInner());
         assertEquals("Invalid 'getInner().getFlag()' value.", sourceInstance.getX(), result.getInner().getFlag());
+    }
+    
+    @Test
+    public void converter_can_map_to_value_objects() {
+        // GIVEN
+        int sourceValue = 9;
+        Integer sourceValueWrapper = sourceValue;
+        
+        // WHEN
+        Mapper mapper = new MapperBuilder()
+                .addConverter(int.class, XY.class, source -> XY.of(source))
+                .buildMapper();
+        
+        XY resultFromPrimitiveType = mapper.map(sourceValue, XY.class);
+        XY resultFromPrimitiveTypeWrapper = mapper.map(sourceValueWrapper, XY.class);
+        
+        // THEN
+        assertEquals("Invalid primitive type mapping result.", sourceValue, resultFromPrimitiveType.getX());
+        assertEquals("Invalid primitive type wrapper mapping result.", sourceValue, resultFromPrimitiveTypeWrapper.getX());
     }
 }

@@ -24,6 +24,32 @@ import static org.junit.Assert.*;
 
 public class NameBasedConventionBasicScenarioTest {
 
+    public static class SourceWithByte {
+
+        private byte x;
+
+        public byte getX() {
+            return x;
+        }
+
+        public void setX(byte x) {
+            this.x = x;
+        }
+    }
+
+    public static class DestinationWithDouble {
+
+        private double x;
+
+        public double getX() {
+            return x;
+        }
+
+        public void setX(double x) {
+            this.x = x;
+        }
+    }
+
     public static class InnerClass {
 
         private final String value;
@@ -44,7 +70,7 @@ public class NameBasedConventionBasicScenarioTest {
         private int z;
 
         private int a;
-        
+
         private InnerClass inner;
 
         public int getX() {
@@ -175,7 +201,7 @@ public class NameBasedConventionBasicScenarioTest {
         Mapper mapper = new MapperBuilder()
                 .addMap(SimpleSourceWithProperties.class, SimpleDestinationWithProperties.class,
                         (config, source, destination)
-                        -> config.useConvention(NameBasedMappingConvention.get())
+                        -> config.useConvention(NameBasedMapConvention.get())
                 ).buildMapper();
 
         SimpleDestinationWithProperties result = mapper.map(sourceInstance, SimpleDestinationWithProperties.class);
@@ -209,7 +235,7 @@ public class NameBasedConventionBasicScenarioTest {
         Mapper mapper = new MapperBuilder()
                 .addMap(SimpleSourceWithFields.class, SimpleDestinationWithFields.class,
                         (config, source, destination)
-                        -> config.useConvention(NameBasedMappingConvention.get())
+                        -> config.useConvention(NameBasedMapConvention.get())
                 ).buildMapper();
 
         SimpleDestinationWithFields result = mapper.map(sourceInstance, SimpleDestinationWithFields.class);
@@ -243,7 +269,7 @@ public class NameBasedConventionBasicScenarioTest {
         Mapper mapper = new MapperBuilder()
                 .addMap(SimpleSourceWithFields.class, SimpleDestinationWithProperties.class,
                         (config, source, destination)
-                        -> config.useConvention(NameBasedMappingConvention.get())
+                        -> config.useConvention(NameBasedMapConvention.get())
                 ).buildMapper();
 
         SimpleDestinationWithProperties result = mapper.map(sourceInstance, SimpleDestinationWithProperties.class);
@@ -277,7 +303,7 @@ public class NameBasedConventionBasicScenarioTest {
         Mapper mapper = new MapperBuilder()
                 .addMap(SimpleSourceWithProperties.class, SimpleDestinationWithFields.class,
                         (config, source, destination)
-                        -> config.useConvention(NameBasedMappingConvention.get())
+                        -> config.useConvention(NameBasedMapConvention.get())
                 ).buildMapper();
 
         SimpleDestinationWithFields result = mapper.map(sourceInstance, SimpleDestinationWithFields.class);
@@ -295,5 +321,24 @@ public class NameBasedConventionBasicScenarioTest {
         // 'z' exists in source and in destination, but have different data types - it will be not
         // mapped by StrictMatch convention
         assertEquals("Invalid 'z' field value.", 0, result.z);
+    }
+
+    @Test
+    public void convention_should_use_converter_if_available() {
+        // GIVEN
+        SourceWithByte sourceInstance = new SourceWithByte();
+        sourceInstance.setX((byte) 8);
+
+        // WHEN
+        Mapper mapper = new MapperBuilder()
+                .addConverter(byte.class, double.class, source -> (double)source)
+                .addMap(SourceWithByte.class, DestinationWithDouble.class,
+                        (config, source, destination)
+                        -> config.useConvention(NameBasedMapConvention.get()))
+                .buildMapper();
+        DestinationWithDouble result = mapper.map(sourceInstance, DestinationWithDouble.class);
+
+        // THEN
+        assertEquals(8.0, result.getX(), 0.0);
     }
 }

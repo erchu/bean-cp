@@ -21,8 +21,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.function.BiConsumer;
-import java.util.function.Supplier;
+import java.util.function.BiFunction;
+import java.util.function.Function;
 import static org.apache.commons.lang3.Validate.*;
 
 /**
@@ -30,9 +30,11 @@ import static org.apache.commons.lang3.Validate.*;
  */
 public final class MapperBuilder implements MappingInfo {
 
-    private final List<MapExecutor<?, ?>> mapExecutors = new LinkedList<>();
+    private final List<MapImpl<?, ?>> maps = new LinkedList<>();
 
-    private final List<MappingConvention> mapAnyConvention = new LinkedList<>();
+    private final List<Converter<?, ?>> converters = new LinkedList<>();
+
+    private final List<MapConvention> mapAnyConventions = new LinkedList<>();
 
     private boolean mapperBuilded = false;
 
@@ -60,7 +62,7 @@ public final class MapperBuilder implements MappingInfo {
         MapImpl map = new MapImpl(sourceClass, destinationClass, mapConfiguration);
         map.configure(this);
 
-        mapExecutors.add(map);
+        maps.add(map);
 
         return this;
     }
@@ -76,43 +78,14 @@ public final class MapperBuilder implements MappingInfo {
      *
      * @return this (for method chaining)
      */
-    public <S, D> MapperBuilder addConverter(final Class<S> sourceClass,
+    public <S, D> MapperBuilder addConverter(
+            final Class<S> sourceClass,
             final Class<D> destinationClass,
-            final BiConsumer<S, D> convertionAction) throws MapperConfigurationException {
+            final Function<S, D> convertionAction)
+            throws MapperConfigurationException {
         validateAddMappingAction(sourceClass, destinationClass);
 
-        TriConsumer<Mapper, S, D> convertActionWrapper
-                = (Mapper mapper, S source, D destination)
-                -> convertionAction.accept(source, destination);
-
-        addConverter(sourceClass, destinationClass, convertActionWrapper);
-
-        return this;
-    }
-
-    /**
-     * Adds new mapping implemented by converter.
-     *
-     * @param <S> source object class.
-     * @param <D> destination object class.
-     * @param sourceClass source object class.
-     * @param destinationClass destination object class.
-     * @param convertionAction converter action, must be thread-safe.
-     * @param destinationObjectBuilder destination object builder.
-     *
-     * @return this (for method chaining)
-     */
-    public <S, D> MapperBuilder addConverter(final Class<S> sourceClass,
-            final Class<D> destinationClass,
-            final BiConsumer<S, D> convertionAction,
-            final Supplier<D> destinationObjectBuilder) throws MapperConfigurationException {
-        validateAddMappingAction(sourceClass, destinationClass);
-
-        TriConsumer<Mapper, S, D> convertActionWrapper
-                = (Mapper mapper, S source, D destination)
-                -> convertionAction.accept(source, destination);
-
-        addConverter(sourceClass, destinationClass, convertActionWrapper, destinationObjectBuilder);
+        converters.add(new Converter<>(sourceClass, destinationClass, convertionAction));
 
         return this;
     }
@@ -128,38 +101,31 @@ public final class MapperBuilder implements MappingInfo {
      *
      * @return this (for method chaining)
      */
-    public <S, D> MapperBuilder addConverter(final Class<S> sourceClass,
+    public <S, D> MapperBuilder addConverter(
+            final Class<S> sourceClass,
             final Class<D> destinationClass,
-            final TriConsumer<Mapper, S, D> convertionAction) throws MapperConfigurationException {
+            final BiFunction<Mapper, S, D> convertionAction) throws MapperConfigurationException {
         validateAddMappingAction(sourceClass, destinationClass);
 
-        addConverter(sourceClass, destinationClass, convertionAction, null);
+        converters.add(new Converter<>(sourceClass, destinationClass, convertionAction));
 
         return this;
     }
 
     /**
-     * Adds new mapping implemented by converter.
+     * Adds new mapping implemented by converters.
      *
-     * @param <S> source object class.
-     * @param <D> destination object class.
-     * @param sourceClass source object class.
-     * @param destinationClass destination object class.
-     * @param convertionAction converter action, must be thread-safe.
-     * @param destinationObjectBuilder destination object builder.
+     * @param converters converters to add.
      *
      * @return this (for method chaining)
      */
-    public <S, D> MapperBuilder addConverter(final Class<S> sourceClass,
-            final Class<D> destinationClass,
-            final TriConsumer<Mapper, S, D> convertionAction,
-            final Supplier<D> destinationObjectBuilder) throws MapperConfigurationException {
-        validateAddMappingAction(sourceClass, destinationClass);
+    public MapperBuilder addConverter(
+            final Converter<?, ?>... converters) throws MapperConfigurationException {
 
-        Converter converter = new Converter(
-                sourceClass, destinationClass, convertionAction, destinationObjectBuilder);
-
-        mapExecutors.add(converter);
+        for (Converter<?, ?> i : converters) {
+            validateAddMappingAction(i.getSourceClass(), i.getDestinationClass());
+            this.converters.addAll(Arrays.asList(converters));
+        }
 
         return this;
     }
@@ -173,9 +139,9 @@ public final class MapperBuilder implements MappingInfo {
      *
      * @return this (for method chaining)
      */
-    public MapperBuilder addMapAnyByConvention(final MappingConvention... conventions)
+    public MapperBuilder addMapAnyByConvention(final MapConvention... conventions)
             throws MapperConfigurationException {
-        this.mapAnyConvention.addAll(Arrays.asList(conventions));
+        this.mapAnyConventions.addAll(Arrays.asList(conventions));
 
         return this;
     }
@@ -189,17 +155,32 @@ public final class MapperBuilder implements MappingInfo {
     public Mapper buildMapper() {
         this.mapperBuilded = true;
 
-        return new MapperImpl(mapExecutors, mapAnyConvention);
+        return new MapperImpl(converters, maps, mapAnyConventions);
     }
 
     @Override
-    public boolean isMapperAvailable(final Class sourceClass, final Class destinationClass) {
-        return MapperSelector.isMappingAvailable(
+    public boolean isMapAvailable(final Class sourceClass, final Class destinationClass) {
+        notNull(sourceClass, "sourceClass");
+        notNull(destinationClass, "destinationClass");
+        
+        return MapperExecutorSelector.isMapAvailable(
                 this,
                 sourceClass,
                 destinationClass,
-                Collections.unmodifiableCollection(mapExecutors),
-                Collections.unmodifiableCollection(mapAnyConvention));
+                Collections.unmodifiableCollection(maps),
+                Collections.unmodifiableCollection(mapAnyConventions));
+    }
+
+    @Override
+    public boolean isConverterAvailable(final Class sourceClass, final Class destinationClass) {
+        notNull(sourceClass, "sourceClass");
+        notNull(destinationClass, "destinationClass");
+        
+        return MapperExecutorSelector.isConverterAvailable(
+                this,
+                sourceClass,
+                destinationClass,
+                Collections.unmodifiableCollection(converters));
     }
 
     private <S, D> void validateAddMappingAction(final Class<S> sourceClass,
@@ -211,7 +192,7 @@ public final class MapperBuilder implements MappingInfo {
             throw new MapperConfigurationException("Mapper already builded. No changes allowed.");
         }
 
-        for (MapExecutor<?, ?> i : mapExecutors) {
+        for (MapImpl<?, ?> i : maps) {
             if (i.getSourceClass().equals(sourceClass)
                     && i.getDestinationClass().equals(destinationClass)) {
                 throw new MapperConfigurationException(String.format(

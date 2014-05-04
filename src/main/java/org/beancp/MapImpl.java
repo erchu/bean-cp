@@ -28,7 +28,7 @@ import static org.apache.commons.lang3.Validate.*;
  * @param <S> source class
  * @param <D> destination class
  */
-final class MapImpl<S, D> extends MapExecutor<S, D> implements Map<S, D> {
+final class MapImpl<S, D> implements Map<S, D>, MappingExecutor<S, D> {
 
     private static enum MapMode {
 
@@ -45,6 +45,8 @@ final class MapImpl<S, D> extends MapExecutor<S, D> implements Map<S, D> {
 
     private final MapSetup<S, D> configuration;
 
+    private Supplier<D> destinationObjectBuilder;
+
     private MapMode mode = MapMode.CONFIGURATION;
 
     private boolean constructDestinationObjectUsingExecuted;
@@ -59,7 +61,7 @@ final class MapImpl<S, D> extends MapExecutor<S, D> implements Map<S, D> {
 
     private Mapper executionPhaseMapper;
 
-    private MappingConvention executionPhaseMappingConvention;
+    private MapConvention executionPhaseMapConvention;
 
     private final ThreadLocal<S> executionPhaseSourceReference = new ThreadLocal<>();
 
@@ -72,73 +74,6 @@ final class MapImpl<S, D> extends MapExecutor<S, D> implements Map<S, D> {
         this.configuration = configuration;
         this.sourceClass = sourceClass;
         this.destinationClass = destinationClass;
-    }
-
-    private <T> boolean shouldBeMapped(final BindingOption<S, D, T>[] options) {
-        boolean map = true;
-
-        for (BindingOption<S, D, T> i : options) {
-            if (i.getMapWhenCondition() != null && i.getMapWhenCondition().get() == false) {
-                map = false;
-                break;
-            }
-        }
-
-        return map;
-    }
-
-    void configure(MappingInfo configurationPhaseMappingsInfo) {
-        if (mode != MapMode.CONFIGURATION) {
-            throw new IllegalStateException("Map was already configured.");
-        }
-
-        FakeObjectBuilder proxyBuilder = new FakeObjectBuilder();
-        S sourceObject = proxyBuilder.createFakeObject(sourceClass);
-        D destinationObject = proxyBuilder.createFakeObject(destinationClass);
-
-        beforeMapExecuted = bindBindConstantOrMapExecuted = afterMapExecuted = false;
-        this.configurationPhaseMappingsInfo = configurationPhaseMappingsInfo;
-
-        // Source and destination object instances are not required by MapImpl 
-        // in CONFIGURATION mode, but Java lambda handling mechanizm requires 
-        // non-null value, so we need to create proxy instance. Unfortunatelly
-        // this enforces constraint on source and destination classes as in javadoc.
-        configuration.apply(this, sourceObject, destinationObject);
-
-        // release reference
-        this.configurationPhaseMappingsInfo = null;
-
-        mode = MapMode.EXECUTION;
-    }
-
-    @Override
-    void execute(final Mapper caller, final S source, final D destination) {
-        if (mode != MapMode.EXECUTION) {
-            throw new IllegalStateException(
-                    "Map is not configured. Use configure() first.");
-        }
-
-        this.executionPhaseMapper = caller;
-
-        try {
-            this.executionPhaseSourceReference.set(source);
-            this.executionPhaseDestinationReference.set(destination);
-
-            configuration.apply(this, source, destination);
-        } finally {
-            this.executionPhaseSourceReference.set(null);
-            this.executionPhaseDestinationReference.set(null);
-        }
-    }
-
-    @Override
-    Class<S> getSourceClass() {
-        return sourceClass;
-    }
-
-    @Override
-    Class<D> getDestinationClass() {
-        return destinationClass;
     }
 
     @Override
@@ -266,8 +201,8 @@ final class MapImpl<S, D> extends MapExecutor<S, D> implements Map<S, D> {
     }
 
     @Override
-    public MapImpl<S, D> useConvention(final MappingConvention mappingConvention) {
-        notNull(mappingConvention, "mappingConvention");
+    public MapImpl<S, D> useConvention(final MapConvention MapConvention) {
+        notNull(MapConvention, "MapConvention");
 
         if (mode == MapMode.CONFIGURATION) {
             if (useConventionExecuted) {
@@ -280,15 +215,15 @@ final class MapImpl<S, D> extends MapExecutor<S, D> implements Map<S, D> {
             }
 
             // Build and cache result
-            mappingConvention.build(configurationPhaseMappingsInfo, sourceClass, destinationClass);
-            this.executionPhaseMappingConvention = mappingConvention;
+            MapConvention.build(configurationPhaseMappingsInfo, sourceClass, destinationClass);
+            this.executionPhaseMapConvention = MapConvention;
 
             useConventionExecuted = true;
         }
 
         if (mode == MapMode.EXECUTION) {
             // use cached convention
-            this.executionPhaseMappingConvention.map(executionPhaseMapper,
+            this.executionPhaseMapConvention.map(executionPhaseMapper,
                     executionPhaseSourceReference.get(), executionPhaseDestinationReference.get());
         }
 
@@ -347,5 +282,81 @@ final class MapImpl<S, D> extends MapExecutor<S, D> implements Map<S, D> {
         setDestinationObjectBuilder(destinationObjectBuilder);
 
         return this;
+    }
+
+    void configure(MappingInfo configurationPhaseMappingsInfo) {
+        if (mode != MapMode.CONFIGURATION) {
+            throw new IllegalStateException("Map was already configured.");
+        }
+
+        FakeObjectBuilder proxyBuilder = new FakeObjectBuilder();
+        S sourceObject = proxyBuilder.createFakeObject(sourceClass);
+        D destinationObject = proxyBuilder.createFakeObject(destinationClass);
+
+        beforeMapExecuted = bindBindConstantOrMapExecuted = afterMapExecuted = false;
+        this.configurationPhaseMappingsInfo = configurationPhaseMappingsInfo;
+
+        // Source and destination object instances are not required by MapImpl 
+        // in CONFIGURATION mode, but Java lambda handling mechanizm requires 
+        // non-null value, so we need to create proxy instance. Unfortunatelly
+        // this enforces constraint on source and destination classes as in javadoc.
+        configuration.apply(this, sourceObject, destinationObject);
+
+        // release reference
+        this.configurationPhaseMappingsInfo = null;
+
+        mode = MapMode.EXECUTION;
+    }
+
+    void execute(final Mapper caller, final S source, final D destination) {
+        if (mode != MapMode.EXECUTION) {
+            throw new IllegalStateException(
+                    "Map is not configured. Use configure() first.");
+        }
+
+        this.executionPhaseMapper = caller;
+
+        try {
+            this.executionPhaseSourceReference.set(source);
+            this.executionPhaseDestinationReference.set(destination);
+
+            configuration.apply(this, source, destination);
+        } finally {
+            this.executionPhaseSourceReference.set(null);
+            this.executionPhaseDestinationReference.set(null);
+        }
+    }
+
+    @Override
+    public Class<S> getSourceClass() {
+        return sourceClass;
+    }
+
+    @Override
+    public Class<D> getDestinationClass() {
+        return destinationClass;
+    }
+
+    Supplier<D> getDestinationObjectBuilder() {
+        return destinationObjectBuilder;
+    }
+
+    void setDestinationObjectBuilder(final Supplier<D> destinationObjectBuilder) {
+        notNull(destinationObjectBuilder, "destinationObjectBuilder");
+
+        this.destinationObjectBuilder = destinationObjectBuilder;
+    }
+
+    private <T> boolean shouldBeMapped(final BindingOption<S, D, T>[] options) {
+        boolean map = true;
+
+        for (BindingOption<S, D, T> i : options) {
+            if (i.getMapWhenCondition() != null && i.getMapWhenCondition().get() == false) {
+                map = false;
+                break;
+            }
+        }
+
+        return map;
     }
 }

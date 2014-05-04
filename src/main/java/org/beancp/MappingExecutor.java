@@ -15,28 +15,28 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library.
  */
+
 package org.beancp;
 
-import java.util.function.Supplier;
-import static org.apache.commons.lang3.Validate.*;
+/**
+ * Mapping executor (converter or map) common methods.
+ *
+ * @param <S> source class.
+ * @param <D> destination class.
+ */
+public interface MappingExecutor<S, D> {
 
-abstract class MapExecutor<S, D> {
+    /**
+     * Returns source class.
+     *
+     * @return source class.
+     */
+    Class<D> getDestinationClass();
 
-    private Supplier<D> destinationObjectBuilder;
-
-    abstract void execute(final Mapper caller, final S source, final D destination);
-
-    abstract Class<D> getDestinationClass();
-
-    abstract Class<S> getSourceClass();
-
-    protected Supplier<D> getDestinationObjectBuilder() {
-        return destinationObjectBuilder;
-    }
-
-    protected void setDestinationObjectBuilder(final Supplier<D> destinationObjectBuilder) {
-        notNull(destinationObjectBuilder, "destinationObjectBuilder");
-
-        this.destinationObjectBuilder = destinationObjectBuilder;
-    }
+    /**
+     * Returns destination class.
+     *
+     * @return destination class.
+     */
+    Class<S> getSourceClass();
 }

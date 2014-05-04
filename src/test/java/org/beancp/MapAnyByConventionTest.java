@@ -17,7 +17,7 @@
  */
 package org.beancp;
 
-import org.beancp.commons.NameBasedMappingConvention;
+import org.beancp.commons.NameBasedMapConvention;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import org.junit.Test;
@@ -173,7 +173,7 @@ public class MapAnyByConventionTest {
 
         // WHEN
         Mapper mapper = new MapperBuilder()
-                .addMapAnyByConvention(NameBasedMappingConvention.get())
+                .addMapAnyByConvention(NameBasedMapConvention.get())
                 .buildMapper();
 
         SimpleDestinationWithProperties result = mapper.map(sourceInstance, SimpleDestinationWithProperties.class);
@@ -205,7 +205,7 @@ public class MapAnyByConventionTest {
 
         // WHEN
         Mapper mapper = new MapperBuilder()
-                .addMapAnyByConvention(NameBasedMappingConvention.get())
+                .addMapAnyByConvention(NameBasedMapConvention.get())
                 .buildMapper();
 
         SimpleDestinationWithFields result = mapper.map(sourceInstance, SimpleDestinationWithFields.class);

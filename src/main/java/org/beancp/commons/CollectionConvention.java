@@ -20,11 +20,11 @@ package org.beancp.commons;
 
 import org.beancp.Mapper;
 import org.beancp.MapperConfigurationException;
-import org.beancp.MappingConvention;
+import org.beancp.MapConvention;
 import org.beancp.MappingException;
 import org.beancp.MappingInfo;
 
-public class CollectionConvention implements MappingConvention {
+public class CollectionConvention implements MapConvention {
     
     private CollectionConvention() {}
     

@@ -27,13 +27,18 @@ import static org.apache.commons.lang3.Validate.*;
 
 class MapperImpl implements Mapper {
 
-    private final Collection<MapExecutor<?, ?>> mapExecutors;
+    private final Collection<MapImpl<?, ?>> maps;
 
-    private final List<MappingConvention> mapAnyConventions;
+    private final Collection<Converter<?, ?>> converters;
 
-    MapperImpl(final List<MapExecutor<?, ?>> mapExecutors,
-            final List<MappingConvention> mapAnyConvention) {
-        this.mapExecutors = Collections.unmodifiableCollection(mapExecutors);
+    private final List<MapConvention> mapAnyConventions;
+
+    MapperImpl(
+            final Collection<Converter<?, ?>> converters,
+            final List<MapImpl<?, ?>> maps,
+            final List<MapConvention> mapAnyConvention) {
+        this.converters = Collections.unmodifiableCollection(converters);
+        this.maps = Collections.unmodifiableCollection(maps);
         this.mapAnyConventions = mapAnyConvention;
     }
 
@@ -52,12 +57,11 @@ class MapperImpl implements Mapper {
         notNull(source, "source");
         notNull(destination, "destination");
 
-        MapExecutor<S, D> mapExecutor
-                = (MapExecutor<S, D>) MapperSelector.getBestMatchingMapExecutor(
-                        source.getClass(), destination.getClass(),
-                        mapExecutors);
+        MapImpl<S, D> map = (MapImpl<S, D>) MapperExecutorSelector.getBestMatchingMap(
+                source.getClass(), destination.getClass(),
+                maps);
 
-        return mapIfMapperAvailable(mapExecutor, source, destination);
+        return mapIfMapperAvailable(map, source, destination);
     }
 
     @Override
@@ -69,7 +73,7 @@ class MapperImpl implements Mapper {
 
         if (result.isPresent() == false) {
             throw new MappingException(
-                    String.format("No suitable mapping found from %s to %s.",
+                    String.format("No suitable converter or map found to map from %s to %s.",
                             source.getClass(), destinationClass));
         } else {
             return result.get();
@@ -83,20 +87,28 @@ class MapperImpl implements Mapper {
         notNull(source, "source");
         notNull(destinationClass, "destinationClass");
 
+        Class sourceClass = source.getClass();
+
         try {
-            MapExecutor<S, D> mapExecutor
-                    = (MapExecutor<S, D>) MapperSelector.getBestMatchingMapExecutor(
-                            source.getClass(), destinationClass,
-                            mapExecutors);
+            Converter<S, D> converter
+                    = (Converter<S, D>) MapperExecutorSelector.getBestMatchingConverter(
+                            sourceClass, destinationClass, converters);
+
+            if (converter != null) {
+                return Optional.of(converter.convert(this, source));
+            }
+
+            MapImpl<S, D> map = (MapImpl<S, D>) MapperExecutorSelector.getBestMatchingMap(
+                    sourceClass, destinationClass, maps);
 
             D destination = null;
 
-            if (mapExecutor != null && mapExecutor.getDestinationObjectBuilder() != null) {
+            if (map != null && map.getDestinationObjectBuilder() != null) {
                 destination = constructObjectUsingDestinationObjectBuilder(
-                        mapExecutor.getDestinationObjectBuilder(), destinationClass);
+                        map.getDestinationObjectBuilder(), destinationClass);
             }
 
-            // if mapExecutor is not available or has no specific destination object builder
+            // if MapImpl is not available or has no specific destination object builder
             if (destination == null) {
                 destination = constructObjectUsingDefaultConstructor(destinationClass);
             }
@@ -110,30 +122,45 @@ class MapperImpl implements Mapper {
             throw new MappingException(
                     String.format(
                             "Failed to map from %s to %s",
-                            source.getClass(), destinationClass),
+                            sourceClass, destinationClass),
                     ex);
         }
     }
 
     @Override
-    public boolean isMapperAvailable(final Class sourceClass, final Class destinationClass) {
-        return MapperSelector.isMappingAvailable(
+    public boolean isMapAvailable(final Class sourceClass, final Class destinationClass) {
+        notNull(sourceClass, "sourceClass");
+        notNull(destinationClass, "destinationClass");
+
+        return MapperExecutorSelector.isMapAvailable(
                 this,
                 sourceClass,
                 destinationClass,
-                mapExecutors,
+                maps,
                 mapAnyConventions);
     }
 
+    @Override
+    public boolean isConverterAvailable(final Class sourceClass, final Class destinationClass) {
+        notNull(sourceClass, "sourceClass");
+        notNull(destinationClass, "destinationClass");
+
+        return MapperExecutorSelector.isConverterAvailable(
+                this,
+                sourceClass,
+                destinationClass,
+                Collections.unmodifiableCollection(converters));
+    }
+
     private <D, S> boolean mapIfMapperAvailable(
-            final MapExecutor<S, D> mapExecutor, final S source, final D destination) {
-        if (mapExecutor != null) {
-            mapExecutor.execute(this, source, destination);
+            final MapImpl<S, D> MapImpl, final S source, final D destination) {
+        if (MapImpl != null) {
+            MapImpl.execute(this, source, destination);
 
             return true;
         }
 
-        for (MappingConvention i : mapAnyConventions) {
+        for (MapConvention i : mapAnyConventions) {
             if (i.tryMap(this, source, destination)) {
                 return true;
             }
@@ -150,6 +177,7 @@ class MapperImpl implements Mapper {
             } else {
                 return (D) destinationClass.newInstance();
             }
+            //TODO: Handle all exceptions
         } catch (InstantiationException | IllegalAccessException ex) {
             throw new MappingException("Cannot create destination instance.", ex);
         }
@@ -161,9 +189,15 @@ class MapperImpl implements Mapper {
         notNull(destinationObjectBuilder, "destinationObjectBuilder");
         notNull(destinationClass, "destinationClass");
 
-        D destination = destinationObjectBuilder.get();
+        D destination;
 
-        //TODO: Use default constructor in this case
+        try {
+            destination = destinationObjectBuilder.get();
+        } catch (Exception ex) {
+            throw new MappingException(String.format("Failed to create destination object class %s "
+                    + "using constructDestinationObjectUsing.", destinationClass));
+        }
+
         if (destinationClass.isAssignableFrom(destination.getClass()) == false) {
             throw new MappingException(String.format("Destination object class %s returned "
                     + "by constructDestinationObjectUsing cannot be assigned to expected "

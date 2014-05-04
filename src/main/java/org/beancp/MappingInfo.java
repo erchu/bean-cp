@@ -24,12 +24,22 @@ package org.beancp;
 public interface MappingInfo {
 
     /**
-     * Returns {@code true} if mapping is available, {@code false} otherwise.
-     * 
+     * Returns {@code true} if converter is available, {@code false} otherwise.
+     *
      * @param sourceClass source object class.
      * @param destinationClass destination object class.
-     * 
-     * @return {@code true} if mapping is available, {@code false} otherwise.
+     *
+     * @return {@code true} if converter is available, {@code false} otherwise.
      */
-    boolean isMapperAvailable(Class sourceClass, Class destinationClass);
+    boolean isConverterAvailable(Class sourceClass, Class destinationClass);
+
+    /**
+     * Returns {@code true} if map (or map convention) is available, {@code false} otherwise.
+     *
+     * @param sourceClass source object class.
+     * @param destinationClass destination object class.
+     *
+     * @return {@code true} if map (or map convention) is available, {@code false} otherwise.
+     */
+    boolean isMapAvailable(Class sourceClass, Class destinationClass);
 }

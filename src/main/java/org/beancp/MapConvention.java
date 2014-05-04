@@ -20,7 +20,7 @@ package org.beancp;
 /**
  * Mapping convention.
  */
-public interface MappingConvention {
+public interface MapConvention {
 
     /**
      * Indicates that mapping configuration is defined, so convention may populate its internal
@@ -30,8 +30,8 @@ public interface MappingConvention {
      * @param sourceClass source object class.
      * @param destinationClass destination object class.
      *
-     * @see org.beancp.Map#useConvention(org.beancp.MappingConvention)
-     * @see org.beancp.MapperBuilder#addMapAnyByConvention(org.beancp.MappingConvention...)
+     * @see org.beancp.Map#useConvention(org.beancp.MapConvention)
+     * @see org.beancp.MapperBuilder#addMapAnyByConvention(org.beancp.MapConvention...)
      */
     void build(MappingInfo mappingInfo, Class sourceClass, Class destinationClass)
             throws MapperConfigurationException;
@@ -41,11 +41,10 @@ public interface MappingConvention {
      *
      * <ol>
      * <li>when for particular instance
-     * {@link #build(org.beancp.MappingsInfo, java.lang.Class, java.lang.Class)} <b>is not
-     * executed</b>
-     * before first execution of this method</li>
+     * {@link #build(org.beancp.MappingInfo, java.lang.Class, java.lang.Class)} <b>is not
+     * executed</b> before first execution of this method</li>
      * <li>when for particular instance
-     * {@link #build(org.beancp.MappingsInfo, java.lang.Class, java.lang.Class) } <b>is executed</b>
+     * {@link #build(org.beancp.MappingInfo, java.lang.Class, java.lang.Class)} <b>is executed</b>
      * before first execution of this method (but <b>never</b> concurrently or after first call on
      * this method)</li>
      * </ol>
@@ -53,7 +52,7 @@ public interface MappingConvention {
      * <p>
      * Implementation must be thread-safe in both of those scenarios. Implementation cannot produce
      * state that is shared state between calls, but may use data produced by
-     * {@link #build(org.beancp.MappingsInfo, java.lang.Class, java.lang.Class)} method. Acquiring
+     * {@link #build(org.beancp.MappingInfo, java.lang.Class, java.lang.Class)} method. Acquiring
      * locks is not permitted.
      * </p>
      *
@@ -65,8 +64,8 @@ public interface MappingConvention {
      * @param source source object.
      * @param destination destination object.
      *
-     * @see org.beancp.Map#useConvention(org.beancp.MappingConvention)
-     * @see org.beancp.MapperBuilder#addMapAnyByConvention(org.beancp.MappingConvention...)
+     * @see org.beancp.Map#useConvention(org.beancp.MapConvention)
+     * @see org.beancp.MapperBuilder#addMapAnyByConvention(org.beancp.MapConvention...)
      */
     void map(Mapper mapper, Object source, Object destination) throws MappingException;
 
@@ -75,11 +74,11 @@ public interface MappingConvention {
      *
      * <ol>
      * <li>when for particular instance
-     * {@link #build(org.beancp.MappingsInfo, java.lang.Class, java.lang.Class)} <b>is not
-     * executed</b>
+     * {@link #build(org.beancp.MappingInfo, java.lang.Class, java.lang.Class)}
+     * <b>is not executed</b>
      * before first execution of this method</li>
      * <li>when for particular instance
-     * {@link #build(org.beancp.MappingsInfo, java.lang.Class, java.lang.Class) } <b>is executed</b>
+     * {@link #build(org.beancp.MappingInfo, java.lang.Class, java.lang.Class)} <b>is executed</b>
      * before first execution of this method (but <b>never</b> concurrently or after first call on
      * this method)</li>
      * </ol>
@@ -87,7 +86,7 @@ public interface MappingConvention {
      * <p>
      * Implementation must be thread-safe in both of those scenarios. Implementation cannot produce
      * state that is shared state between calls, but may use data produced by
-     * {@link #build(org.beancp.MappingsInfo, java.lang.Class, java.lang.Class)} method. Acquiring
+     * {@link #build(org.beancp.MappingInfo, java.lang.Class, java.lang.Class)} method. Acquiring
      * locks is not permitted.
      * </p>
      *
@@ -102,8 +101,8 @@ public interface MappingConvention {
      * @return {@code}true{code} if mapping is supported for passed object types, otherwise
      * {@code}true{code}.
      *
-     * @see org.beancp.Map#useConvention(org.beancp.MappingConvention)
-     * @see org.beancp.MapperBuilder#addMapAnyByConvention(org.beancp.MappingConvention...)
+     * @see org.beancp.Map#useConvention(org.beancp.MapConvention)
+     * @see org.beancp.MapperBuilder#addMapAnyByConvention(org.beancp.MapConvention...)
      */
     boolean tryMap(Mapper mapper, Object source, Object destination)
             throws MapperConfigurationException;

@@ -17,50 +17,86 @@
  */
 package org.beancp;
 
-import java.util.function.Supplier;
+import java.util.function.BiFunction;
+import java.util.function.Function;
 import static org.apache.commons.lang3.Validate.*;
 
-final class Converter<S, D> extends MapExecutor<S, D> {
+/**
+ * Converter used to convert source to usually immutable new destination object.
+ *
+ * @param <S> conversion source class.
+ * @param <D> conversion destination class.
+ */
+public final class Converter<S, D> implements MappingExecutor<S, D> {
 
     private final Class<S> sourceClass;
 
     private final Class<D> destinationClass;
 
-    private final TriConsumer<Mapper, S, D> convertionAction;
+    private final BiFunction<Mapper, S, D> convertionAction;
 
-    public Converter(final Class<S> sourceClass, final Class<D> destinationClass,
-            final TriConsumer<Mapper, S, D> convertionAction,
-            final Supplier<D> destinationObjectBuilder) {
+    /**
+     * Creates converter instance not using {@link Mapper} reference during execution.
+     *
+     * @param sourceClass source class.
+     * @param destinationClass destination class.
+     * @param convertAction conversion action.
+     */
+    public Converter(
+            final Class<S> sourceClass,
+            final Class<D> destinationClass,
+            final Function<S, D> convertAction) {
         notNull(sourceClass, "sourceClass");
         notNull(destinationClass, "destinationClass");
-        notNull(convertionAction, "convertionAction");
+        notNull(convertAction, "convertAction");
+
+        BiFunction<Mapper, S, D> convertActionWrapper
+                = (Mapper mapper, S source) -> convertAction.apply(source);
 
         this.sourceClass = sourceClass;
         this.destinationClass = destinationClass;
-        this.convertionAction = convertionAction;
-
-        if (destinationObjectBuilder != null) {
-            setDestinationObjectBuilder(destinationObjectBuilder);
-        }
+        this.convertionAction = convertActionWrapper;
     }
 
-    public Converter(final Class<S> source, final Class<D> destination,
-            final TriConsumer<Mapper, S, D> convertionAction) {
-        this(source, destination, convertionAction, null);
+    /**
+     * Creates converter instance using {@link Mapper} reference during execution.
+     *
+     * @param sourceClass source class.
+     * @param destinationClass destination class.
+     * @param convertAction conversion action.
+     */
+    public Converter(
+            final Class<S> sourceClass,
+            final Class<D> destinationClass,
+            final BiFunction<Mapper, S, D> convertAction) {
+        notNull(sourceClass, "sourceClass");
+        notNull(destinationClass, "destinationClass");
+        notNull(convertAction, "convertAction");
+
+        this.sourceClass = sourceClass;
+        this.destinationClass = destinationClass;
+        this.convertionAction = convertAction;
     }
 
-    @Override
-    public void execute(Mapper caller, S source, D destination) {
-        convertionAction.accept(caller, source, destination);
+    /**
+     * Returns source class supported by this converter.
+     * 
+     * @return source class supported by this converter.
+     */
+    public Class<S> getSourceClass() {
+        return sourceClass;
     }
 
-    @Override
+    /**
+     * Returns destination class supported by this converter.
+     * 
+     * @return destination class supported by this converter.
+     */
     public Class<D> getDestinationClass() {
         return destinationClass;
     }
 
-    @Override
-    public Class<S> getSourceClass() {
-        return sourceClass;
+    D convert(final Mapper caller, final S source) {
+        return convertionAction.apply(caller, source);
     }
 }

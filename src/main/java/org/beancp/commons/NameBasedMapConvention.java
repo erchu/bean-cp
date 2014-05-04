@@ -17,7 +17,7 @@
  */
 package org.beancp.commons;
 
-import org.beancp.MappingConvention;
+import org.beancp.MapConvention;
 import java.beans.BeanInfo;
 import java.beans.IntrospectionException;
 import java.beans.Introspector;
@@ -37,7 +37,7 @@ import static org.apache.commons.lang3.Validate.*;
 /**
  * Convention matches fields by name.
  */
-public class NameBasedMappingConvention implements MappingConvention {
+public class NameBasedMapConvention implements MapConvention {
 
     private enum MemberAccessType {
 
@@ -61,7 +61,7 @@ public class NameBasedMappingConvention implements MappingConvention {
     /**
      * Constructs instance.
      */
-    protected NameBasedMappingConvention() {
+    protected NameBasedMapConvention() {
     }
 
     /**
@@ -77,8 +77,8 @@ public class NameBasedMappingConvention implements MappingConvention {
      *
      * @return mapping convention.
      */
-    public static NameBasedMappingConvention get() {
-        NameBasedMappingConvention defaultConvention = new NameBasedMappingConvention();
+    public static NameBasedMapConvention get() {
+        NameBasedMapConvention defaultConvention = new NameBasedMapConvention();
         defaultConvention.excludeDestinationMembers = new String[0];
         defaultConvention.includeDestinationMembers = new String[0];
         defaultConvention.failIfNotAllDestinationMembersMapped = false;
@@ -105,7 +105,7 @@ public class NameBasedMappingConvention implements MappingConvention {
      *
      * @return this (for method chaining)
      */
-    public NameBasedMappingConvention includeDestinationMembers(String... members) {
+    public NameBasedMapConvention includeDestinationMembers(String... members) {
         notNull(members, "members");
 
         this.includeDestinationMembers = members;
@@ -128,7 +128,7 @@ public class NameBasedMappingConvention implements MappingConvention {
      *
      * @return this (for method chaining)
      */
-    public NameBasedMappingConvention excludeDestinationMembers(String... members) {
+    public NameBasedMapConvention excludeDestinationMembers(String... members) {
         notNull(members, "members");
 
         this.excludeDestinationMembers = members;
@@ -185,7 +185,7 @@ public class NameBasedMappingConvention implements MappingConvention {
      *
      * @return this (for method chaining)
      */
-    public NameBasedMappingConvention enableFlattening() {
+    public NameBasedMapConvention enableFlattening() {
         this.flateningEnabled = true;
 
         return this;
@@ -197,7 +197,7 @@ public class NameBasedMappingConvention implements MappingConvention {
      *
      * @return this (for method chaining)
      */
-    public NameBasedMappingConvention disableFlattening() {
+    public NameBasedMapConvention disableFlattening() {
         this.flateningEnabled = false;
 
         return this;
@@ -205,12 +205,12 @@ public class NameBasedMappingConvention implements MappingConvention {
 
     /**
      * Convention will fail during map building (see
-     * {@link #build(org.beancp.MappingsInfo, java.lang.Class, java.lang.Class)} method) if not all
+     * {@link #build(org.beancp.MappingInfo, java.lang.Class, java.lang.Class)} method) if not all
      * destination properties are mapped.
      *
      * @return this (for method chaining)
      */
-    public NameBasedMappingConvention failIfNotAllDestinationMembersMapped() {
+    public NameBasedMapConvention failIfNotAllDestinationMembersMapped() {
         this.failIfNotAllDestinationMembersMapped = true;
 
         return this;
@@ -218,12 +218,12 @@ public class NameBasedMappingConvention implements MappingConvention {
 
     /**
      * Convention will fail during map building (see
-     * {@link #build(org.beancp.MappingsInfo, java.lang.Class, java.lang.Class)} method) if not all
+     * {@link #build(org.beancp.MappingInfo, java.lang.Class, java.lang.Class)} method) if not all
      * source properties are mapped.
      *
      * @return this (for method chaining)
      */
-    public NameBasedMappingConvention failIfNotAllSourceMembersMapped() {
+    public NameBasedMapConvention failIfNotAllSourceMembersMapped() {
         this.failIfNotAllSourceMembersMapped = true;
 
         return this;
@@ -442,8 +442,10 @@ public class NameBasedMappingConvention implements MappingConvention {
         if (sourceValueClass.equals(destinationValueClass)) {
             return new Binding(sourceBindingSide, destinationBindingSide);
         } else {
-            if (mappingsInfo.isMapperAvailable(sourceValueClass, destinationValueClass)) {
-                return new BindingWithValueMapping(sourceBindingSide, destinationBindingSide);
+            if (mappingsInfo.isConverterAvailable(sourceValueClass, destinationValueClass)) {
+                return new BindingWithValueConversion(sourceBindingSide, destinationBindingSide);
+            } else if (mappingsInfo.isMapAvailable(sourceValueClass, destinationValueClass)) {
+                return new BindingWithValueMap(sourceBindingSide, destinationBindingSide);
             } else if (destinationValueClass.isAssignableFrom(sourceValueClass)) {
                 return new Binding(sourceBindingSide, destinationBindingSide);
             } else {

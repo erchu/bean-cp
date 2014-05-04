@@ -20,11 +20,11 @@ package org.beancp.commons;
 
 import org.beancp.Mapper;
 import org.beancp.MapperConfigurationException;
-import org.beancp.MappingConvention;
+import org.beancp.MapConvention;
 import org.beancp.MappingException;
 import org.beancp.MappingInfo;
 
-public class StringParseConvention implements MappingConvention {
+public class StringParseConvention implements MapConvention {
     
     private StringParseConvention() {}
     
