@@ -20,7 +20,7 @@ package org.beancp;
 
 class CircularReferencesMappingTest {
 
-    //TODO: Implement some recursive structure mapping test:
+    //TODO: Implement some circular references mapping test:
     // 1) conventer
     // 2) map
     // 3) convention
