@@ -278,4 +278,20 @@ public class ConverterTest {
         assertEquals("Invalid primitive type mapping result.", sourceValue, resultFromPrimitiveType.getX());
         assertEquals("Invalid primitive type wrapper mapping result.", sourceValue, resultFromPrimitiveTypeWrapper.getX());
     }
+    
+    @Test
+    public void converter_can_support_primitive_type_wrappers() {
+        // GIVEN
+        int sourceValue = 9;
+        
+        // WHEN
+        Mapper mapper = new MapperBuilder()
+                .addConverter(Integer.class, Double.class, source -> (double)source)
+                .buildMapper();
+        
+        double result = mapper.map(sourceValue, double.class);
+        
+        // THEN
+        assertEquals("Invalid result.", (double) sourceValue, result, 0.0);
+    }
 }

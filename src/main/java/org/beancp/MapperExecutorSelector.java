@@ -109,19 +109,19 @@ class MapperExecutorSelector {
         if (matchMode == MapperExecutorMatchMode.STRICT_DESTINATION) {
             mapper = firstNonNull(
                     firstOrNull(validMappers,
-                            (i -> sourceClass.equals(i.getSourceClass())
-                            && destinationClass.equals(i.getDestinationClass()))),
+                            (i -> classEqualsOrWrapper(sourceClass, i.getSourceClass())
+                            && classEqualsOrWrapper(destinationClass, i.getDestinationClass()))),
                     firstOrNull(validMappers,
-                            (i -> destinationClass.equals(i.getDestinationClass()))));
+                            (i -> classEqualsOrWrapper(destinationClass, i.getDestinationClass()))));
         } else {
             mapper = firstNonNull(
                     firstOrNull(validMappers,
-                            (i -> sourceClass.equals(i.getSourceClass())
-                            && destinationClass.equals(i.getDestinationClass()))),
+                            (i -> classEqualsOrWrapper(sourceClass, i.getSourceClass())
+                            && classEqualsOrWrapper(destinationClass, i.getDestinationClass()))),
                     firstOrNull(validMappers,
-                            (i -> destinationClass.equals(i.getDestinationClass()))),
+                            (i -> classEqualsOrWrapper(destinationClass, i.getDestinationClass()))),
                     firstOrNull(validMappers,
-                            (i -> sourceClass.equals(i.getSourceClass()))),
+                            (i -> classEqualsOrWrapper(sourceClass, i.getSourceClass()))),
                     validMappers.get(0));
         }
 
@@ -148,6 +148,12 @@ class MapperExecutorSelector {
     }
 
     private static boolean canBeMapped(final Class objectClass, final Class supportedClass) {
+        return classEqualsOrWrapper(objectClass, supportedClass)
+                || supportedClass.isAssignableFrom(objectClass);
+    }
+
+    private static boolean classEqualsOrWrapper(
+            final Class objectClass, final Class supportedClass) {
         if (objectClass.isPrimitive()) {
             Class<?> primitiveTypeWrapper = ClassUtils.primitiveToWrapper(objectClass);
 
@@ -155,11 +161,11 @@ class MapperExecutorSelector {
                     || primitiveTypeWrapper.equals(supportedClass);
         } else if (supportedClass.isPrimitive()) {
             Class<?> primitiveTypeWrapper = ClassUtils.primitiveToWrapper(supportedClass);
-                    
+
             return objectClass.equals(supportedClass)
                     || objectClass.equals(primitiveTypeWrapper);
         } else {
-            return supportedClass.isAssignableFrom(objectClass);
+            return supportedClass.equals(objectClass);
         }
     }
 }
