@@ -18,7 +18,7 @@
 
 package org.beancp;
 
-class RecursiveStructureMappingTest {
+class CircularReferencesMappingTest {
 
     //TODO: Implement some recursive structure mapping test:
     // 1) conventer
