@@ -280,7 +280,7 @@ public class ConverterTest {
     }
     
     @Test
-    public void converter_can_support_primitive_type_wrappers() {
+    public void converter_can_support_primitive_types_based_on_primitive_type_wrapper_converters() {
         // GIVEN
         int sourceValue = 9;
         
@@ -293,5 +293,21 @@ public class ConverterTest {
         
         // THEN
         assertEquals("Invalid result.", (double) sourceValue, result, 0.0);
+    }
+    
+    @Test
+    public void converter_can_support_primitive_type_wrapper_based_on_primitive_types_converters() {
+        // GIVEN
+        Integer sourceValue = 9;
+        
+        // WHEN
+        Mapper mapper = new MapperBuilder()
+                .addConverter(int.class, double.class, source -> new Double(source))
+                .buildMapper();
+        
+        Double result = mapper.map(sourceValue, Double.class);
+        
+        // THEN
+        assertEquals("Invalid result.", sourceValue.doubleValue(), result, 0.0);
     }
 }
