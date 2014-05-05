@@ -24,12 +24,12 @@ import org.beancp.MapConvention;
 import org.beancp.MappingException;
 import org.beancp.MappingInfo;
 
-public class StringParseConvention implements MapConvention {
+public class StringParseConveters implements MapConvention {
     
-    private StringParseConvention() {}
+    private StringParseConveters() {}
     
-    public static StringParseConvention get() {
-        return new StringParseConvention();
+    public static StringParseConveters get() {
+        return new StringParseConveters();
     }
 
     @Override
