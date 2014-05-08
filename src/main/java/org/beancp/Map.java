@@ -27,7 +27,9 @@ import java.util.function.Supplier;
  * <li>{@link #constructDestinationObjectUsing(java.util.function.Supplier)} zero or one time</li>
  * <li>{@link #beforeMap(org.beancp.Action)} zero or many times</li>
  * <li>{@link #useConvention(org.beancp.MapConvention) } zero or one time</li>
- * <li>{@link #bind(java.util.function.Supplier, java.util.function.Consumer, org.beancp.BindingOption...)}, {@link #bindConstant(java.lang.Object, java.util.function.Consumer, org.beancp.BindingOption...)}, {@link #mapInner(java.util.function.Supplier, java.util.function.Consumer, java.lang.Class, org.beancp.BindingOption[])}
+ * <li>{@link #bind(java.util.function.Supplier, java.util.function.Consumer, org.beancp.BindingOption...)},
+ * {@link #bindConstant(java.lang.Object, java.util.function.Consumer, org.beancp.BindingOption...)},
+ * {@link #mapInner(java.util.function.Supplier, java.util.function.Consumer, java.lang.Class, org.beancp.BindingOption[])}
  * and
  * {@link #mapInner(java.util.function.Supplier, java.util.function.Consumer, java.util.function.Supplier, java.lang.Class, org.beancp.BindingOption[])}
  * methods zero or many times in any order</li>

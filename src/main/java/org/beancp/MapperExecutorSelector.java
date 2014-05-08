@@ -35,7 +35,10 @@ class MapperExecutorSelector {
     }
 
     private MapperExecutorSelector() {
-        throw new IllegalStateException("Not allowed to create instance of this class");
+        throw new AssertionError(
+                String.format(
+                        "Creating an instance of the %s class is not allowed.",
+                        MapperExecutorSelector.class));
     }
 
     public static boolean isMapAvailable(

@@ -83,6 +83,7 @@ public final class Converter<S, D> implements MappingExecutor<S, D> {
      * 
      * @return source class supported by this converter.
      */
+    @Override
     public Class<S> getSourceClass() {
         return sourceClass;
     }
@@ -92,6 +93,7 @@ public final class Converter<S, D> implements MappingExecutor<S, D> {
      * 
      * @return destination class supported by this converter.
      */
+    @Override
     public Class<D> getDestinationClass() {
         return destinationClass;
     }

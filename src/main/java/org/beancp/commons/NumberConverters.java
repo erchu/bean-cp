@@ -41,9 +41,17 @@ import org.beancp.Converter;
 public class NumberConverters {
 
     private NumberConverters() {
-        throw new IllegalStateException("Not allowed to create instance of this class");
+        throw new AssertionError(
+                String.format(
+                        "Creating an instance of the %s class is not allowed.",
+                        AssertionError.class));
     }
 
+    /**
+     * Returns number converters.
+     * 
+     * @return number converters.
+     */
     public static Converter[] get() {
         return new Converter[]{
             new Converter(byte.class, Byte.class, ((Function<Byte, Byte>) (source -> source))),
