@@ -169,6 +169,7 @@ class MapperImpl implements Mapper {
         return false;
     }
 
+    @SuppressWarnings({"TooBroadCatch", "UseSpecificCatch"})
     private <D> D constructObjectUsingDefaultConstructor(
             final Class<D> destinationClass) throws MappingException {
         try {
@@ -177,8 +178,7 @@ class MapperImpl implements Mapper {
             } else {
                 return (D) destinationClass.newInstance();
             }
-            //TODO: Handle all exceptions
-        } catch (InstantiationException | IllegalAccessException ex) {
+        } catch (Exception ex) {
             throw new MappingException("Cannot create destination instance.", ex);
         }
     }
