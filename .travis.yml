@@ -3,10 +3,10 @@ jdk:
 - oraclejdk8
 deploy:
   provider: releases
-  api-key: "GITHUB OAUTH TOKEN"
+  api-key: GITHUB OAUTH TOKEN
   file: target/beancp-0.1.jar
   on:
     repo: erchu/bean-cp
 env:
   global:
-    secure: DJ9xHEbxAPOeGoGova0NEll9ziYZI8DLneMl6/lEmhLxQ3NdumBvL9C5l3TIcrpPX4oD9cK4hhpWfxOIC2WvNS1GEXeWgg1aOzKOQryCLH9y8bXfvSB/zLOQjk3plYJz84k3XxE/voWaRN7KzHKw9A97/s0/iS5eBEfHR4xpZdw=
+  - secure: DK9tv6x8LLJo7XxhOPLPqX/qdpdkgyz2ixa6wV4bNZX3Gm7OkMLldRKYOpjm0fnhqVgNPNzE31MwVb12RL8CokVNNOv8vPXI8jdG68/tLNrOx2Dq3qGl5ivkFkYnI3WaI3A5NUbCMYaxYO1qOZrAvhJfIH5LWDZnRa3WQEpj9io=
