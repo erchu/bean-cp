@@ -3,6 +3,7 @@ jdk:
 - oraclejdk8
 deploy:
   provider: releases
+  api-key: "GITHUB OAUTH TOKEN"
   file: target/beancp-0.1.jar
   on:
     repo: erchu/bean-cp
