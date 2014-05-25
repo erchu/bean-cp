@@ -2,7 +2,7 @@
 
 # Build javadoc
 
-cp $HOME/build/erchu/bean-cp
+cd $HOME/build/erchu/bean-cp
 mvn javadoc:javadoc
 mvn javadoc:jar
 
@@ -15,7 +15,7 @@ git clone --quiet --branch=gh-pages https://${GH_TOKEN}@github.com/erchu/bean-cp
 cd $HOME/gh-pages/upload
 git rm -rf ./javadoc
 cp $HOME/build/erchu/bean-cp/target/beancp-*.jar ./upload
-cp $HOME/build/erchu/bean-cp/target/apidocs ./apidocs
+cp -R $HOME/build/erchu/bean-cp/target/apidocs/* ./apidocs
 
 # Commit and Push the Changes
 git add .
