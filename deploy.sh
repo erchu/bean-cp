@@ -13,9 +13,9 @@ git config --global user.email "travis@travis-ci.org"
 git config --global user.name "travis-ci"
 git clone --quiet --branch=gh-pages https://${GH_TOKEN}@github.com/erchu/bean-cp gh-pages > /dev/null
 
-# Prepare files to push
-cd $HOME/gh-pages/upload
-git rm -rf ./javadoc
+# Copy and prepare files to push
+cd $HOME/gh-pages
+git rm -rf ./apidocs/*
 cp $HOME/build/erchu/bean-cp/target/beancp-*.jar ./upload
 cp -R $HOME/build/erchu/bean-cp/target/apidocs/* ./apidocs
 
