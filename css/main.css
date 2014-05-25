@@ -79,22 +79,27 @@ div.page-content > header {
 #page-menu a.selected {
 	background-color: rgba(255, 255, 255, 0.75);
 	border: 1px solid #d7b469;
+	padding-left: 14px;
+	padding-right: 14px;
 	padding-top: 0;
-}
-
-#page-menu a.selected:hover {
-	padding-left: 15px;
-	padding-right: 15px;
-	margin-left: 0;
-	margin-right: 0;
 }
 
 #page-menu a:hover {
 	background-color: rgba(255, 255, 255, 0.75);
-	padding-left: 13px;
-	padding-right: 13px;
-	margin-left: 2px;
-	margin-right: 2px;
+	padding-left: 14px;
+	padding-right: 14px;
+	padding-top: 0;
+	padding-bottom: 0;
+	margin: 1px;
+}
+
+#page-menu a.selected:hover {
+	background-color: rgba(255, 255, 255, 0.75);
+	border: 1px solid #d7b469;
+	padding-left: 14px;
+	padding-right: 14px;
+	padding-top: 0;
+	margin: 0;
 }
 
 #page-logo-panel {
