@@ -46,38 +46,40 @@ div.page-content > header {
 
 #page-menu {
 	display: table-row;
-	height: 26px;
 	border: 1px solid #808080;
 	background-color: rgba(255, 255, 255, 0.5);
 	width: 440px;
-	padding-top: 1px;
 	padding-left: 1px;
 	padding-right: 1px;
-	padding-bottom: 1px;
 	float: right;
+}
+
+#page-menu * {
+	margin: 0;
+	padding: 0;
 }
 
 #page-menu > div {
 	display: table-cell;
 	float: left;
 	font-weight: bold;
+	margin-top: 1px;
+	margin-bottom: 1px;
 }
 
 #page-menu a {
+	display: block;
 	color: #b37000;
 	padding-top: 1px;
 	padding-left: 15px;
 	padding-right: 15px;
-	padding-bottom: 2px;
-}
-
-#page-menu img {
-	height: 14px;
+	margin: 0;
 }
 
 #page-menu a.selected {
 	background-color: rgba(255, 255, 255, 0.75);
 	border: 1px solid #d7b469;
+	padding-top: 0;
 }
 
 #page-menu a.selected:hover {
