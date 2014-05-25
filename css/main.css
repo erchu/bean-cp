@@ -130,7 +130,7 @@ div.page-content > footer {
 
 	padding: 0;
 
-	background:  #eee;
+	background:  #f0f0f0;
 	background:  -moz-linear-gradient(top, #f7f8f7 0%, #f0f0f0 100%);
 	background:  -webkit-gradient(linear, left top, left bottom, color-stop(0%,#f7f8f7), color-stop(100%,#f0f0f0));
 	background:  -webkit-linear-gradient(top, #f7f8f7 0%,#f0f0f0 100%);
@@ -142,6 +142,26 @@ div.page-content > footer {
 	border: 1px solid #d2d2d2;
 	box-shadow: inset #fff 0 1px 0, inset rgba(0,0,0,0.03) 0 -1px 0;
 	width: 242px;
+}
+
+#project-download-section li:hover {
+	background:  #eee;
+	background:  -moz-linear-gradient(top, #f8f8f8 0%, #dddddd 100%);
+	background:  -webkit-gradient(linear, left top, left bottom, color-stop(0%,#f8f8f8), color-stop(100%,#dddddd));
+	background:  -webkit-linear-gradient(top, #f8f8f8 0%,#dddddd 100%);
+	background:  -o-linear-gradient(top, #f8f8f8 0%,#dddddd 100%);
+	background:  -ms-linear-gradient(top, #f8f8f8 0%,#dddddd 100%);
+	background:  linear-gradient(top, #f8f8f8 0%,#dddddd 100%);
+}
+
+#project-download-section li:first-child:hover {
+	border-top-left-radius: 5px;
+	border-bottom-left-radius: 5px;
+}
+
+#project-download-section li:last-child:hover {
+	border-top-right-radius: 5px;
+	border-bottom-right-radius: 5px;
 }
 
 #project-download-section li:first-child {
