@@ -1,0 +1,212 @@
+
+/* Fonts */
+
+
+@import url(http://fonts.googleapis.com/css?family=Arimo:400,700);
+
+
+/* Page layout */
+
+
+html {
+	height: 100%;
+}
+	
+body {
+	background: url('../images/background.png') repeat scroll top left #F2F2F2;
+	font-family: 'Arimo', sans-serif;
+	min-height: 100%;
+}
+
+body > div.page-content {
+	width: 980px;
+	margin: 0 auto;
+	padding: 0;
+	background-color: #ffffff;
+	border: 1px solid #aeaeae;
+	box-shadow: 0 0 3px #a1a1a1;	
+	height: 100%;
+}
+
+div.page-content > header {
+	width: 978px;
+	height: 66px;
+	padding-left: 22px;
+	padding-right: 22px;
+	margin: 0;
+	background-image: url('../images/top-background.png'); 
+	background-repeat: no-repeat;
+	display: table;
+}
+
+#page-menu-panel {
+	display: table-cell;
+	vertical-align: middle;
+}
+
+#page-menu {
+	display: table-row;
+	height: 25px;
+	border: 1px solid #808080;
+	background-color: rgba(255, 255, 255, 0.5);
+	width: 440px;
+	padding-left: 1px;
+	padding-right: 1px;
+	float: right;
+}
+
+#page-menu > div {
+	display: table-cell;
+	float: left;
+	padding-top: 1px;
+	font-weight: bold;
+}
+
+#page-menu a {
+	color: #b37000;
+	padding-left: 15px;
+	padding-right: 15px;
+	padding-top: 1px;
+	padding-bottom: 2px;
+}
+
+#page-menu a.selected {
+	background-color: rgba(255, 255, 255, 0.75);
+	border: 1px solid #d7b469;
+}
+
+#page-menu a.selected:hover {
+	padding-left: 15px;
+	padding-right: 15px;
+	margin-left: 0;
+	margin-right: 0;
+}
+
+#page-menu a:hover {
+	background-color: rgba(255, 255, 255, 0.75);
+	padding-left: 13px;
+	padding-right: 13px;
+	margin-left: 2px;
+	margin-right: 2px;
+}
+
+#page-logo-panel {
+	display: table-cell;
+	vertical-align: middle;
+}
+
+div.page-content > section {
+	padding-top: 15px;
+	padding-left: 22px;
+	width: 70%;
+	float: left;
+}
+
+div.page-content > footer {
+	padding-left: 22px;
+	padding-right: 22px;
+	padding-top: 44px;
+	width: 30%;
+	float: right;
+	display: table;
+}
+
+#project-download-section ul {
+	float: left;
+	list-style: none;
+	height: 36px;
+
+	padding: 0;
+
+	background:  #eee;
+	background:  -moz-linear-gradient(top, #f7f8f7 0%, #f0f0f0 100%);
+	background:  -webkit-gradient(linear, left top, left bottom, color-stop(0%,#f7f8f7), color-stop(100%,#f0f0f0));
+	background:  -webkit-linear-gradient(top, #f7f8f7 0%,#f0f0f0 100%);
+	background:  -o-linear-gradient(top, #f7f8f7 0%,#f0f0f0 100%);
+	background:  -ms-linear-gradient(top, #f7f8f7 0%,#f0f0f0 100%);
+	background:  linear-gradient(top, #f7f8f7 0%,#f0f0f0 100%);
+
+	border-radius: 5px;
+	border: 1px solid #d2d2d2;
+	box-shadow: inset #fff 0 1px 0, inset rgba(0,0,0,0.03) 0 -1px 0;
+	width: 242px;
+}
+
+#project-download-section li:first-child {
+	border-right: 1px solid #d2d2d2;
+}
+
+#project-download-section li {
+	width: 120px;
+	float: left;
+	height: 35px;
+}
+
+#project-download-section ul a {
+	line-height: 1;
+	font-size: 10px;
+	color: #999;
+	display: block;
+	text-align: center;
+	padding-top: 6px;
+	height: 35px;
+}
+
+#project-download-section ul a {
+	text-decoration: none;
+}
+
+#project-download-section li:hover * {
+	color: #b37000 !important;
+}
+
+#project-download-section strong {
+	font-size: 13px;
+	font-family: Arial, Helvetica, sans-serif;
+	display: block;
+	color: #222;
+}
+
+#project-maintenance-info {
+	position: fixed;
+	margin-top: 50px;
+}
+
+#project-maintenance-info > p {
+	font-size: 12px;
+	margin-top: 10px;
+	margin-bottom: 10px;
+}
+
+
+/* Content */
+
+
+h1 {
+	font-size: 18px;
+	font-weight: normal;
+	color: #b37000;
+}
+
+h1, p {
+	margin-top: 20px;
+	margin-bottom: 20px;
+}
+
+code, pre {
+  font-family: Monaco, Bitstream Vera Sans Mono, Lucida Console, Terminal;
+  color: #333;
+  font-size: 12px;
+}
+
+pre {
+  padding: 8px 15px;
+  background:  #f7f8f7;  
+  border-radius: 5px;
+  border: 1px solid #e5e5e5;
+  overflow-x:  auto;
+}
+
+.work-in-progress {
+	background-color:  #ffff8d;
+}
