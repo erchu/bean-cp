@@ -1,3 +1,11 @@
 language: java
 jdk:
   - oraclejdk8
+deploy:
+  provider: releases
+  api-key: "GITHUB OAUTH TOKEN"
+  file: target/beancp-0.1.jar
+  skip_cleanup: true
+  on:
+    tags: true
+    all_branches: true
