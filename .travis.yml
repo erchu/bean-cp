@@ -3,7 +3,7 @@ jdk:
 - oraclejdk8
 env:
   global:
-    secure: UnJ1PQ3oFGS3rNJsDGXZe4MYlWB7OBaOQOZXb0a1b0b3Y2yvMzMLhV5I55FYXAlU1Y72n7/SyifUnFoi3Z50XhOPTG+FxykW8RqwlQ+XSekSb9ALB62eWYHObwgVQEP1TT52FBp25JNb/OYMUb/zzY/MlHYZpqKV6Jv0ckFwSo8=
+  - secure: Ujy8ogsN6A0R7rADVbEhF5/NkPnIqqAVBM5d0O7iBc1xWzenlHu0Pm1rdin73iKFfoZ1vMhafn26LswYzyZE3kvNj5GVMYbAeFHUrqafYzTKioVjRE/NuPdGZbLYceiVf/mMghGZeJtM+y8xec+CNt2pyFKkpA+ASPKDZ1UqflY=
 before_script:
 - chmod +x ./deploy.sh
 after_success:
