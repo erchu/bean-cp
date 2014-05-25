@@ -3,8 +3,9 @@ jdk:
 - oraclejdk8
 deploy:
   provider: releases
-  api_key:
-    secure: "VjAImm3kefVaJUUDJocOIgN3OscF3/GtT/V3cbc8jWJMAYl97M8OkvgPbgHzRDjjhZuAo34ICm6U6gll1xhaCmqfD5wzAGdnuOaA7rW3EH7DUijypqbY/Ozy0Q+N1qXr0lA6PG6hXVxMUQ1wtH4mDV58FDB8Qz2Yrsv+ZYVlXUg="
   file: target/beancp-0.1.jar
   on:
     repo: erchu/bean-cp
+env:
+  global:
+    secure: DJ9xHEbxAPOeGoGova0NEll9ziYZI8DLneMl6/lEmhLxQ3NdumBvL9C5l3TIcrpPX4oD9cK4hhpWfxOIC2WvNS1GEXeWgg1aOzKOQryCLH9y8bXfvSB/zLOQjk3plYJz84k3XxE/voWaRN7KzHKw9A97/s0/iS5eBEfHR4xpZdw=
