@@ -4,7 +4,7 @@ jdk:
 deploy:
   provider: releases
   api_key:
-    secure: InxFusN/i/boSRGpKtRQG2yFneXXNyiAZO5gt8QSLV4wqncZg/Ikiqc0jcpHtaLgRC1yefTkgFjMECnqAJRJyYpBe1tLAFx9VrkMArQARJjRNoIIZ8gOD+ofmn72k0Sq2uL41kXkXlBtD5Ek/0hx/Qej8vgYG0obo/6n6fIBBfs=
+    secure: "VjAImm3kefVaJUUDJocOIgN3OscF3/GtT/V3cbc8jWJMAYl97M8OkvgPbgHzRDjjhZuAo34ICm6U6gll1xhaCmqfD5wzAGdnuOaA7rW3EH7DUijypqbY/Ozy0Q+N1qXr0lA6PG6hXVxMUQ1wtH4mDV58FDB8Qz2Yrsv+ZYVlXUg="
   file: target/beancp-0.1.jar
   on:
     repo: erchu/bean-cp
