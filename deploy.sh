@@ -1,12 +1,10 @@
-# Get to the Travis build directory, configure git and clone the repo
-
 # Build javadoc
 
 cd $HOME/build/erchu/bean-cp
 mvn javadoc:javadoc
 mvn javadoc:jar
 
-# Checkout gh-pages
+# Configure git and clone the repo
 
 cd $HOME
 git config --global user.email "travis@travis-ci.org"
