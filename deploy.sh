@@ -21,5 +21,5 @@ cp -R $HOME/build/erchu/bean-cp/target/apidocs/* ./apidocs
 # Commit and push the changes
 
 git add . -all
-git commit -m "Lastest jar on successful travis build $TRAVIS_BUILD_NUMBER auto-pushed to gh-pages"
+git commit -m "Travis build $TRAVIS_BUILD_NUMBER: auto-pushed to gh-pages"
 git push -fq origin gh-pages > /dev/null
