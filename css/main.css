@@ -46,28 +46,33 @@ div.page-content > header {
 
 #page-menu {
 	display: table-row;
-	height: 25px;
+	height: 26px;
 	border: 1px solid #808080;
 	background-color: rgba(255, 255, 255, 0.5);
 	width: 440px;
+	padding-top: 1px;
 	padding-left: 1px;
 	padding-right: 1px;
+	padding-bottom: 1px;
 	float: right;
 }
 
 #page-menu > div {
 	display: table-cell;
 	float: left;
-	padding-top: 1px;
 	font-weight: bold;
 }
 
 #page-menu a {
 	color: #b37000;
+	padding-top: 1px;
 	padding-left: 15px;
 	padding-right: 15px;
-	padding-top: 1px;
 	padding-bottom: 2px;
+}
+
+#page-menu img {
+	height: 14px;
 }
 
 #page-menu a.selected {
