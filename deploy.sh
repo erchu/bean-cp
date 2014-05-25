@@ -7,6 +7,6 @@ git clone --quiet --branch=gh-pages https://${GH_TOKEN}@github.com/erchu/bean-cp
 # Commit and Push the Changes
 ls -R
 cd gh-pages/upload
-cp $HOME/target/beancp-0.1.jar ./upload
+cp $HOME/build/erchu/bean-cp/target/beancp-0.1.jar ./upload
 git commit -am "Lastest jar on successful travis build $TRAVIS_BUILD_NUMBER auto-pushed to gh-pages"
 git push -fq origin gh-pages > /dev/null
