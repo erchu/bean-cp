@@ -1,3 +1,10 @@
 language: java
 jdk:
-  - oraclejdk8
+- oraclejdk8
+deploy:
+  provider: releases
+  api_key:
+    secure: InxFusN/i/boSRGpKtRQG2yFneXXNyiAZO5gt8QSLV4wqncZg/Ikiqc0jcpHtaLgRC1yefTkgFjMECnqAJRJyYpBe1tLAFx9VrkMArQARJjRNoIIZ8gOD+ofmn72k0Sq2uL41kXkXlBtD5Ek/0hx/Qej8vgYG0obo/6n6fIBBfs=
+  file: target/beancp-0.1.jar
+  on:
+    repo: erchu/bean-cp
