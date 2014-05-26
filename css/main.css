@@ -34,9 +34,14 @@ div.page-content > header {
 	padding-left: 22px;
 	padding-right: 22px;
 	margin: 0;
-	background-image: url('../images/top-background.png'); 
+	background-image: url('../images/header-background.png'); 
 	background-repeat: no-repeat;
 	display: table;
+}
+
+div.page-main {
+	width: 978px;
+	height: 100%;
 }
 
 #page-menu-panel {
@@ -44,13 +49,20 @@ div.page-content > header {
 	vertical-align: middle;
 }
 
+#footer-page-menu-panel {
+	display: table-cell;
+	vertical-align: top;
+	margin-top: 10px;
+	text-align: right;
+	float: right;
+}
+	
 #page-menu {
 	display: table-row;
 	border: 1px solid #808080;
 	background-color: rgba(255, 255, 255, 0.7);
 	width: 440px;
-	padding-left: 1px;
-	padding-right: 1px;
+	padding: 1px;
 	float: right;
 }
 
@@ -62,9 +74,6 @@ div.page-content > header {
 #page-menu > div {
 	display: table-cell;
 	float: left;
-	font-weight: bold;
-	margin-top: 1px;
-	margin-bottom: 1px;
 }
 
 #page-menu a {
@@ -73,6 +82,24 @@ div.page-content > header {
 	padding-top: 1px;
 	padding-left: 15px;
 	padding-right: 15px;
+	margin: 0;
+}
+
+#footer-page-menu {
+	display: table-row;
+}
+
+#footer-page-menu > div {
+	display: table-cell;
+}
+
+#footer-page-menu a {
+	display: block;
+	font-size: 12px;
+	color: #dbedf4;
+	padding-top: 1px;
+	padding-left: 10px;
+	padding-right: 10px;
 	margin: 0;
 }
 
@@ -107,14 +134,21 @@ div.page-content > header {
 	vertical-align: middle;
 }
 
-div.page-content > section {
+#footer-page-logo-panel {
+	display: table-cell;
+	vertical-align: top;
+	margin-top: 10px;
+	float: left;
+}
+
+#main-content-section {
 	padding-top: 15px;
 	padding-left: 22px;
 	width: 70%;
 	float: left;
 }
 
-div.page-content > footer {
+#project-download-section {
 	padding-left: 22px;
 	padding-right: 22px;
 	padding-top: 44px;
@@ -123,7 +157,7 @@ div.page-content > footer {
 	display: table;
 }
 
-#project-download-section ul {
+#project-download-panel ul {
 	float: left;
 	list-style: none;
 	height: 36px;
@@ -144,7 +178,7 @@ div.page-content > footer {
 	width: 242px;
 }
 
-#project-download-section li:hover {
+#project-download-panel li:hover {
 	background:  #eee;
 	background:  -moz-linear-gradient(top, #f8f8f8 0%, #dddddd 100%);
 	background:  -webkit-gradient(linear, left top, left bottom, color-stop(0%,#f8f8f8), color-stop(100%,#dddddd));
@@ -154,27 +188,27 @@ div.page-content > footer {
 	background:  linear-gradient(top, #f8f8f8 0%,#dddddd 100%);
 }
 
-#project-download-section li:first-child:hover {
+#project-download-panel li:first-child:hover {
 	border-top-left-radius: 5px;
 	border-bottom-left-radius: 5px;
 }
 
-#project-download-section li:last-child:hover {
+#project-download-panel li:last-child:hover {
 	border-top-right-radius: 5px;
 	border-bottom-right-radius: 5px;
 }
 
-#project-download-section li:first-child {
+#project-download-panel li:first-child {
 	border-right: 1px solid #d2d2d2;
 }
 
-#project-download-section li {
+#project-download-panel li {
 	width: 120px;
 	float: left;
 	height: 35px;
 }
 
-#project-download-section ul a {
+#project-download-panel ul a {
 	line-height: 1;
 	font-size: 10px;
 	color: #999;
@@ -184,15 +218,15 @@ div.page-content > footer {
 	height: 35px;
 }
 
-#project-download-section ul a {
+#project-download-panel ul a {
 	text-decoration: none;
 }
 
-#project-download-section li:hover * {
+#project-download-panel li:hover * {
 	color: #b37000 !important;
 }
 
-#project-download-section strong {
+#project-download-panel strong {
 	font-size: 13px;
 	font-family: Arial, Helvetica, sans-serif;
 	display: block;
@@ -207,6 +241,17 @@ div.page-content > footer {
 	font-size: 12px;
 	margin-top: 10px;
 	margin-bottom: 10px;
+}
+
+footer {
+	width: 978px;
+	height: 79px;
+	padding-left: 22px;
+	padding-right: 22px;
+	margin: 0;
+	background-image: url('../images/footer-background.png'); 
+	background-repeat: no-repeat;
+	display: table;
 }
 
 
