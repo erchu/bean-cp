@@ -16,6 +16,7 @@ body {
 	background: url('../images/background.png') repeat scroll top left #F2F2F2;
 	font-family: 'Arimo', sans-serif;
 	min-height: 100%;
+	padding-top: 5px;
 }
 
 body > div.page-content {
