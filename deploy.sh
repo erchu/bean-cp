@@ -17,6 +17,7 @@ cd $HOME/gh-pages
 rm -rf ./apidocs/*
 cp $HOME/build/erchu/bean-cp/target/beancp-*.jar ./upload
 cp -R $HOME/build/erchu/bean-cp/target/apidocs/* ./apidocs
+cp -f ./apidocs-custom/* ./apidocs/
 
 # Commit and push the changes
 
