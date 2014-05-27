@@ -254,6 +254,10 @@ footer {
 	display: table;
 }
 
+#apidocs {
+	width: 100%;
+}
+
 
 /* Content */
 
@@ -285,4 +289,20 @@ pre {
 
 .work-in-progress {
 	background-color:  #ffff8d;
+}
+
+
+/* jQuery UI overrides */
+
+.ui-dialog-title {
+	font-size: 13px !important;
+}
+
+.ui-dialog-titlebar {
+	background-image: url('../images/header-background.png') !important;
+	background-size: 100% !important;
+}
+
+.ui-dialog-titlebar > button {
+	border: none !important;
 }

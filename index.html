@@ -13,6 +13,7 @@
 		
         <link rel="stylesheet" href="css/normalize.min.css">
         <link rel="stylesheet" href="css/bootstrap.min.css">
+		<link rel="stylesheet" href="css/jquery-ui/jquery-ui-1.10.4.custom.min.css">
         <link rel="stylesheet" href="css/main.css">
 
         <!--[if lt IE 9]>
@@ -78,14 +79,19 @@
 					<div><a href="#">home</a></div>
 					<div><a href="#">download</a></div>
 					<div><a href="#">user manual</a></div>
-					<div><a id="api-specs-link" href="apidocs/index.html" target="_blank">api specs</a></div>
+					<div><a id="footer-api-specs-link" href="apidocs/index.html" target="_blank">api specs</a></div>
 					<div><a href="#">support</a></div>
 				</nav>
 			</div>
 		  </footer>
 		</div>
+		
+		<div id="dialog" style="display: none;" title="API Specs">
+			<iframe id="apidocs" src="apidocs/overview-summary.html"></iframe>
+		</div>
 	
-        <script src="js/vendor/jquery-1.11.0.min.js"></script>
+		<script src="js/vendor/jquery-1.10.2.js"></script>
+		<script src="js/vendor/jquery-ui.custom.min.js"></script>
         <script src="js/main.js"></script>
 
 		<!--
