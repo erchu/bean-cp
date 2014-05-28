@@ -16,7 +16,7 @@ body {
 	background: url('../images/background.png') repeat scroll top left #F2F2F2;
 	font-family: 'Arimo', sans-serif;
 	min-height: 100%;
-	padding-top: 5px;
+	padding: 5px;
 }
 
 body > div.page-content {
@@ -97,7 +97,7 @@ div.page-main {
 #footer-page-menu a {
 	display: block;
 	font-size: 12px;
-	color: #dbedf4;
+	color: #6d767a;
 	padding-top: 1px;
 	padding-left: 10px;
 	padding-right: 10px;
