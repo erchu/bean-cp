@@ -18,7 +18,7 @@
 package org.beancp;
 
 /**
- * Source or destination part (ex. property) referenced by binding.
+ * Source or destination part (for example property) referenced by binding.
  */
 public interface BindingSide {
 
