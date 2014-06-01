@@ -61,7 +61,7 @@ final class MapImpl<S, D> implements Map<S, D>, MappingExecutor<S, D> {
 
     private Mapper executionPhaseMapper;
 
-    private MapConvention executionPhaseMapConvention;
+    private MapConventionExecutor executionPhaseMapConvention;
 
     private final ThreadLocal<S> executionPhaseSourceReference = new ThreadLocal<>();
 
@@ -201,8 +201,10 @@ final class MapImpl<S, D> implements Map<S, D>, MappingExecutor<S, D> {
     }
 
     @Override
-    public MapImpl<S, D> useConvention(final MapConvention MapConvention) {
-        notNull(MapConvention, "MapConvention");
+    public MapImpl<S, D> useConvention(final MapConvention mapConvention) {
+        notNull(mapConvention, "mapConvention");
+        
+        MapConventionExecutor conventionExecutor = new MapConventionExecutor(mapConvention);
 
         if (mode == MapMode.CONFIGURATION) {
             if (useConventionExecuted) {
@@ -215,8 +217,8 @@ final class MapImpl<S, D> implements Map<S, D>, MappingExecutor<S, D> {
             }
 
             // Build and cache result
-            MapConvention.build(configurationPhaseMappingsInfo, sourceClass, destinationClass);
-            this.executionPhaseMapConvention = MapConvention;
+            conventionExecutor.build(configurationPhaseMappingsInfo, sourceClass, destinationClass);
+            this.executionPhaseMapConvention = conventionExecutor;
 
             useConventionExecuted = true;
         }

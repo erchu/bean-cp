@@ -17,6 +17,12 @@
  */
 package org.beancp.commons;
 
+import org.beancp.FieldBindingSide;
+import org.beancp.PropertyBindingSide;
+import org.beancp.Binding;
+import org.beancp.BindingWithValueConversion;
+import org.beancp.BindingWithValueMap;
+import org.beancp.BindingSide;
 import org.beancp.MapConvention;
 import java.beans.BeanInfo;
 import java.beans.IntrospectionException;
@@ -28,7 +34,6 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
-import org.beancp.Mapper;
 import org.beancp.MappingException;
 import org.beancp.MappingInfo;
 import static org.apache.commons.lang3.ObjectUtils.*;
@@ -55,8 +60,6 @@ public class NameBasedMapConvention implements MapConvention {
     private boolean failIfNotAllDestinationMembersMapped;
 
     private boolean failIfNotAllSourceMembersMapped;
-
-    private List<Binding> bindings = null;
 
     /**
      * Constructs instance.
@@ -230,77 +233,7 @@ public class NameBasedMapConvention implements MapConvention {
     }
 
     @Override
-    public void build(final MappingInfo mappingInfo, final Class sourceClass, final Class destinationClass) {
-        notNull(mappingInfo, "mappingInfo");
-        notNull(sourceClass, "sourceClass");
-        notNull(destinationClass, "destinationClass");
-
-        //TODO: Proxy generation using javassist would be faster?
-        this.bindings = getBindings(mappingInfo, sourceClass, destinationClass);
-    }
-
-    @Override
-    public void map(final Mapper mapper, final Object source, final Object destination) {
-        if (tryMap(mapper, source, destination) == false) {
-            throw new MappingException(String.format("I don't know how to map %s to %s",
-                    source.getClass(), destination.getClass()));
-        }
-    }
-
-    @Override
-    public boolean tryMap(final Mapper mapper, final Object source, final Object destination) {
-        notNull(mapper, "mapper");
-        notNull(source, "source");
-        notNull(destination, "destination");
-
-        List<Binding> bindingsToExecute = getBindingsToExecute(
-                mapper, source.getClass(), destination.getClass());
-
-        if (bindingsToExecute.isEmpty()) {
-            return false;
-        } else {
-            executeBindings(bindingsToExecute, mapper, source, destination);
-
-            return true;
-        }
-    }
-
-    @Override
-    public boolean canMap(
-            final MappingInfo mappingsInfo, final Class sourceClass, final Class destinationClass) {
-        notNull(mappingsInfo, "mappingsInfo");
-        notNull(sourceClass, "source");
-        notNull(destinationClass, "destination");
-
-        List<Binding> bindingsToExecute = getBindingsToExecute(
-                mappingsInfo, sourceClass, destinationClass);
-
-        return (bindingsToExecute.isEmpty() == false);
-    }
-
-    private List<Binding> getBindingsToExecute(
-            final MappingInfo mappingsInfo, final Class sourceClass, final Class destinationClass) {
-        // According to API specification build() method but never concurrently or after first of
-        // this method, so we can safely get bindings field value without acquiring any locks or
-        // defining fields as volatile.
-        List<Binding> bindingsToExecute = (bindings != null)
-                ? bindings
-                // According to API specification it is build() method may be not executed before
-                // this method call. In this situation we generate bindings on the fly. Moreover API
-                // prohibits produce state that is shared state between calls, so next call
-                : getBindings(mappingsInfo, sourceClass, destinationClass);
-
-        return bindingsToExecute;
-    }
-
-    private void executeBindings(final List<Binding> bindingsToExecute, final Mapper mapper,
-            final Object source, final Object destination) {
-        bindingsToExecute.stream().forEach(i -> {
-            i.execute(mapper, source, destination);
-        });
-    }
-
-    private List<Binding> getBindings(
+    public List<Binding> getBindings(
             final MappingInfo mappingsInfo,
             final Class sourceClass,
             final Class destinationClass) {

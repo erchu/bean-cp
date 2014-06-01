@@ -23,6 +23,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 import static org.apache.commons.lang3.Validate.*;
 
 /**
@@ -34,7 +35,7 @@ public final class MapperBuilder implements MappingInfo {
 
     private final List<Converter<?, ?>> converters = new LinkedList<>();
 
-    private final List<MapConvention> mapAnyConventions = new LinkedList<>();
+    private final List<MapConventionExecutor> mapAnyConventions = new LinkedList<>();
 
     private boolean mapperBuilded = false;
 
@@ -141,7 +142,11 @@ public final class MapperBuilder implements MappingInfo {
      */
     public MapperBuilder addMapAnyByConvention(final MapConvention... conventions)
             throws MapperConfigurationException {
-        this.mapAnyConventions.addAll(Arrays.asList(conventions));
+        List<MapConventionExecutor> conventionExecutors = Arrays.stream(conventions)
+                .map(i -> new MapConventionExecutor(i))
+                .collect(Collectors.toList());
+
+        this.mapAnyConventions.addAll(conventionExecutors);
 
         return this;
     }
@@ -162,7 +167,7 @@ public final class MapperBuilder implements MappingInfo {
     public boolean isMapAvailable(final Class sourceClass, final Class destinationClass) {
         notNull(sourceClass, "sourceClass");
         notNull(destinationClass, "destinationClass");
-        
+
         return MapperExecutorSelector.isMapAvailable(
                 this,
                 sourceClass,
@@ -175,7 +180,7 @@ public final class MapperBuilder implements MappingInfo {
     public boolean isConverterAvailable(final Class sourceClass, final Class destinationClass) {
         notNull(sourceClass, "sourceClass");
         notNull(destinationClass, "destinationClass");
-        
+
         return MapperExecutorSelector.isConverterAvailable(
                 this,
                 sourceClass,

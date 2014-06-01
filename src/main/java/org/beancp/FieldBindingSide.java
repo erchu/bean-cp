@@ -15,15 +15,22 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library.
  */
-package org.beancp.commons;
+package org.beancp;
 
 import java.lang.reflect.Field;
-import org.beancp.MappingException;
 
-final class FieldBindingSide implements BindingSide {
+/**
+ * Binding to field.
+ */
+public final class FieldBindingSide implements BindingSide {
 
     private final Field field;
 
+    /**
+     * Creates binding to field from field reference.
+     * 
+     * @param field field reference used to create binding.
+     */
     public FieldBindingSide(final Field field) {
         this.field = field;
     }

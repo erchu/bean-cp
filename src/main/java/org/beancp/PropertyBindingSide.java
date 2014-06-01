@@ -15,14 +15,16 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library.
  */
-package org.beancp.commons;
+package org.beancp;
 
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Method;
-import org.beancp.MappingException;
 import static org.apache.commons.lang3.Validate.*;
 
-class PropertyBindingSide implements BindingSide {
+/**
+ * Binding to property.
+ */
+public class PropertyBindingSide implements BindingSide {
 
     private final Method readMethod;
 
@@ -32,6 +34,12 @@ class PropertyBindingSide implements BindingSide {
 
     private final Class valueClass;
 
+    /**
+     *
+     * Creates binding to property from property information.
+     *
+     * @param propertyDescriptor property information used to create binding
+     */
     public PropertyBindingSide(final PropertyDescriptor propertyDescriptor) {
         this.valueClass = propertyDescriptor.getPropertyType();
         this.readMethod = propertyDescriptor.getReadMethod();
@@ -40,7 +48,7 @@ class PropertyBindingSide implements BindingSide {
     }
 
     @Override
-    @SuppressWarnings({"TooBroadCatch", "UseSpecificCatch"})
+    @SuppressWarnings({ "TooBroadCatch", "UseSpecificCatch" })
     public Object getValue(final Object object) {
         isTrue(readMethod != null, "Getter is not available.");
 
@@ -53,7 +61,7 @@ class PropertyBindingSide implements BindingSide {
     }
 
     @Override
-    @SuppressWarnings({"TooBroadCatch", "UseSpecificCatch"})
+    @SuppressWarnings({ "TooBroadCatch", "UseSpecificCatch" })
     public void setValue(final Object object, final Object value) {
         isTrue(writeMethod != null, "Setter is not available.");
 

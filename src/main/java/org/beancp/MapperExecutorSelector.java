@@ -46,7 +46,7 @@ class MapperExecutorSelector {
             final Class sourceClass,
             final Class destinationClass,
             final Collection<MapImpl<?, ?>> maps,
-            final Collection<MapConvention> mapAnyConventions) {
+            final Collection<MapConventionExecutor> mapAnyConventions) {
         notNull(sourceClass, "sourceClass");
         notNull(destinationClass, "destinationClass");
         notNull(maps, "maps");

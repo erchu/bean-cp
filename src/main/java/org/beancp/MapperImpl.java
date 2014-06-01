@@ -31,12 +31,12 @@ class MapperImpl implements Mapper {
 
     private final Collection<Converter<?, ?>> converters;
 
-    private final List<MapConvention> mapAnyConventions;
+    private final List<MapConventionExecutor> mapAnyConventions;
 
     MapperImpl(
             final Collection<Converter<?, ?>> converters,
             final List<MapImpl<?, ?>> maps,
-            final List<MapConvention> mapAnyConvention) {
+            final List<MapConventionExecutor> mapAnyConvention) {
         this.converters = Collections.unmodifiableCollection(converters);
         this.maps = Collections.unmodifiableCollection(maps);
         this.mapAnyConventions = mapAnyConvention;
@@ -160,7 +160,7 @@ class MapperImpl implements Mapper {
             return true;
         }
 
-        for (MapConvention i : mapAnyConventions) {
+        for (MapConventionExecutor i : mapAnyConventions) {
             if (i.tryMap(this, source, destination)) {
                 return true;
             }

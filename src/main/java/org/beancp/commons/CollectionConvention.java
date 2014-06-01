@@ -18,10 +18,9 @@
 
 package org.beancp.commons;
 
-import org.beancp.Mapper;
-import org.beancp.MapperConfigurationException;
+import java.util.List;
+import org.beancp.Binding;
 import org.beancp.MapConvention;
-import org.beancp.MappingException;
 import org.beancp.MappingInfo;
 
 public class CollectionConvention implements MapConvention {
@@ -33,33 +32,8 @@ public class CollectionConvention implements MapConvention {
     }
 
     @Override
-    public void build(
-            final MappingInfo mappingInfo, final Class sourceClass, final Class destinationClass)
-            throws MapperConfigurationException {
-        //TODO: Not supported yet
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public void map(
-            final Mapper mapper, final Object source, final Object destination)
-            throws MappingException {
-        //TODO: Not supported yet
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public boolean tryMap(final Mapper mapper, final Object source, final Object destination)
-            throws MappingException {
-        //TODO: Not supported yet
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public boolean canMap(
-            final MappingInfo mappingsInfo,
-            final Class sourceClass,
-            final Class destinationClass) {
+    public List<Binding> getBindings(
+            final MappingInfo mappingsInfo, final Class sourceClass, final Class destinationClass) {
         //TODO: Not supported yet
         throw new UnsupportedOperationException("Not supported yet.");
     }
