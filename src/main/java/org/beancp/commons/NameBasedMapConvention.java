@@ -58,7 +58,6 @@ public class NameBasedMapConvention implements MapConvention {
 
     private List<Binding> bindings = null;
 
-    //TODO: Add clone controling options
     /**
      * Constructs instance.
      */
