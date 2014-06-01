@@ -32,6 +32,7 @@ import org.beancp.Mapper;
 import org.beancp.MappingException;
 import org.beancp.MappingInfo;
 import static org.apache.commons.lang3.ObjectUtils.*;
+import org.apache.commons.lang3.StringUtils;
 import static org.apache.commons.lang3.Validate.*;
 
 /**
@@ -324,12 +325,6 @@ public class NameBasedMapConvention implements MapConvention {
             throw new UnsupportedOperationException("failIfNotAllSourceMembersMapped option not supported yet.");
         }
 
-        if (flateningEnabled) {
-            // TODO: Implement flateningEnabled option support
-            // TODO: Reverse flattening?
-            throw new UnsupportedOperationException("flateningEnabled option not supported yet.");
-        }
-
         List<Binding> result = new LinkedList<>();
         BeanInfo sourceBeanInfo, destinationBeanInfo;
 
@@ -351,16 +346,19 @@ public class NameBasedMapConvention implements MapConvention {
             Method destinationMember = destinationProperty.getWriteMethod();
 
             if (destinationMember != null) {
-                BindingSide sourceBindingSide
-                        = getMatchingSourceMember(sourceBeanInfo, sourceClass,
+                List<BindingSide> sourceBindingSide
+                        = getMatchingSourceMemberByName(sourceBeanInfo, sourceClass,
                                 destinationProperty.getName(), MemberAccessType.PROPERTY);
 
                 if (sourceBindingSide != null) {
                     BindingSide destinationBindingSide
                             = new PropertyBindingSide(destinationProperty);
 
+                    BindingSide[] sourceBindingSideArray
+                            = sourceBindingSide.stream().toArray(BindingSide[]::new);
+
                     Binding binding = getBidingIfAvailable(
-                            mappingsInfo, sourceBindingSide, destinationBindingSide);
+                            mappingsInfo, sourceBindingSideArray, destinationBindingSide);
 
                     if (binding != null) {
                         result.add(binding);
@@ -370,13 +368,18 @@ public class NameBasedMapConvention implements MapConvention {
         }
 
         for (Field destinationMember : destinationClass.getFields()) {
-            BindingSide sourceBindingSide = getMatchingSourceMember(sourceBeanInfo, sourceClass,
-                    destinationMember.getName(), MemberAccessType.FIELD);
+            List<BindingSide> sourceBindingSide
+                    = getMatchingSourceMemberByName(sourceBeanInfo, sourceClass,
+                            destinationMember.getName(), MemberAccessType.FIELD);
 
             if (sourceBindingSide != null) {
                 BindingSide destinationBindingSide = new FieldBindingSide(destinationMember);
+
+                BindingSide[] sourceBindingSideArray
+                        = sourceBindingSide.stream().toArray(BindingSide[]::new);
+
                 Binding binding = getBidingIfAvailable(
-                        mappingsInfo, sourceBindingSide, destinationBindingSide);
+                        mappingsInfo, sourceBindingSideArray, destinationBindingSide);
 
                 if (binding != null) {
                     result.add(binding);
@@ -387,16 +390,16 @@ public class NameBasedMapConvention implements MapConvention {
         return result;
     }
 
-    private BindingSide getMatchingSourceMember(
+    private List<BindingSide> getMatchingSourceMemberByName(
             final BeanInfo sourceBeanInfo,
             final Class sourceClass,
             final String atDestinationName,
             final MemberAccessType destinationMemberAccessType) {
-        BindingSide matchingSourcePropertyBindingSide
-                = getMatchingPropertyBindingSide(sourceBeanInfo, atDestinationName);
+        List<BindingSide> matchingSourcePropertyBindingSide = getMatchingPropertyByName(
+                sourceBeanInfo, atDestinationName, destinationMemberAccessType);
 
-        BindingSide matchingSourceFieldBindingSide
-                = getMatchingFieldBindingSide(sourceClass, atDestinationName);
+        List<BindingSide> matchingSourceFieldBindingSide = getMatchingFieldByName(
+                sourceClass, atDestinationName, destinationMemberAccessType);
 
         switch (destinationMemberAccessType) {
             case FIELD:
@@ -411,32 +414,125 @@ public class NameBasedMapConvention implements MapConvention {
         }
     }
 
-    private PropertyBindingSide getMatchingPropertyBindingSide(
+    private List<BindingSide> getMatchingPropertyByName(
             final BeanInfo sourceBeanInfo,
-            final String atDestinationName) {
-        Optional<PropertyDescriptor> result
+            final String atDestinationName,
+            final MemberAccessType destinationMemberAccessType) {
+        Optional<PropertyDescriptor> exactMatchResult
                 = Arrays.stream(sourceBeanInfo.getPropertyDescriptors())
-                .filter(i -> i.getName().equals(atDestinationName))
+                .filter(i -> i.getName().equalsIgnoreCase(atDestinationName))
                 .findFirst();
 
-        return (result.isPresent()) ? new PropertyBindingSide(result.get()) : null;
+        if (exactMatchResult.isPresent()) {
+            List<BindingSide> result = new LinkedList<>();
+            result.add(new PropertyBindingSide(exactMatchResult.get()));
+
+            return result;
+        }
+
+        if (flateningEnabled) {
+            Optional<PropertyDescriptor> partiallyMatchResult
+                    = Arrays.stream(sourceBeanInfo.getPropertyDescriptors())
+                    .filter(i -> StringUtils.startsWithIgnoreCase(atDestinationName, i.getName()))
+                    .sorted((x, y) -> y.getName().length() - x.getName().length())
+                    .findFirst();
+
+            if (partiallyMatchResult.isPresent()) {
+                BindingSide firstBinding = new PropertyBindingSide(partiallyMatchResult.get());
+                Class innerPropertyClass = firstBinding.getValueClass();
+
+                return getInnerMatchingSourceMemberByName(
+                        innerPropertyClass,
+                        atDestinationName,
+                        firstBinding,
+                        destinationMemberAccessType);
+            } else {
+                return null;
+            }
+        }
+
+        return null;
     }
 
-    private FieldBindingSide getMatchingFieldBindingSide(
-            final Class sourceClass, final String atDestinationName) {
-        Optional<Field> result
+    private List<BindingSide> getMatchingFieldByName(
+            final Class sourceClass,
+            final String atDestinationName,
+            final MemberAccessType destinationMemberAccessType) {
+        Optional<Field> exactMatchResult
                 = Arrays.stream(sourceClass.getFields())
-                .filter(i -> i.getName().equals(atDestinationName))
+                .filter(i -> i.getName().equalsIgnoreCase(atDestinationName))
                 .findFirst();
 
-        return (result.isPresent()) ? new FieldBindingSide(result.get()) : null;
+        if (exactMatchResult.isPresent()) {
+            List<BindingSide> result = new LinkedList<>();
+            result.add(new FieldBindingSide(exactMatchResult.get()));
+
+            return result;
+        }
+
+        if (flateningEnabled) {
+            Optional<Field> partiallyMatchResult
+                    = Arrays.stream(sourceClass.getFields())
+                    .filter(i -> StringUtils.startsWithIgnoreCase(atDestinationName, i.getName()))
+                    .sorted((x, y) -> y.getName().length() - x.getName().length())
+                    .findFirst();
+
+            if (partiallyMatchResult.isPresent()) {
+                BindingSide firstBinding = new FieldBindingSide(partiallyMatchResult.get());
+                Class innerPropertyClass = firstBinding.getValueClass();
+
+                return getInnerMatchingSourceMemberByName(
+                        innerPropertyClass,
+                        atDestinationName,
+                        firstBinding,
+                        destinationMemberAccessType);
+            } else {
+                return null;
+            }
+        }
+
+        return null;
+    }
+
+    private List<BindingSide> getInnerMatchingSourceMemberByName(
+            final Class innerPropertyClass,
+            final String atDestinationName,
+            final BindingSide firstBinding,
+            final MemberAccessType destinationMemberAccessType)
+            throws MappingException {
+        BeanInfo innerPropertyBeanInfo;
+
+        try {
+            innerPropertyBeanInfo = Introspector.getBeanInfo(innerPropertyClass);
+        } catch (IntrospectionException ex) {
+            throw new MappingException(
+                    String.format("Failed to get bean info for %s", innerPropertyClass), ex);
+        }
+
+        String innerDestinationName
+                = atDestinationName.substring(firstBinding.getName().length());
+
+        List<BindingSide> result
+                = getMatchingSourceMemberByName(
+                        innerPropertyBeanInfo,
+                        innerPropertyClass,
+                        innerDestinationName,
+                        destinationMemberAccessType);
+
+        if (result != null) {
+            result.add(0, firstBinding);
+
+            return result;
+        } else {
+            return null;
+        }
     }
 
     private Binding getBidingIfAvailable(
             final MappingInfo mappingsInfo,
-            final BindingSide sourceBindingSide,
+            final BindingSide[] sourceBindingSide,
             final BindingSide destinationBindingSide) {
-        Class sourceValueClass = sourceBindingSide.getValueClass();
+        Class sourceValueClass = sourceBindingSide[sourceBindingSide.length - 1].getValueClass();
         Class destinationValueClass = destinationBindingSide.getValueClass();
 
         if (sourceValueClass.equals(destinationValueClass)) {
