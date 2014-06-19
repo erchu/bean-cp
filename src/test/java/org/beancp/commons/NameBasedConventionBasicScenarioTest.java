@@ -23,170 +23,230 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 
 public class NameBasedConventionBasicScenarioTest {
-
+    
     public static class SourceWithByte {
-
+        
         private byte x;
-
+        
         public byte getX() {
             return x;
         }
-
+        
         public void setX(byte x) {
             this.x = x;
         }
     }
-
+    
     public static class DestinationWithDouble {
-
+        
         private double x;
-
+        
         public double getX() {
             return x;
         }
-
+        
         public void setX(double x) {
             this.x = x;
         }
     }
-
+    
     public static class InnerClass {
-
+        
         private final String value;
-
+        
         public InnerClass(final String value) {
             this.value = value;
         }
-
+        
         public String getValue() {
             return value;
         }
     }
-
+    
     public static class SimpleSourceWithProperties {
-
+        
         private int x, y;
-
+        
         private int z;
-
+        
         private int a;
-
+        
         private InnerClass inner;
-
+        
         public int getX() {
             return x;
         }
-
+        
         public void setX(int x) {
             this.x = x;
         }
-
+        
         public int getY() {
             return y;
         }
-
+        
         public void setY(int y) {
             this.y = y;
         }
-
+        
         public int getZ() {
             return z;
         }
-
+        
         public void setZ(int z) {
             this.z = z;
         }
-
+        
         public int getA() {
             return a;
         }
-
+        
         public void setA(int a) {
             this.a = a;
         }
-
+        
         public InnerClass getInner() {
             return inner;
         }
-
+        
         public void setInner(InnerClass inner) {
             this.inner = inner;
         }
     }
-
+    
     public static class SimpleDestinationWithProperties {
-
+        
         private int x, y;
-
+        
         private long z;
-
+        
         private int b;
-
+        
         private InnerClass inner;
-
+        
         public int getX() {
             return x;
         }
-
+        
         public void setX(int x) {
             this.x = x;
         }
-
+        
         public int getY() {
             return y;
         }
-
+        
         public void setY(int y) {
             this.y = y;
         }
-
+        
         public long getZ() {
             return z;
         }
-
+        
         public void setZ(long z) {
             this.z = z;
         }
-
+        
         public int getB() {
             return b;
         }
-
+        
         public void setB(int b) {
             this.b = b;
         }
-
+        
         public InnerClass getInner() {
             return inner;
         }
-
+        
         public void setInner(InnerClass inner) {
             this.inner = inner;
         }
     }
-
+    
     public static class SimpleSourceWithFields {
-
+        
         public int x, y;
-
+        
         public int z;
-
+        
         public int a;
-
+        
         public InnerClass inner;
     }
-
+    
     public static class SimpleDestinationWithFields {
-
+        
         public int x, y;
-
+        
         public long z;
-
+        
         public int b;
-
+        
         public InnerClass inner;
     }
-
+    
+    public static class InheritanceTestBaseSource {
+        
+        private int x;
+        
+        public int y;
+        
+        public int getX() {
+            return x;
+        }
+        
+        public void setX(int x) {
+            this.x = x;
+        }
+    }
+    
+    public static class InheritanceTestSource extends InheritanceTestBaseSource {
+        
+        private int a;
+        
+        public int b;
+        
+        public int getA() {
+            return a;
+        }
+        
+        public void setA(int a) {
+            this.a = a;
+        }
+    }
+    
+    public static class InheritanceTestBaseDestination {
+        
+        private int a;
+        
+        public int b;
+        
+        public int getA() {
+            return a;
+        }
+        
+        public void setA(int a) {
+            this.a = a;
+        }
+    }
+    
+    public static class InheritanceTestDestination extends InheritanceTestBaseDestination {
+        
+        private int x;
+        
+        public int y;
+        
+        public int getX() {
+            return x;
+        }
+        
+        public void setX(int x) {
+            this.x = x;
+        }
+    }
+    
     @Test
     public void when_source_and_destination_classes_has_properties_of_the_same_name_and_type_then_should_be_mapped() {
         // GIVEN
@@ -203,7 +263,7 @@ public class NameBasedConventionBasicScenarioTest {
                         (config, source, destination)
                         -> config.useConvention(NameBasedMapConvention.get())
                 ).buildMapper();
-
+        
         SimpleDestinationWithProperties result = mapper.map(sourceInstance, SimpleDestinationWithProperties.class);
 
         // THEN
@@ -220,7 +280,7 @@ public class NameBasedConventionBasicScenarioTest {
         // mapped by StrictMatch convention
         assertEquals("Invalid 'z' property value.", 0, result.getZ());
     }
-
+    
     @Test
     public void when_source_and_destination_classes_has_fields_of_the_same_name_and_type_then_should_be_mapped() {
         // GIVEN
@@ -237,7 +297,7 @@ public class NameBasedConventionBasicScenarioTest {
                         (config, source, destination)
                         -> config.useConvention(NameBasedMapConvention.get())
                 ).buildMapper();
-
+        
         SimpleDestinationWithFields result = mapper.map(sourceInstance, SimpleDestinationWithFields.class);
 
         // THEN
@@ -254,7 +314,7 @@ public class NameBasedConventionBasicScenarioTest {
         // mapped by StrictMatch convention
         assertEquals("Invalid 'z' field value.", 0, result.z);
     }
-
+    
     @Test
     public void convention_should_be_able_to_map_from_fields_to_properties() {
         // GIVEN
@@ -271,7 +331,7 @@ public class NameBasedConventionBasicScenarioTest {
                         (config, source, destination)
                         -> config.useConvention(NameBasedMapConvention.get())
                 ).buildMapper();
-
+        
         SimpleDestinationWithProperties result = mapper.map(sourceInstance, SimpleDestinationWithProperties.class);
 
         // THEN
@@ -288,7 +348,7 @@ public class NameBasedConventionBasicScenarioTest {
         // mapped by StrictMatch convention
         assertEquals("Invalid 'z' property value.", 0, result.getZ());
     }
-
+    
     @Test
     public void convention_should_be_able_to_map_from_properties_to_fields() {
         // GIVEN
@@ -305,7 +365,7 @@ public class NameBasedConventionBasicScenarioTest {
                         (config, source, destination)
                         -> config.useConvention(NameBasedMapConvention.get())
                 ).buildMapper();
-
+        
         SimpleDestinationWithFields result = mapper.map(sourceInstance, SimpleDestinationWithFields.class);
 
         // THEN
@@ -322,7 +382,7 @@ public class NameBasedConventionBasicScenarioTest {
         // mapped by StrictMatch convention
         assertEquals("Invalid 'z' field value.", 0, result.z);
     }
-
+    
     @Test
     public void convention_should_use_converter_if_available() {
         // GIVEN
@@ -331,7 +391,7 @@ public class NameBasedConventionBasicScenarioTest {
 
         // WHEN
         Mapper mapper = new MapperBuilder()
-                .addConverter(byte.class, double.class, source -> (double)source)
+                .addConverter(byte.class, double.class, source -> (double) source)
                 .addMap(SourceWithByte.class, DestinationWithDouble.class,
                         (config, source, destination)
                         -> config.useConvention(NameBasedMapConvention.get()))
@@ -340,5 +400,31 @@ public class NameBasedConventionBasicScenarioTest {
 
         // THEN
         assertEquals(8.0, result.getX(), 0.0);
+    }
+    
+    @Test
+    public void convention_should_match_inherited_members() {
+        // GIVEN
+        InheritanceTestSource sourceInstance = new InheritanceTestSource();
+        sourceInstance.setA(3);
+        sourceInstance.b = 1;
+        sourceInstance.setX(6);
+        sourceInstance.y = 2;
+
+        // WHEN
+        Mapper mapper = new MapperBuilder()
+                .addMap(InheritanceTestSource.class, InheritanceTestDestination.class,
+                        (config, source, destination)
+                        -> config.useConvention(NameBasedMapConvention.get())
+                ).buildMapper();
+        
+        // Note: result _base_ class has the same members that source _inherited_ class and vice versa
+        InheritanceTestDestination result = mapper.map(sourceInstance, InheritanceTestDestination.class);
+        
+        // THEN
+        assertEquals("Invalid a value", sourceInstance.getA(), result.getA());
+        assertEquals("Invalid b value", sourceInstance.b, result.b);
+        assertEquals("Invalid x value", sourceInstance.getX(), result.getX());
+        assertEquals("Invalid y value", sourceInstance.y, result.y);
     }
 }
