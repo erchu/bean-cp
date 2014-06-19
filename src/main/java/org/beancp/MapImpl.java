@@ -39,41 +39,41 @@ final class MapImpl<S, D> implements Map<S, D>, MappingExecutor<S, D> {
     private final String INVALID_STATEMENT_ORDER_MESSAGE = "Invalid statement order. Check "
             + Map.class.getSimpleName() + " interface API documentation for details.";
 
-    private final Class<S> sourceClass;
+    private final Class<S> _sourceClass;
 
-    private final Class<D> destinationClass;
+    private final Class<D> _destinationClass;
 
-    private final MapSetup<S, D> configuration;
+    private final MapSetup<S, D> _configuration;
 
-    private Supplier<D> destinationObjectBuilder;
+    private Supplier<D> _destinationObjectBuilder;
 
     private MapMode mode = MapMode.CONFIGURATION;
 
-    private boolean constructDestinationObjectUsingExecuted;
+    private boolean _constructDestinationObjectUsingExecuted;
 
-    private boolean beforeMapExecuted;
+    private boolean _beforeMapExecuted;
 
-    private boolean useConventionExecuted;
+    private boolean _useConventionExecuted;
 
-    private boolean bindBindConstantOrMapExecuted;
+    private boolean _bindBindConstantOrMapExecuted;
 
-    private boolean afterMapExecuted;
+    private boolean _afterMapExecuted;
 
-    private Mapper executionPhaseMapper;
+    private Mapper _executionPhaseMapper;
 
-    private MapConventionExecutor executionPhaseMapConvention;
+    private MapConventionExecutor _executionPhaseMapConvention;
 
-    private final ThreadLocal<S> executionPhaseSourceReference = new ThreadLocal<>();
+    private final ThreadLocal<S> _executionPhaseSourceReference = new ThreadLocal<>();
 
-    private final ThreadLocal<D> executionPhaseDestinationReference = new ThreadLocal<>();
+    private final ThreadLocal<D> _executionPhaseDestinationReference = new ThreadLocal<>();
 
-    private MappingInfo configurationPhaseMappingsInfo;
+    private MappingInfo _configurationPhaseMappingsInfo;
 
     public MapImpl(final Class<S> sourceClass, final Class<D> destinationClass,
             final MapSetup<S, D> configuration) {
-        this.configuration = configuration;
-        this.sourceClass = sourceClass;
-        this.destinationClass = destinationClass;
+        _configuration = configuration;
+        _sourceClass = sourceClass;
+        _destinationClass = destinationClass;
     }
 
     @Override
@@ -85,11 +85,11 @@ final class MapImpl<S, D> implements Map<S, D>, MappingExecutor<S, D> {
         notNull(toMember, "toMember");
 
         if (mode == MapMode.CONFIGURATION) {
-            if (afterMapExecuted) {
+            if (_afterMapExecuted) {
                 throw new MapperConfigurationException(INVALID_STATEMENT_ORDER_MESSAGE);
             }
 
-            bindBindConstantOrMapExecuted = true;
+            _bindBindConstantOrMapExecuted = true;
         }
 
         if (mode == MapMode.EXECUTION) {
@@ -122,11 +122,11 @@ final class MapImpl<S, D> implements Map<S, D>, MappingExecutor<S, D> {
         notNull(toMember, "toMember");
 
         if (mode == MapMode.CONFIGURATION) {
-            if (afterMapExecuted) {
+            if (_afterMapExecuted) {
                 throw new MapperConfigurationException(INVALID_STATEMENT_ORDER_MESSAGE);
             }
 
-            bindBindConstantOrMapExecuted = true;
+            _bindBindConstantOrMapExecuted = true;
         }
 
         if (mode == MapMode.CONFIGURATION) {
@@ -167,11 +167,11 @@ final class MapImpl<S, D> implements Map<S, D>, MappingExecutor<S, D> {
         notNull(toMember, "toMember");
 
         if (mode == MapMode.CONFIGURATION) {
-            if (afterMapExecuted) {
+            if (_afterMapExecuted) {
                 throw new MapperConfigurationException(INVALID_STATEMENT_ORDER_MESSAGE);
             }
 
-            bindBindConstantOrMapExecuted = true;
+            _bindBindConstantOrMapExecuted = true;
         }
 
         if (mode == MapMode.EXECUTION) {
@@ -189,10 +189,10 @@ final class MapImpl<S, D> implements Map<S, D>, MappingExecutor<S, D> {
                 }
 
                 if (currentDestinationMemberValue == null) {
-                    DI mapResult = executionPhaseMapper.map(currentSourceValue, toMemberClass);
+                    DI mapResult = _executionPhaseMapper.map(currentSourceValue, toMemberClass);
                     toMember.accept(mapResult);
                 } else {
-                    executionPhaseMapper.map(currentSourceValue, currentDestinationMemberValue);
+                    _executionPhaseMapper.map(currentSourceValue, currentDestinationMemberValue);
                 }
             }
         }
@@ -207,26 +207,26 @@ final class MapImpl<S, D> implements Map<S, D>, MappingExecutor<S, D> {
         MapConventionExecutor conventionExecutor = new MapConventionExecutor(mapConvention);
 
         if (mode == MapMode.CONFIGURATION) {
-            if (useConventionExecuted) {
+            if (_useConventionExecuted) {
                 throw new MapperConfigurationException("useConventionExecuted() cannot be called "
                         + "more than once.");
             }
 
-            if (bindBindConstantOrMapExecuted || afterMapExecuted) {
+            if (_bindBindConstantOrMapExecuted || _afterMapExecuted) {
                 throw new MapperConfigurationException(INVALID_STATEMENT_ORDER_MESSAGE);
             }
 
             // Build and cache result
-            conventionExecutor.build(configurationPhaseMappingsInfo, sourceClass, destinationClass);
-            this.executionPhaseMapConvention = conventionExecutor;
+            conventionExecutor.build(_configurationPhaseMappingsInfo, _sourceClass, _destinationClass);
+            _executionPhaseMapConvention = conventionExecutor;
 
-            useConventionExecuted = true;
+            _useConventionExecuted = true;
         }
 
         if (mode == MapMode.EXECUTION) {
             // use cached convention
-            this.executionPhaseMapConvention.map(executionPhaseMapper,
-                    executionPhaseSourceReference.get(), executionPhaseDestinationReference.get());
+            _executionPhaseMapConvention.map(_executionPhaseMapper,
+                    _executionPhaseSourceReference.get(), _executionPhaseDestinationReference.get());
         }
 
         return this;
@@ -235,11 +235,11 @@ final class MapImpl<S, D> implements Map<S, D>, MappingExecutor<S, D> {
     @Override
     public Map<S, D> beforeMap(final Action action) {
         if (mode == MapMode.CONFIGURATION) {
-            if (useConventionExecuted || bindBindConstantOrMapExecuted || afterMapExecuted) {
+            if (_useConventionExecuted || _bindBindConstantOrMapExecuted || _afterMapExecuted) {
                 throw new MapperConfigurationException(INVALID_STATEMENT_ORDER_MESSAGE);
             }
 
-            beforeMapExecuted = true;
+            _beforeMapExecuted = true;
         }
 
         if (mode == MapMode.EXECUTION) {
@@ -252,7 +252,7 @@ final class MapImpl<S, D> implements Map<S, D>, MappingExecutor<S, D> {
     @Override
     public Map<S, D> afterMap(final Action action) {
         if (mode == MapMode.CONFIGURATION) {
-            afterMapExecuted = true;
+            _afterMapExecuted = true;
         }
 
         if (mode == MapMode.EXECUTION) {
@@ -268,17 +268,17 @@ final class MapImpl<S, D> implements Map<S, D>, MappingExecutor<S, D> {
         notNull(destinationObjectBuilder, "destinationObjectBuilder");
 
         if (mode == MapMode.CONFIGURATION) {
-            if (beforeMapExecuted || useConventionExecuted || bindBindConstantOrMapExecuted
-                    || afterMapExecuted) {
+            if (_beforeMapExecuted || _useConventionExecuted || _bindBindConstantOrMapExecuted
+                    || _afterMapExecuted) {
                 throw new MapperConfigurationException(INVALID_STATEMENT_ORDER_MESSAGE);
             }
 
-            if (constructDestinationObjectUsingExecuted) {
+            if (_constructDestinationObjectUsingExecuted) {
                 throw new MapperConfigurationException("constructDestinationObjectUsing() cannot "
                         + "be called more than once.");
             }
 
-            constructDestinationObjectUsingExecuted = true;
+            _constructDestinationObjectUsingExecuted = true;
         }
 
         setDestinationObjectBuilder(destinationObjectBuilder);
@@ -292,20 +292,20 @@ final class MapImpl<S, D> implements Map<S, D>, MappingExecutor<S, D> {
         }
 
         FakeObjectBuilder proxyBuilder = new FakeObjectBuilder();
-        S sourceObject = proxyBuilder.createFakeObject(sourceClass);
-        D destinationObject = proxyBuilder.createFakeObject(destinationClass);
+        S sourceObject = proxyBuilder.createFakeObject(_sourceClass);
+        D destinationObject = proxyBuilder.createFakeObject(_destinationClass);
 
-        beforeMapExecuted = bindBindConstantOrMapExecuted = afterMapExecuted = false;
-        this.configurationPhaseMappingsInfo = configurationPhaseMappingsInfo;
+        _beforeMapExecuted = _bindBindConstantOrMapExecuted = _afterMapExecuted = false;
+        _configurationPhaseMappingsInfo = configurationPhaseMappingsInfo;
 
         // Source and destination object instances are not required by MapImpl 
         // in CONFIGURATION mode, but Java lambda handling mechanizm requires 
         // non-null value, so we need to create proxy instance. Unfortunatelly
         // this enforces constraint on source and destination classes as in javadoc.
-        configuration.apply(this, sourceObject, destinationObject);
+        _configuration.apply(this, sourceObject, destinationObject);
 
         // release reference
-        this.configurationPhaseMappingsInfo = null;
+        _configurationPhaseMappingsInfo = null;
 
         mode = MapMode.EXECUTION;
     }
@@ -316,37 +316,37 @@ final class MapImpl<S, D> implements Map<S, D>, MappingExecutor<S, D> {
                     "Map is not configured. Use configure() first.");
         }
 
-        this.executionPhaseMapper = caller;
+        _executionPhaseMapper = caller;
 
         try {
-            this.executionPhaseSourceReference.set(source);
-            this.executionPhaseDestinationReference.set(destination);
+            _executionPhaseSourceReference.set(source);
+            _executionPhaseDestinationReference.set(destination);
 
-            configuration.apply(this, source, destination);
+            _configuration.apply(this, source, destination);
         } finally {
-            this.executionPhaseSourceReference.set(null);
-            this.executionPhaseDestinationReference.set(null);
+            _executionPhaseSourceReference.set(null);
+            _executionPhaseDestinationReference.set(null);
         }
     }
 
     @Override
     public Class<S> getSourceClass() {
-        return sourceClass;
+        return _sourceClass;
     }
 
     @Override
     public Class<D> getDestinationClass() {
-        return destinationClass;
+        return _destinationClass;
     }
 
     Supplier<D> getDestinationObjectBuilder() {
-        return destinationObjectBuilder;
+        return _destinationObjectBuilder;
     }
 
     void setDestinationObjectBuilder(final Supplier<D> destinationObjectBuilder) {
         notNull(destinationObjectBuilder, "destinationObjectBuilder");
 
-        this.destinationObjectBuilder = destinationObjectBuilder;
+        _destinationObjectBuilder = destinationObjectBuilder;
     }
 
     private <T> boolean shouldBeMapped(final BindingOption<S, D, T>[] options) {

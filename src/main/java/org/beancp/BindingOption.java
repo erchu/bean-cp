@@ -31,27 +31,27 @@ import java.util.function.Supplier;
  */
 public final class BindingOption<S, D, T> {
 
-    private Supplier<Boolean> mapWhenCondition = null;
+    private Supplier<Boolean> _mapWhenCondition = null;
 
-    private T nullSubstitution = null;
+    private T _nullSubstitution = null;
 
     private BindingOption() {
     }
 
     Supplier<Boolean> getMapWhenCondition() {
-        return mapWhenCondition;
+        return _mapWhenCondition;
     }
 
     void setMapWhenCondition(Supplier<Boolean> mapWhenCondition) {
-        this.mapWhenCondition = mapWhenCondition;
+        this._mapWhenCondition = mapWhenCondition;
     }
 
     T getNullSubstitution() {
-        return nullSubstitution;
+        return _nullSubstitution;
     }
 
     void setNullSubstitution(T nullSubstitution) {
-        this.nullSubstitution = nullSubstitution;
+        this._nullSubstitution = nullSubstitution;
     }
 
     /**
@@ -66,14 +66,14 @@ public final class BindingOption<S, D, T> {
      */
     public static <S, D, T> BindingOption<S, D, T> mapWhen(final Supplier<Boolean> condition) {
         BindingOption<S, D, T> result = new BindingOption<>();
-        result.mapWhenCondition = condition;
+        result._mapWhenCondition = condition;
 
         return result;
     }
 
     /**
      * If from source value getter will return null then value will be substituted with result from
-     * nullSubstitution lambda.
+ _nullSubstitution lambda.
      *
      * @param <S> source object type.
      * @param <D> destination object type.
@@ -83,7 +83,7 @@ public final class BindingOption<S, D, T> {
      */
     public static <S, D, T> BindingOption<S, D, T> withNullSubstitution(final T nullSubstitution) {
         BindingOption<S, D, T> result = new BindingOption<>();
-        result.nullSubstitution = nullSubstitution;
+        result._nullSubstitution = nullSubstitution;
 
         return result;
     }

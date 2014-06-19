@@ -24,7 +24,7 @@ import java.lang.reflect.Field;
  */
 public final class FieldBindingSide implements BindingSide {
 
-    private final Field field;
+    private final Field _field;
 
     /**
      * Creates binding to field from field reference.
@@ -32,16 +32,16 @@ public final class FieldBindingSide implements BindingSide {
      * @param field field reference used to create binding.
      */
     public FieldBindingSide(final Field field) {
-        this.field = field;
+        this._field = field;
     }
 
     @Override
     @SuppressWarnings({"TooBroadCatch", "UseSpecificCatch"})
     public Object getValue(final Object object) {
         try {
-            return field.get(object);
+            return _field.get(object);
         } catch (Exception ex) {
-            throw new MappingException(String.format("Failed to get value from %s", field), ex);
+            throw new MappingException(String.format("Failed to get value from %s", _field), ex);
         }
     }
 
@@ -49,25 +49,25 @@ public final class FieldBindingSide implements BindingSide {
     @SuppressWarnings({"TooBroadCatch", "UseSpecificCatch"})
     public void setValue(final Object object, final Object value) {
         try {
-            field.set(object, value);
+            _field.set(object, value);
         } catch (Exception ex) {
-            throw new MappingException(String.format("Failed to get value from %s", field), ex);
+            throw new MappingException(String.format("Failed to get value from %s", _field), ex);
         }
     }
 
     @Override
     public String toString() {
-        return "Field " + field.toString();
+        return "Field " + _field.toString();
     }
 
     @Override
     public Class getValueClass() {
-        return field.getType();
+        return _field.getType();
     }
 
     @Override
     public String getName() {
-        return field.getName();
+        return _field.getName();
     }
 
     @Override

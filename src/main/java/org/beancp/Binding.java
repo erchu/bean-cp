@@ -26,9 +26,9 @@ import static org.apache.commons.lang3.Validate.*;
  */
 public class Binding {
 
-    private final BindingSide[] sourcePath;
+    private final BindingSide[] _sourcePath;
 
-    private final BindingSide destinationMember;
+    private final BindingSide _destinationMember;
 
     /**
      * Creates binding from series of bindings from source (path) to destination member.
@@ -42,8 +42,8 @@ public class Binding {
         isTrue(sourcePath.length > 0, "sourcePath is empty");
         notNull(destinationMember, "destinationMember");
 
-        this.sourcePath = sourcePath;
-        this.destinationMember = destinationMember;
+        this._sourcePath = sourcePath;
+        this._destinationMember = destinationMember;
     }
 
     /**
@@ -64,7 +64,7 @@ public class Binding {
      * property value from object returned by n-th binding).
      */
     public BindingSide[] getSourcePath() {
-        return sourcePath;
+        return _sourcePath;
     }
 
     /**
@@ -73,7 +73,7 @@ public class Binding {
      * @return destination member.
      */
     public BindingSide getDestinationMember() {
-        return destinationMember;
+        return _destinationMember;
     }
 
     /**
@@ -88,7 +88,7 @@ public class Binding {
             throws MappingException {
         Object value = source;
 
-        for (BindingSide i : sourcePath) {
+        for (BindingSide i : _sourcePath) {
             if (value == null) {
                 setValueAtDestination(mapper, destination, null);
             }
@@ -108,11 +108,11 @@ public class Binding {
      */
     protected void setValueAtDestination(
             final Mapper mapper, final Object destination, final Object value) {
-        destinationMember.setValue(destination, value);
+        _destinationMember.setValue(destination, value);
     }
 
     private Object getValue(final BindingSide bindingSide, final Object object) {
-        if (destinationMember.isGetterAvailable() == false) {
+        if (_destinationMember.isGetterAvailable() == false) {
             throw new MappingException("Getter not available for " + bindingSide);
         }
 

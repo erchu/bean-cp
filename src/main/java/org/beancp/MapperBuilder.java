@@ -31,13 +31,13 @@ import static org.apache.commons.lang3.Validate.*;
  */
 public final class MapperBuilder implements MappingInfo {
 
-    private final List<MapImpl<?, ?>> maps = new LinkedList<>();
+    private final List<MapImpl<?, ?>> _maps = new LinkedList<>();
 
-    private final List<Converter<?, ?>> converters = new LinkedList<>();
+    private final List<Converter<?, ?>> _converters = new LinkedList<>();
 
-    private final List<MapConventionExecutor> mapAnyConventions = new LinkedList<>();
+    private final List<MapConventionExecutor> _mapAnyConventions = new LinkedList<>();
 
-    private boolean mapperBuilded = false;
+    private boolean _mapperBuilded = false;
 
     /**
      * Adds new mapping defined by map. Both {@code source} and {@code destination} classes must:
@@ -63,7 +63,7 @@ public final class MapperBuilder implements MappingInfo {
         MapImpl map = new MapImpl(sourceClass, destinationClass, mapConfiguration);
         map.configure(this);
 
-        maps.add(map);
+        _maps.add(map);
 
         return this;
     }
@@ -86,7 +86,7 @@ public final class MapperBuilder implements MappingInfo {
             throws MapperConfigurationException {
         validateAddMappingAction(sourceClass, destinationClass);
 
-        converters.add(new Converter<>(sourceClass, destinationClass, convertionAction));
+        _converters.add(new Converter<>(sourceClass, destinationClass, convertionAction));
 
         return this;
     }
@@ -108,7 +108,7 @@ public final class MapperBuilder implements MappingInfo {
             final BiFunction<Mapper, S, D> convertionAction) throws MapperConfigurationException {
         validateAddMappingAction(sourceClass, destinationClass);
 
-        converters.add(new Converter<>(sourceClass, destinationClass, convertionAction));
+        _converters.add(new Converter<>(sourceClass, destinationClass, convertionAction));
 
         return this;
     }
@@ -125,7 +125,7 @@ public final class MapperBuilder implements MappingInfo {
 
         for (Converter<?, ?> i : converters) {
             validateAddMappingAction(i.getSourceClass(), i.getDestinationClass());
-            this.converters.addAll(Arrays.asList(converters));
+            this._converters.addAll(Arrays.asList(converters));
         }
 
         return this;
@@ -146,7 +146,7 @@ public final class MapperBuilder implements MappingInfo {
                 .map(i -> new MapConventionExecutor(i))
                 .collect(Collectors.toList());
 
-        this.mapAnyConventions.addAll(conventionExecutors);
+        this._mapAnyConventions.addAll(conventionExecutors);
 
         return this;
     }
@@ -158,9 +158,9 @@ public final class MapperBuilder implements MappingInfo {
      * @return map implementation.
      */
     public Mapper buildMapper() {
-        this.mapperBuilded = true;
+        this._mapperBuilded = true;
 
-        return new MapperImpl(converters, maps, mapAnyConventions);
+        return new MapperImpl(_converters, _maps, _mapAnyConventions);
     }
 
     @Override
@@ -172,8 +172,8 @@ public final class MapperBuilder implements MappingInfo {
                 this,
                 sourceClass,
                 destinationClass,
-                Collections.unmodifiableCollection(maps),
-                Collections.unmodifiableCollection(mapAnyConventions));
+                Collections.unmodifiableCollection(_maps),
+                Collections.unmodifiableCollection(_mapAnyConventions));
     }
 
     @Override
@@ -185,7 +185,7 @@ public final class MapperBuilder implements MappingInfo {
                 this,
                 sourceClass,
                 destinationClass,
-                Collections.unmodifiableCollection(converters));
+                Collections.unmodifiableCollection(_converters));
     }
 
     private <S, D> void validateAddMappingAction(final Class<S> sourceClass,
@@ -193,11 +193,11 @@ public final class MapperBuilder implements MappingInfo {
         notNull(sourceClass, "sourceClass");
         notNull(destinationClass, "destinationClass");
 
-        if (this.mapperBuilded) {
+        if (this._mapperBuilded) {
             throw new MapperConfigurationException("Mapper already builded. No changes allowed.");
         }
 
-        for (MapImpl<?, ?> i : maps) {
+        for (MapImpl<?, ?> i : _maps) {
             if (i.getSourceClass().equals(sourceClass)
                     && i.getDestinationClass().equals(destinationClass)) {
                 throw new MapperConfigurationException(String.format(

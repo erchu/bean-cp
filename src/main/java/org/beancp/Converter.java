@@ -29,11 +29,11 @@ import static org.apache.commons.lang3.Validate.*;
  */
 public final class Converter<S, D> implements MappingExecutor<S, D> {
 
-    private final Class<S> sourceClass;
+    private final Class<S> _sourceClass;
 
-    private final Class<D> destinationClass;
+    private final Class<D> _destinationClass;
 
-    private final BiFunction<Mapper, S, D> convertionAction;
+    private final BiFunction<Mapper, S, D> _convertionAction;
 
     /**
      * Creates converter instance not using {@link Mapper} reference during execution.
@@ -53,9 +53,9 @@ public final class Converter<S, D> implements MappingExecutor<S, D> {
         BiFunction<Mapper, S, D> convertActionWrapper
                 = (Mapper mapper, S source) -> convertAction.apply(source);
 
-        this.sourceClass = sourceClass;
-        this.destinationClass = destinationClass;
-        this.convertionAction = convertActionWrapper;
+        this._sourceClass = sourceClass;
+        this._destinationClass = destinationClass;
+        this._convertionAction = convertActionWrapper;
     }
 
     /**
@@ -73,9 +73,9 @@ public final class Converter<S, D> implements MappingExecutor<S, D> {
         notNull(destinationClass, "destinationClass");
         notNull(convertAction, "convertAction");
 
-        this.sourceClass = sourceClass;
-        this.destinationClass = destinationClass;
-        this.convertionAction = convertAction;
+        this._sourceClass = sourceClass;
+        this._destinationClass = destinationClass;
+        this._convertionAction = convertAction;
     }
 
     /**
@@ -85,7 +85,7 @@ public final class Converter<S, D> implements MappingExecutor<S, D> {
      */
     @Override
     public Class<S> getSourceClass() {
-        return sourceClass;
+        return _sourceClass;
     }
 
     /**
@@ -95,10 +95,10 @@ public final class Converter<S, D> implements MappingExecutor<S, D> {
      */
     @Override
     public Class<D> getDestinationClass() {
-        return destinationClass;
+        return _destinationClass;
     }
 
     D convert(final Mapper caller, final S source) {
-        return convertionAction.apply(caller, source);
+        return _convertionAction.apply(caller, source);
     }
 }

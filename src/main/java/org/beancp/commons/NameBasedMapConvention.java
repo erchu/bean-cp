@@ -54,15 +54,15 @@ public class NameBasedMapConvention implements MapConvention {
         PROPERTY
     }
 
-    private List<Predicate<String>> includeDestinationMembers;
+    private List<Predicate<String>> _includeDestinationMembers;
 
-    private String[] excludeDestinationMembers;
+    private String[] _excludeDestinationMembers;
 
-    private boolean flateningEnabled;
+    private boolean _flateningEnabled;
 
-    private boolean failIfNotAllDestinationMembersMapped;
+    private boolean _failIfNotAllDestinationMembersMapped;
 
-    private boolean failIfNotAllSourceMembersMapped;
+    private boolean _failIfNotAllSourceMembersMapped;
 
     /**
      * Constructs instance.
@@ -85,11 +85,11 @@ public class NameBasedMapConvention implements MapConvention {
      */
     public static NameBasedMapConvention get() {
         NameBasedMapConvention defaultConvention = new NameBasedMapConvention();
-        defaultConvention.excludeDestinationMembers = new String[0];
-        defaultConvention.includeDestinationMembers = new LinkedList<>();
-        defaultConvention.failIfNotAllDestinationMembersMapped = false;
-        defaultConvention.failIfNotAllSourceMembersMapped = false;
-        defaultConvention.flateningEnabled = false;
+        defaultConvention._excludeDestinationMembers = new String[0];
+        defaultConvention._includeDestinationMembers = new LinkedList<>();
+        defaultConvention._failIfNotAllDestinationMembersMapped = false;
+        defaultConvention._failIfNotAllSourceMembersMapped = false;
+        defaultConvention._flateningEnabled = false;
 
         return defaultConvention;
     }
@@ -115,7 +115,7 @@ public class NameBasedMapConvention implements MapConvention {
     public NameBasedMapConvention includeDestinationMembers(String... members) {
         notNull(members, "members");
 
-        this.includeDestinationMembers
+        this._includeDestinationMembers
                 = Arrays.stream(members)
                 .map(i -> Pattern.compile(i, Pattern.CASE_INSENSITIVE).asPredicate())
                 .collect(Collectors.toList());
@@ -141,7 +141,7 @@ public class NameBasedMapConvention implements MapConvention {
     public NameBasedMapConvention excludeDestinationMembers(String... members) {
         notNull(members, "members");
 
-        this.excludeDestinationMembers = members;
+        this._excludeDestinationMembers = members;
 
         return this;
     }
@@ -196,7 +196,7 @@ public class NameBasedMapConvention implements MapConvention {
      * @return this (for method chaining)
      */
     public NameBasedMapConvention enableFlattening() {
-        this.flateningEnabled = true;
+        this._flateningEnabled = true;
 
         return this;
     }
@@ -208,7 +208,7 @@ public class NameBasedMapConvention implements MapConvention {
      * @return this (for method chaining)
      */
     public NameBasedMapConvention disableFlattening() {
-        this.flateningEnabled = false;
+        this._flateningEnabled = false;
 
         return this;
     }
@@ -221,7 +221,7 @@ public class NameBasedMapConvention implements MapConvention {
      * @return this (for method chaining)
      */
     public NameBasedMapConvention failIfNotAllDestinationMembersMapped() {
-        this.failIfNotAllDestinationMembersMapped = true;
+        this._failIfNotAllDestinationMembersMapped = true;
 
         return this;
     }
@@ -234,7 +234,7 @@ public class NameBasedMapConvention implements MapConvention {
      * @return this (for method chaining)
      */
     public NameBasedMapConvention failIfNotAllSourceMembersMapped() {
-        this.failIfNotAllSourceMembersMapped = true;
+        this._failIfNotAllSourceMembersMapped = true;
 
         return this;
     }
@@ -244,17 +244,17 @@ public class NameBasedMapConvention implements MapConvention {
             final MappingInfo mappingsInfo,
             final Class sourceClass,
             final Class destinationClass) {
-        if (excludeDestinationMembers.length > 0) {
+        if (_excludeDestinationMembers.length > 0) {
             // TODO: Implement excludeDestinationMembers option support
             throw new UnsupportedOperationException("excludeDestinationMembers option not supported yet.");
         }
 
-        if (failIfNotAllDestinationMembersMapped) {
+        if (_failIfNotAllDestinationMembersMapped) {
             // TODO: Implement failIfNotAllDestinationMembersMapped option support
             throw new UnsupportedOperationException("failIfNotAllDestinationMembersMapped option not supported yet.");
         }
 
-        if (failIfNotAllSourceMembersMapped) {
+        if (_failIfNotAllSourceMembersMapped) {
             // TODO: Implement failIfNotAllDestinationMembersMapped option support
             throw new UnsupportedOperationException("failIfNotAllSourceMembersMapped option not supported yet.");
         }
@@ -335,11 +335,11 @@ public class NameBasedMapConvention implements MapConvention {
     }
 
     private boolean isDestinationMemberExpectedToBind(BindingSide destinationBindingSide) {
-        if (includeDestinationMembers.isEmpty()) {
+        if (_includeDestinationMembers.isEmpty()) {
             return true;
         }
 
-        return includeDestinationMembers.stream()
+        return _includeDestinationMembers.stream()
                 .anyMatch(i -> i.test(destinationBindingSide.getName()));
     }
 
@@ -383,7 +383,7 @@ public class NameBasedMapConvention implements MapConvention {
             return result;
         }
 
-        if (flateningEnabled) {
+        if (_flateningEnabled) {
             Optional<PropertyDescriptor> partiallyMatchResult
                     = Arrays.stream(sourceBeanInfo.getPropertyDescriptors())
                     .filter(i -> StringUtils.startsWithIgnoreCase(atDestinationName, i.getName()))
@@ -423,7 +423,7 @@ public class NameBasedMapConvention implements MapConvention {
             return result;
         }
 
-        if (flateningEnabled) {
+        if (_flateningEnabled) {
             Optional<Field> partiallyMatchResult
                     = Arrays.stream(sourceClass.getFields())
                     .filter(i -> StringUtils.startsWithIgnoreCase(atDestinationName, i.getName()))

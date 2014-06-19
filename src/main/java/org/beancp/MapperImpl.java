@@ -27,19 +27,19 @@ import static org.apache.commons.lang3.Validate.*;
 
 class MapperImpl implements Mapper {
 
-    private final Collection<MapImpl<?, ?>> maps;
+    private final Collection<MapImpl<?, ?>> _maps;
 
-    private final Collection<Converter<?, ?>> converters;
+    private final Collection<Converter<?, ?>> _converters;
 
-    private final List<MapConventionExecutor> mapAnyConventions;
+    private final List<MapConventionExecutor> _mapAnyConventions;
 
     MapperImpl(
             final Collection<Converter<?, ?>> converters,
             final List<MapImpl<?, ?>> maps,
             final List<MapConventionExecutor> mapAnyConvention) {
-        this.converters = Collections.unmodifiableCollection(converters);
-        this.maps = Collections.unmodifiableCollection(maps);
-        this.mapAnyConventions = mapAnyConvention;
+        this._converters = Collections.unmodifiableCollection(converters);
+        this._maps = Collections.unmodifiableCollection(maps);
+        this._mapAnyConventions = mapAnyConvention;
     }
 
     @Override
@@ -59,7 +59,7 @@ class MapperImpl implements Mapper {
 
         MapImpl<S, D> map = (MapImpl<S, D>) MapperExecutorSelector.getBestMatchingMap(
                 source.getClass(), destination.getClass(),
-                maps);
+                _maps);
 
         return mapIfMapperAvailable(map, source, destination);
     }
@@ -92,14 +92,14 @@ class MapperImpl implements Mapper {
         try {
             Converter<S, D> converter
                     = (Converter<S, D>) MapperExecutorSelector.getBestMatchingConverter(
-                            sourceClass, destinationClass, converters);
+                            sourceClass, destinationClass, _converters);
 
             if (converter != null) {
                 return Optional.of(converter.convert(this, source));
             }
 
             MapImpl<S, D> map = (MapImpl<S, D>) MapperExecutorSelector.getBestMatchingMap(
-                    sourceClass, destinationClass, maps);
+                    sourceClass, destinationClass, _maps);
 
             D destination = null;
 
@@ -136,8 +136,8 @@ class MapperImpl implements Mapper {
                 this,
                 sourceClass,
                 destinationClass,
-                maps,
-                mapAnyConventions);
+                _maps,
+                _mapAnyConventions);
     }
 
     @Override
@@ -149,7 +149,7 @@ class MapperImpl implements Mapper {
                 this,
                 sourceClass,
                 destinationClass,
-                Collections.unmodifiableCollection(converters));
+                Collections.unmodifiableCollection(_converters));
     }
 
     private <D, S> boolean mapIfMapperAvailable(
@@ -160,7 +160,7 @@ class MapperImpl implements Mapper {
             return true;
         }
 
-        for (MapConventionExecutor i : mapAnyConventions) {
+        for (MapConventionExecutor i : _mapAnyConventions) {
             if (i.tryMap(this, source, destination)) {
                 return true;
             }

@@ -26,13 +26,13 @@ import static org.apache.commons.lang3.Validate.*;
  */
 public class PropertyBindingSide implements BindingSide {
 
-    private final Method readMethod;
+    private final Method _readMethod;
 
-    private final Method writeMethod;
+    private final Method _writeMethod;
 
-    private final String name;
+    private final String _name;
 
-    private final Class valueClass;
+    private final Class _valueClass;
 
     /**
      *
@@ -41,61 +41,61 @@ public class PropertyBindingSide implements BindingSide {
      * @param propertyDescriptor property information used to create binding
      */
     public PropertyBindingSide(final PropertyDescriptor propertyDescriptor) {
-        this.valueClass = propertyDescriptor.getPropertyType();
-        this.readMethod = propertyDescriptor.getReadMethod();
-        this.writeMethod = propertyDescriptor.getWriteMethod();
-        this.name = propertyDescriptor.getName();
+        this._valueClass = propertyDescriptor.getPropertyType();
+        this._readMethod = propertyDescriptor.getReadMethod();
+        this._writeMethod = propertyDescriptor.getWriteMethod();
+        this._name = propertyDescriptor.getName();
     }
 
     @Override
     @SuppressWarnings({ "TooBroadCatch", "UseSpecificCatch" })
     public Object getValue(final Object object) {
-        isTrue(readMethod != null, "Getter is not available.");
+        isTrue(_readMethod != null, "Getter is not available.");
 
         try {
-            return readMethod.invoke(object);
+            return _readMethod.invoke(object);
         } catch (Exception ex) {
             throw new MappingException(
-                    String.format("Failed to get value from %s", readMethod), ex);
+                    String.format("Failed to get value from %s", _readMethod), ex);
         }
     }
 
     @Override
     @SuppressWarnings({ "TooBroadCatch", "UseSpecificCatch" })
     public void setValue(final Object object, final Object value) {
-        isTrue(writeMethod != null, "Setter is not available.");
+        isTrue(_writeMethod != null, "Setter is not available.");
 
         try {
-            writeMethod.invoke(object, value);
+            _writeMethod.invoke(object, value);
         } catch (Exception ex) {
             throw new MappingException(
-                    String.format("Failed to get value from %s", readMethod), ex);
+                    String.format("Failed to get value from %s", _readMethod), ex);
         }
     }
 
     @Override
     public String toString() {
         return String.format("Property - read method: %s, write method: %s",
-                readMethod, writeMethod);
+                _readMethod, _writeMethod);
     }
 
     @Override
     public Class getValueClass() {
-        return valueClass;
+        return _valueClass;
     }
 
     @Override
     public String getName() {
-        return name;
+        return _name;
     }
 
     @Override
     public boolean isGetterAvailable() {
-        return (readMethod != null);
+        return (_readMethod != null);
     }
 
     @Override
     public boolean isSetterAvailable() {
-        return (writeMethod != null);
+        return (_writeMethod != null);
     }
 }

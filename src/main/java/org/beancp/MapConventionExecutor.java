@@ -22,12 +22,12 @@ import static org.apache.commons.lang3.Validate.notNull;
 
 class MapConventionExecutor {
 
-    private final MapConvention convention;
+    private final MapConvention _convention;
 
-    private final List<Binding> bindings = null;
+    private final List<Binding> _bindings = null;
 
     public MapConventionExecutor(final MapConvention convention) {
-        this.convention = convention;
+        this._convention = convention;
     }
 
     /**
@@ -163,8 +163,8 @@ class MapConventionExecutor {
         // According to API specification build() method but never concurrently or after first of
         // this method, so we can safely get bindings field value without acquiring any locks or
         // defining fields as volatile.
-        List<Binding> bindingsToExecute = (bindings != null)
-                ? bindings
+        List<Binding> bindingsToExecute = (_bindings != null)
+                ? _bindings
                 // According to API specification it is build() method may be not executed before
                 // this method call. In this situation we generate bindings on the fly. Moreover API
                 // prohibits produce state that is shared state between calls, so next call
@@ -182,6 +182,6 @@ class MapConventionExecutor {
 
     private List<Binding> getBindings(
             final MappingInfo mappingsInfo, final Class sourceClass, final Class destinationClass) {
-        return convention.getBindings(mappingsInfo, sourceClass, destinationClass);
+        return _convention.getBindings(mappingsInfo, sourceClass, destinationClass);
     }
 }

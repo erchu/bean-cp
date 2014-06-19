@@ -29,7 +29,7 @@ import javassist.NotFoundException;
 
 final class FakeObjectBuilder {
 
-    private final ClassPool classPool = ClassPool.getDefault();
+    private final ClassPool _classPool = ClassPool.getDefault();
 
     public <T> T createFakeObject(final Class ofClass) {
         Constructor defaultConstructor = getDefaultConstructor(ofClass);
@@ -87,7 +87,7 @@ final class FakeObjectBuilder {
 
     private <T> Class createProxyClass(final Class<T> superClass) {
         try {
-            classPool.insertClassPath(new ClassClassPath(superClass));
+            _classPool.insertClassPath(new ClassClassPath(superClass));
 
             String proxyClassName = superClass.getName() + "_MapperProxy";
             Class proxyClass;
@@ -95,8 +95,8 @@ final class FakeObjectBuilder {
             try {
                 proxyClass = Class.forName(proxyClassName);
             } catch (ClassNotFoundException | NoClassDefFoundError ex) {
-                CtClass superCtClass = classPool.get(superClass.getName());
-                CtClass proxyCtClass = classPool.makeClass(proxyClassName);
+                CtClass superCtClass = _classPool.get(superClass.getName());
+                CtClass proxyCtClass = _classPool.makeClass(proxyClassName);
                 proxyCtClass.setSuperclass(superCtClass);
 
                 proxyClass = proxyCtClass.toClass(
