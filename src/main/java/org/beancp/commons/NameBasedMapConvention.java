@@ -43,6 +43,7 @@ import org.beancp.MappingInfo;
 import static org.apache.commons.lang3.ObjectUtils.*;
 import org.apache.commons.lang3.StringUtils;
 import static org.apache.commons.lang3.Validate.*;
+import org.beancp.MapperConfigurationException;
 
 /**
  * Convention matches fields by name.
@@ -242,16 +243,6 @@ public class NameBasedMapConvention implements MapConvention {
             final MappingInfo mappingsInfo,
             final Class sourceClass,
             final Class destinationClass) {
-        if (_failIfNotAllDestinationMembersMapped) {
-            // TODO: Implement failIfNotAllDestinationMembersMapped option support
-            throw new UnsupportedOperationException("failIfNotAllDestinationMembersMapped option not supported yet.");
-        }
-
-        if (_failIfNotAllSourceMembersMapped) {
-            // TODO: Implement failIfNotAllDestinationMembersMapped option support
-            throw new UnsupportedOperationException("failIfNotAllSourceMembersMapped option not supported yet.");
-        }
-
         List<Binding> result = new LinkedList<>();
         BeanInfo sourceBeanInfo, destinationBeanInfo;
 
@@ -268,6 +259,8 @@ public class NameBasedMapConvention implements MapConvention {
             throw new MappingException(
                     String.format("Failed to get bean info for %s", sourceClass), ex);
         }
+
+        boolean allDestinationMembersMapped = true;
 
         for (PropertyDescriptor destinationProperty : destinationBeanInfo.getPropertyDescriptors()) {
             Method destinationMember = destinationProperty.getWriteMethod();
@@ -295,6 +288,8 @@ public class NameBasedMapConvention implements MapConvention {
                     if (binding != null) {
                         result.add(binding);
                     }
+                } else {
+                    allDestinationMembersMapped = false;
                 }
             }
         }
@@ -305,7 +300,7 @@ public class NameBasedMapConvention implements MapConvention {
             if (isDestinationMemberExpectedToBind(destinationBindingSide) == false) {
                 continue;
             }
-            
+
             List<BindingSide> sourceBindingSide
                     = getMatchingSourceMemberByName(sourceBeanInfo, sourceClass,
                             destinationMember.getName(), MemberAccessType.FIELD);
@@ -321,17 +316,76 @@ public class NameBasedMapConvention implements MapConvention {
                 if (binding != null) {
                     result.add(binding);
                 }
+            } else {
+                allDestinationMembersMapped = false;
+            }
+        }
+
+        if (_failIfNotAllDestinationMembersMapped) {
+            if (allDestinationMembersMapped == false) {
+                throw new MapperConfigurationException("Not all destination members are mapped."
+                        + " This exception has been trown because "
+                        + "failIfNotAllDestinationMembersMapped option is enabled.");
+            }
+        }
+
+        if (_failIfNotAllSourceMembersMapped) {
+            boolean allSourceMembersMapped = true;
+
+            for (PropertyDescriptor sourceProperty : sourceBeanInfo.getPropertyDescriptors()) {
+                Method sourceMember = sourceProperty.getReadMethod();
+
+                if (sourceMember != null) {
+                    if (sourceMember.getDeclaringClass().equals(Object.class)) {
+                        continue;
+                    }
+                    
+                    BindingSide sourceBindingSide = new PropertyBindingSide(sourceProperty);
+
+                    if (isSourceMemberMapped(result, sourceBindingSide) == false) {
+                        allSourceMembersMapped = false;
+                        break;
+                    }
+                }
+            }
+
+            // if all properties are mapped we still need to check fields
+            if (allSourceMembersMapped) {
+                for (Field sourceMember : sourceClass.getFields()) {
+                    if (sourceMember.getDeclaringClass().equals(Object.class)) {
+                        continue;
+                    }
+
+                    BindingSide sourceBindingSide = new FieldBindingSide(sourceMember);
+
+                    if (isSourceMemberMapped(result, sourceBindingSide) == false) {
+                        allSourceMembersMapped = false;
+                        break;
+                    }
+                }
+            }
+
+            if (allSourceMembersMapped == false) {
+                throw new MapperConfigurationException("Not all source members are mapped."
+                        + " This exception has been trown because "
+                        + "failIfNotAllSourceMembersMapped option is enabled.");
             }
         }
 
         return result;
     }
 
+    private boolean isSourceMemberMapped(
+            final List<Binding> allBindings, final BindingSide sourceBindingSide) {
+        return allBindings.stream()
+                .anyMatch(i -> i.getSourcePath()[0].equals(sourceBindingSide));
+    }
+
     private boolean isDestinationMemberExpectedToBind(BindingSide destinationBindingSide) {
         if (anyPredicateMatch(_excludeDestinationMembers, destinationBindingSide)) {
             return false;
         }
-        
+
         if (_includeDestinationMembers.isEmpty()) {
             return true;
         }
@@ -345,7 +399,7 @@ public class NameBasedMapConvention implements MapConvention {
         if (predicates.isEmpty()) {
             return false;
         }
-        
+
         return predicates.stream()
                 .anyMatch(i -> i.test(destinationBindingSide.getName()));
     }

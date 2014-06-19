@@ -18,6 +18,7 @@
 package org.beancp;
 
 import java.lang.reflect.Field;
+import java.util.Objects;
 
 /**
  * Binding to field.
@@ -28,7 +29,7 @@ public final class FieldBindingSide implements BindingSide {
 
     /**
      * Creates binding to field from field reference.
-     * 
+     *
      * @param field field reference used to create binding.
      */
     public FieldBindingSide(final Field field) {
@@ -36,7 +37,7 @@ public final class FieldBindingSide implements BindingSide {
     }
 
     @Override
-    @SuppressWarnings({"TooBroadCatch", "UseSpecificCatch"})
+    @SuppressWarnings({ "TooBroadCatch", "UseSpecificCatch" })
     public Object getValue(final Object object) {
         try {
             return _field.get(object);
@@ -46,7 +47,7 @@ public final class FieldBindingSide implements BindingSide {
     }
 
     @Override
-    @SuppressWarnings({"TooBroadCatch", "UseSpecificCatch"})
+    @SuppressWarnings({ "TooBroadCatch", "UseSpecificCatch" })
     public void setValue(final Object object, final Object value) {
         try {
             _field.set(object, value);
@@ -78,5 +79,25 @@ public final class FieldBindingSide implements BindingSide {
     @Override
     public boolean isSetterAvailable() {
         return true;
+    }
+
+    @Override
+    public int hashCode() {
+        return _field.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+
+        final FieldBindingSide other = (FieldBindingSide) obj;
+
+        return (this._field.equals(other._field));
     }
 }

@@ -19,6 +19,7 @@ package org.beancp;
 
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Method;
+import java.util.Objects;
 import static org.apache.commons.lang3.Validate.*;
 
 /**
@@ -97,5 +98,30 @@ public class PropertyBindingSide implements BindingSide {
     @Override
     public boolean isSetterAvailable() {
         return (_writeMethod != null);
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+
+        hash = 53 * hash + Objects.hashCode(this._name);
+        hash = 53 * hash + Objects.hashCode(this._valueClass);
+
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+
+        final PropertyBindingSide other = (PropertyBindingSide) obj;
+
+        return (Objects.equals(this._valueClass, other._valueClass) != false);
     }
 }

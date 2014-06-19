@@ -24,10 +24,10 @@ class MapConventionExecutor {
 
     private final MapConvention _convention;
 
-    private final List<Binding> _bindings = null;
+    private List<Binding> _bindings = null;
 
     public MapConventionExecutor(final MapConvention convention) {
-        this._convention = convention;
+        _convention = convention;
     }
 
     /**
@@ -43,7 +43,7 @@ class MapConventionExecutor {
      */
     void build(MappingInfo mappingInfo, Class sourceClass, Class destinationClass)
             throws MapperConfigurationException {
-
+        _bindings = _convention.getBindings(mappingInfo, sourceClass, destinationClass);
     }
 
     /**
