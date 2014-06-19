@@ -31,6 +31,7 @@ import java.beans.PropertyDescriptor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
@@ -56,7 +57,7 @@ public class NameBasedMapConvention implements MapConvention {
 
     private List<Predicate<String>> _includeDestinationMembers;
 
-    private String[] _excludeDestinationMembers;
+    private List<Predicate<String>> _excludeDestinationMembers;
 
     private boolean _flateningEnabled;
 
@@ -85,7 +86,7 @@ public class NameBasedMapConvention implements MapConvention {
      */
     public static NameBasedMapConvention get() {
         NameBasedMapConvention defaultConvention = new NameBasedMapConvention();
-        defaultConvention._excludeDestinationMembers = new String[0];
+        defaultConvention._excludeDestinationMembers = new LinkedList<>();
         defaultConvention._includeDestinationMembers = new LinkedList<>();
         defaultConvention._failIfNotAllDestinationMembersMapped = false;
         defaultConvention._failIfNotAllSourceMembersMapped = false;
@@ -115,10 +116,7 @@ public class NameBasedMapConvention implements MapConvention {
     public NameBasedMapConvention includeDestinationMembers(String... members) {
         notNull(members, "members");
 
-        this._includeDestinationMembers
-                = Arrays.stream(members)
-                .map(i -> Pattern.compile(i, Pattern.CASE_INSENSITIVE).asPredicate())
-                .collect(Collectors.toList());
+        _includeDestinationMembers = toPredicates(members);
 
         return this;
     }
@@ -141,7 +139,7 @@ public class NameBasedMapConvention implements MapConvention {
     public NameBasedMapConvention excludeDestinationMembers(String... members) {
         notNull(members, "members");
 
-        this._excludeDestinationMembers = members;
+        _excludeDestinationMembers = toPredicates(members);
 
         return this;
     }
@@ -162,7 +160,7 @@ public class NameBasedMapConvention implements MapConvention {
      *     private String name;
      *
      *     public String getName() {
-     *          return this.name;
+     *          return name;
      *     }
      * }
      *
@@ -171,7 +169,7 @@ public class NameBasedMapConvention implements MapConvention {
      *     private Customer customer;
      *
      *     public Customer getCustomer() {
-     *          return this.customer;
+     *          return customer;
      *     }
      * }
      *
@@ -180,11 +178,11 @@ public class NameBasedMapConvention implements MapConvention {
      *     private String customerName;
      *
      *     public void setCustomerName(final String customerName) {
-     *          this.customerName = customerName;
+     *          customerName = customerName;
      *     }
      *
      *     public String getCustomerName() {
-     *          return this.customerName;
+     *          return customerName;
      *     }
      * }
      * </pre>
@@ -196,7 +194,7 @@ public class NameBasedMapConvention implements MapConvention {
      * @return this (for method chaining)
      */
     public NameBasedMapConvention enableFlattening() {
-        this._flateningEnabled = true;
+        _flateningEnabled = true;
 
         return this;
     }
@@ -208,7 +206,7 @@ public class NameBasedMapConvention implements MapConvention {
      * @return this (for method chaining)
      */
     public NameBasedMapConvention disableFlattening() {
-        this._flateningEnabled = false;
+        _flateningEnabled = false;
 
         return this;
     }
@@ -221,7 +219,7 @@ public class NameBasedMapConvention implements MapConvention {
      * @return this (for method chaining)
      */
     public NameBasedMapConvention failIfNotAllDestinationMembersMapped() {
-        this._failIfNotAllDestinationMembersMapped = true;
+        _failIfNotAllDestinationMembersMapped = true;
 
         return this;
     }
@@ -234,7 +232,7 @@ public class NameBasedMapConvention implements MapConvention {
      * @return this (for method chaining)
      */
     public NameBasedMapConvention failIfNotAllSourceMembersMapped() {
-        this._failIfNotAllSourceMembersMapped = true;
+        _failIfNotAllSourceMembersMapped = true;
 
         return this;
     }
@@ -244,11 +242,6 @@ public class NameBasedMapConvention implements MapConvention {
             final MappingInfo mappingsInfo,
             final Class sourceClass,
             final Class destinationClass) {
-        if (_excludeDestinationMembers.length > 0) {
-            // TODO: Implement excludeDestinationMembers option support
-            throw new UnsupportedOperationException("excludeDestinationMembers option not supported yet.");
-        }
-
         if (_failIfNotAllDestinationMembersMapped) {
             // TODO: Implement failIfNotAllDestinationMembersMapped option support
             throw new UnsupportedOperationException("failIfNotAllDestinationMembersMapped option not supported yet.");
@@ -335,11 +328,25 @@ public class NameBasedMapConvention implements MapConvention {
     }
 
     private boolean isDestinationMemberExpectedToBind(BindingSide destinationBindingSide) {
+        if (anyPredicateMatch(_excludeDestinationMembers, destinationBindingSide)) {
+            return false;
+        }
+        
         if (_includeDestinationMembers.isEmpty()) {
             return true;
         }
 
-        return _includeDestinationMembers.stream()
+        return anyPredicateMatch(_includeDestinationMembers, destinationBindingSide);
+    }
+
+    private boolean anyPredicateMatch(
+            final Collection<Predicate<String>> predicates,
+            final BindingSide destinationBindingSide) {
+        if (predicates.isEmpty()) {
+            return false;
+        }
+        
+        return predicates.stream()
                 .anyMatch(i -> i.test(destinationBindingSide.getName()));
     }
 
@@ -501,5 +508,11 @@ public class NameBasedMapConvention implements MapConvention {
                 return null;
             }
         }
+    }
+
+    private static List<Predicate<String>> toPredicates(final String[] members) {
+        return Arrays.stream(members)
+                .map(i -> Pattern.compile(i, Pattern.CASE_INSENSITIVE).asPredicate())
+                .collect(Collectors.toList());
     }
 }
