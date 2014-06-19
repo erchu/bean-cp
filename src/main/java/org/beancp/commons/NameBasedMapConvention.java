@@ -34,6 +34,9 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Predicate;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import org.beancp.MappingException;
 import org.beancp.MappingInfo;
 import static org.apache.commons.lang3.ObjectUtils.*;
@@ -51,7 +54,7 @@ public class NameBasedMapConvention implements MapConvention {
         PROPERTY
     }
 
-    private String[] includeDestinationMembers;
+    private List<Predicate<String>> includeDestinationMembers;
 
     private String[] excludeDestinationMembers;
 
@@ -83,7 +86,7 @@ public class NameBasedMapConvention implements MapConvention {
     public static NameBasedMapConvention get() {
         NameBasedMapConvention defaultConvention = new NameBasedMapConvention();
         defaultConvention.excludeDestinationMembers = new String[0];
-        defaultConvention.includeDestinationMembers = new String[0];
+        defaultConvention.includeDestinationMembers = new LinkedList<>();
         defaultConvention.failIfNotAllDestinationMembersMapped = false;
         defaultConvention.failIfNotAllSourceMembersMapped = false;
         defaultConvention.flateningEnabled = false;
@@ -96,8 +99,9 @@ public class NameBasedMapConvention implements MapConvention {
      * regular expression matching field name or bean property name (according to beans
      * specification). If <b>not specified</b> (empty array) all members are subject to map by
      * convention. If <b>specified</b> (not empty array) only members with names matching any of
-     * {@code members} could be mapped by convention. This list has lower priority that exclude list
-     * specified by {@link #excludeDestinationMembers(java.lang.String...)} method.
+     * {@code members} could be mapped by convention ignoring case. This list has lower priority
+     * that exclude list specified by {@link #excludeDestinationMembers(java.lang.String...)}
+     * method.
      *
      * <p>
      * Note that when you put some member on list then it is not guaranteed that it will be mapped
@@ -111,7 +115,10 @@ public class NameBasedMapConvention implements MapConvention {
     public NameBasedMapConvention includeDestinationMembers(String... members) {
         notNull(members, "members");
 
-        this.includeDestinationMembers = members;
+        this.includeDestinationMembers
+                = Arrays.stream(members)
+                .map(i -> Pattern.compile(i, Pattern.CASE_INSENSITIVE).asPredicate())
+                .collect(Collectors.toList());
 
         return this;
     }
@@ -242,11 +249,6 @@ public class NameBasedMapConvention implements MapConvention {
             throw new UnsupportedOperationException("excludeDestinationMembers option not supported yet.");
         }
 
-        if (includeDestinationMembers.length > 0) {
-            // TODO: Implement includeDestinationMembers option support
-            throw new UnsupportedOperationException("includeDestinationMembers option not supported yet.");
-        }
-
         if (failIfNotAllDestinationMembersMapped) {
             // TODO: Implement failIfNotAllDestinationMembersMapped option support
             throw new UnsupportedOperationException("failIfNotAllDestinationMembersMapped option not supported yet.");
@@ -278,13 +280,18 @@ public class NameBasedMapConvention implements MapConvention {
             Method destinationMember = destinationProperty.getWriteMethod();
 
             if (destinationMember != null) {
+                BindingSide destinationBindingSide
+                        = new PropertyBindingSide(destinationProperty);
+
+                if (isDestinationMemberExpectedToBind(destinationBindingSide) == false) {
+                    continue;
+                }
+
                 List<BindingSide> sourceBindingSide
                         = getMatchingSourceMemberByName(sourceBeanInfo, sourceClass,
                                 destinationProperty.getName(), MemberAccessType.PROPERTY);
 
                 if (sourceBindingSide != null) {
-                    BindingSide destinationBindingSide
-                            = new PropertyBindingSide(destinationProperty);
 
                     BindingSide[] sourceBindingSideArray
                             = sourceBindingSide.stream().toArray(BindingSide[]::new);
@@ -300,12 +307,17 @@ public class NameBasedMapConvention implements MapConvention {
         }
 
         for (Field destinationMember : destinationClass.getFields()) {
+            BindingSide destinationBindingSide = new FieldBindingSide(destinationMember);
+
+            if (isDestinationMemberExpectedToBind(destinationBindingSide) == false) {
+                continue;
+            }
+            
             List<BindingSide> sourceBindingSide
                     = getMatchingSourceMemberByName(sourceBeanInfo, sourceClass,
                             destinationMember.getName(), MemberAccessType.FIELD);
 
             if (sourceBindingSide != null) {
-                BindingSide destinationBindingSide = new FieldBindingSide(destinationMember);
 
                 BindingSide[] sourceBindingSideArray
                         = sourceBindingSide.stream().toArray(BindingSide[]::new);
@@ -320,6 +332,15 @@ public class NameBasedMapConvention implements MapConvention {
         }
 
         return result;
+    }
+
+    private boolean isDestinationMemberExpectedToBind(BindingSide destinationBindingSide) {
+        if (includeDestinationMembers.isEmpty()) {
+            return true;
+        }
+
+        return includeDestinationMembers.stream()
+                .anyMatch(i -> i.test(destinationBindingSide.getName()));
     }
 
     private List<BindingSide> getMatchingSourceMemberByName(
