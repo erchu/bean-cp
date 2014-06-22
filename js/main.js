@@ -23,6 +23,8 @@ $( document ).ready(function() {
 		});
 	}
 	
+	// API specs pop-up disabled
+	/*
 	$('#api-specs-link').click(function(e) {
 		e.preventDefault();
 		showApiSpecs();
@@ -32,4 +34,5 @@ $( document ).ready(function() {
 		e.preventDefault();
 		showApiSpecs();
 	});
+	*/
 });
