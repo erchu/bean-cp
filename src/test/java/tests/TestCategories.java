@@ -16,25 +16,11 @@
  * License along with this library.
  */
 
-package org.beancp.commons;
+package tests;
 
-import java.util.List;
-import org.beancp.Binding;
-import org.beancp.MapConvention;
-import org.beancp.MappingInfo;
+public interface TestCategories {
 
-public class CollectionConvention implements MapConvention {
+    static interface IntegrationTest {}
     
-    private CollectionConvention() {}
-    
-    public static CollectionConvention get() {
-        return new CollectionConvention();
-    }
-
-    @Override
-    public List<Binding> getBindings(
-            final MappingInfo mappingsInfo, final Class sourceClass, final Class destinationClass) {
-        //TODO: Collection mapping not supported yet
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
+    static interface LongRunning {}
 }

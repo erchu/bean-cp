@@ -16,25 +16,12 @@
  * License along with this library.
  */
 
-package org.beancp.commons;
+package org.beancp.integration_tests;
 
-import java.util.List;
-import org.beancp.Binding;
-import org.beancp.MapConvention;
-import org.beancp.MappingInfo;
+public class CircularReferencesMappingTest {
 
-public class CollectionConvention implements MapConvention {
-    
-    private CollectionConvention() {}
-    
-    public static CollectionConvention get() {
-        return new CollectionConvention();
-    }
-
-    @Override
-    public List<Binding> getBindings(
-            final MappingInfo mappingsInfo, final Class sourceClass, final Class destinationClass) {
-        //TODO: Collection mapping not supported yet
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
+    //TODO: Implement some circular references mapping test:
+    // 1) conventer
+    // 2) map
+    // 3) convention
 }

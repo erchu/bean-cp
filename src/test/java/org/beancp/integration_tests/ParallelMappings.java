@@ -16,12 +16,10 @@
  * License along with this library.
  */
 
-package org.beancp;
+package org.beancp.integration_tests;
 
-class CircularReferencesMappingTest {
+public class ParallelMappings {
 
-    //TODO: Implement some circular references mapping test:
-    // 1) conventer
-    // 2) map
-    // 3) convention
+    //TODO: Configure builder and start mapping in many parallel threads
+    //TODO: Switch to TestNG and mark test as long running
 }
