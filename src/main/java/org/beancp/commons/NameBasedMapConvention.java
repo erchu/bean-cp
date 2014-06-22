@@ -125,8 +125,8 @@ public class NameBasedMapConvention implements MapConvention {
     /**
      * Sets list of destination members which will be excluded (ignored) by convention. Each entry
      * must be regular expression matching field name or bean property name (according to beans
-     * specification). This list has higher priority that include list specified by {@link #includeDestinationMembers(java.lang.String...)
-     * } method.
+     * specification). This list has higher priority that include list specified by
+     * {@link #includeDestinationMembers(java.lang.String...)} method.
      *
      * <p>
      * Note that when you put some member on list then it is not guaranteed that it will be mapped
@@ -278,12 +278,15 @@ public class NameBasedMapConvention implements MapConvention {
                                 destinationProperty.getName(), MemberAccessType.PROPERTY);
 
                 if (sourceBindingSide != null) {
-
                     BindingSide[] sourceBindingSideArray
                             = sourceBindingSide.stream().toArray(BindingSide[]::new);
 
                     Binding binding = getBidingIfAvailable(
-                            mappingsInfo, sourceBindingSideArray, destinationBindingSide);
+                            sourceClass,
+                            destinationClass,
+                            mappingsInfo,
+                            sourceBindingSideArray,
+                            destinationBindingSide);
 
                     if (binding != null) {
                         result.add(binding);
@@ -311,7 +314,11 @@ public class NameBasedMapConvention implements MapConvention {
                         = sourceBindingSide.stream().toArray(BindingSide[]::new);
 
                 Binding binding = getBidingIfAvailable(
-                        mappingsInfo, sourceBindingSideArray, destinationBindingSide);
+                        sourceClass,
+                        destinationClass,
+                        mappingsInfo,
+                        sourceBindingSideArray,
+                        destinationBindingSide);
 
                 if (binding != null) {
                     result.add(binding);
@@ -543,6 +550,8 @@ public class NameBasedMapConvention implements MapConvention {
     }
 
     private Binding getBidingIfAvailable(
+            final Class sourceClass,
+            final Class destinationClass,
             final MappingInfo mappingsInfo,
             final BindingSide[] sourceBindingSide,
             final BindingSide destinationBindingSide) {
@@ -552,7 +561,9 @@ public class NameBasedMapConvention implements MapConvention {
         if (sourceValueClass.equals(destinationValueClass)) {
             return new Binding(sourceBindingSide, destinationBindingSide);
         } else {
-            if (mappingsInfo.isConverterAvailable(sourceValueClass, destinationValueClass)) {
+            if (sourceClass.equals(sourceValueClass) && destinationClass.equals(destinationValueClass)) {
+                return new BindingWithValueMap(sourceBindingSide, destinationBindingSide);
+            } else if (mappingsInfo.isConverterAvailable(sourceValueClass, destinationValueClass)) {
                 return new BindingWithValueConversion(sourceBindingSide, destinationBindingSide);
             } else if (mappingsInfo.isMapAvailable(sourceValueClass, destinationValueClass)) {
                 return new BindingWithValueMap(sourceBindingSide, destinationBindingSide);
