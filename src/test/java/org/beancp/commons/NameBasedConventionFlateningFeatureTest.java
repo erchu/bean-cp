@@ -265,6 +265,25 @@ public class NameBasedConventionFlateningFeatureTest {
     }
 
     @Test
+    public void when_flattening_then_null_at_intermediate_level_shoud_be_mapped_as_null() {
+        // GIVEN
+        SourceLevel3 sourceInstance = getSampleSourceLevel3();
+        sourceInstance.setFirst(null);
+
+        // WHEN
+        Mapper mapper = new MapperBuilder()
+                .addMap(SourceLevel3.class, DestinationForSourceLevel3.class,
+                        (config, source, destination)
+                        -> config.useConvention(NameBasedMapConvention.get().enableFlattening()))
+                .buildMapper();
+
+        DestinationForSourceLevel3 result = mapper.map(sourceInstance, DestinationForSourceLevel3.class);
+
+        // THEN
+        assertNull("Invalid result.getFirstModel() value", result.getFirstModel());
+    }
+
+    @Test
     public void flatening_feature_should_look_as_deep_as_possible() {
         // GIVEN
         SourceTopLevel sourceInstance = getSampleSourceTopLevel();

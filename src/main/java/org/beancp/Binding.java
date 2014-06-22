@@ -91,6 +91,7 @@ public class Binding {
         for (BindingSide i : _sourcePath) {
             if (value == null) {
                 setValueAtDestination(mapper, destination, null);
+                return;
             }
 
             value = getValue(i, value);
@@ -108,10 +109,15 @@ public class Binding {
      */
     protected void setValueAtDestination(
             final Mapper mapper, final Object destination, final Object value) {
+        notNull(destination, "destination");
+        
         _destinationMember.setValue(destination, value);
     }
 
     private Object getValue(final BindingSide bindingSide, final Object object) {
+        notNull(bindingSide, "bindingSide");
+        notNull(object, "object");
+        
         if (_destinationMember.isGetterAvailable() == false) {
             throw new MappingException("Getter not available for " + bindingSide);
         }

@@ -126,7 +126,7 @@ public interface Map<S, D> {
      *
      * @param <SI> source value data type
      * @param <DI> destination value data type
-     * @param supplierFunction calculated member function, must be thread-safe.
+     * @param fromFunction calculated member function, must be thread-safe.
      * @param toMember destination class member setter, must be thread-safe.
      * @param toMemberClass destination class member type
      * @param options additional mapping options
@@ -134,7 +134,7 @@ public interface Map<S, D> {
      * @return this (for method chaining)
      */
     <SI, DI> Map<S, D> mapInner(
-            final Supplier<SI> supplierFunction,
+            final Supplier<SI> fromFunction,
             final Consumer<DI> toMember,
             final Class<DI> toMemberClass,
             final BindingOption<S, D, DI>... options);

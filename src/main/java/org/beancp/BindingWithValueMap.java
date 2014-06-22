@@ -62,18 +62,22 @@ public class BindingWithValueMap extends Binding {
 
         BindingSide destinationMember = getDestinationMember();
 
-        if (destinationMember.isGetterAvailable()) {
-            Object currentValue = destinationMember.getValue(destination);
+        if (value == null) {
+            super.setValueAtDestination(mapper, destination, null);
+        } else {
+            if (destinationMember.isGetterAvailable()) {
+                Object currentValue = destinationMember.getValue(destination);
 
-            if (currentValue != null) {
-                mapper.map(value, currentValue);
+                if (currentValue != null) {
+                    mapper.map(value, currentValue);
+                } else {
+                    Object mapResult = mapper.map(value, destinationMember.getValueClass());
+                    super.setValueAtDestination(mapper, destination, mapResult);
+                }
             } else {
                 Object mapResult = mapper.map(value, destinationMember.getValueClass());
                 super.setValueAtDestination(mapper, destination, mapResult);
             }
-        } else {
-            Object mapResult = mapper.map(value, destinationMember.getValueClass());
-            super.setValueAtDestination(mapper, destination, mapResult);
         }
     }
 }
