@@ -187,7 +187,26 @@ public class MapperSelectionTest {
     }
 
     @Test
-    public void map_shoudl_accept_inherited_classes_by_default_if_more_specific_option_is_not_available() {
+    public void map_should_accept_inherited_classes_by_default_if_more_specific_option_is_not_available() {
+        // GIVEN
+        InheritedFromSource sourceInstance = new InheritedFromSource();
+        sourceInstance.setX("xval");
+
+        Mapper mapper = new MapperBuilder()
+                .addMap(Source.class, Destination.class,
+                        (config, source, destination)
+                        -> config.bind(() -> source.getX() + "4", destination::setA))
+                .buildMapper();
+
+        // WHEN
+        InheritedFromDestination result = mapper.map(sourceInstance, InheritedFromDestination.class);
+
+        // THEN
+        assertEquals("Property 'x' is not mapped correctly.", "xval4", result.getA());
+    }
+    
+    @Test
+    public void map_should_accept_array_of_inherited_elements_if_no_specific_option_is_not_available() {
         // GIVEN
         InheritedFromSource sourceInstance = new InheritedFromSource();
         sourceInstance.setX("xval");

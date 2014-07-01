@@ -59,6 +59,15 @@ public interface Map<S, D> {
     Map<S, D> beforeMap(final Action action);
 
     /**
+     * Action to be performed after mappings.
+     *
+     * @param action action to be executed after mappings, must be thread-safe.
+     *
+     * @return this (for method chaining)
+     */
+    Map<S, D> beforeMap(final Consumer<Mapper> action);
+
+    /**
      * Adds mappings using convention. Convention mappings are performed before other mappings
      * defined by
      * {@link #bind(java.util.function.Supplier, java.util.function.Consumer, org.beancp.BindingOption...)}
@@ -147,4 +156,13 @@ public interface Map<S, D> {
      * @return this (for method chaining)
      */
     Map<S, D> afterMap(final Action action);
+
+    /**
+     * Action to be performed before mappings.
+     *
+     * @param action action to be executed before mappings, must be thread-safe.
+     *
+     * @return this (for method chaining)
+     */
+    Map<S, D> afterMap(final Consumer<Mapper> action);
 }

@@ -234,6 +234,11 @@ final class MapImpl<S, D> implements Map<S, D>, MappingExecutor<S, D> {
 
     @Override
     public Map<S, D> beforeMap(final Action action) {
+        return beforeMap(notUsed -> action.invoke());
+    }
+
+    @Override
+    public Map<S, D> beforeMap(final Consumer<Mapper> action) {
         if (mode == MapMode.CONFIGURATION) {
             if (_useConventionExecuted || _bindBindConstantOrMapExecuted || _afterMapExecuted) {
                 throw new MapperConfigurationException(INVALID_STATEMENT_ORDER_MESSAGE);
@@ -243,7 +248,7 @@ final class MapImpl<S, D> implements Map<S, D>, MappingExecutor<S, D> {
         }
 
         if (mode == MapMode.EXECUTION) {
-            action.invoke();
+            action.accept(_executionPhaseMapper);
         }
 
         return this;
@@ -251,12 +256,17 @@ final class MapImpl<S, D> implements Map<S, D>, MappingExecutor<S, D> {
 
     @Override
     public Map<S, D> afterMap(final Action action) {
+        return afterMap(notUsed -> action.invoke());
+    }
+
+    @Override
+    public Map<S, D> afterMap(final Consumer<Mapper> action) {
         if (mode == MapMode.CONFIGURATION) {
             _afterMapExecuted = true;
         }
 
         if (mode == MapMode.EXECUTION) {
-            action.invoke();
+            action.accept(_executionPhaseMapper);
         }
 
         return this;
