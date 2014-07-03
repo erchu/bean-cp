@@ -125,8 +125,9 @@ public final class MapperBuilder implements MappingInfo {
 
         for (Converter<?, ?> i : converters) {
             validateAddMappingAction(i.getSourceClass(), i.getDestinationClass());
-            this._converters.addAll(Arrays.asList(converters));
         }
+
+        this._converters.addAll(Arrays.asList(converters));
 
         return this;
     }

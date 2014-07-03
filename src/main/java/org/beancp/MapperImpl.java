@@ -17,6 +17,7 @@
  */
 package org.beancp;
 
+import java.lang.reflect.Array;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -95,7 +96,14 @@ class MapperImpl implements Mapper {
                             sourceClass, destinationClass, _converters);
 
             if (converter != null) {
-                return Optional.of(converter.convert(this, source));
+                if (sourceClass.isArray() && sourceClass.getComponentType().isPrimitive()) {
+                    Object[] sourceWrapper = getArrayOfPrimitiveTypeWrapper(sourceClass, source);
+
+                    return Optional.of(
+                            ((Converter<Object, D>) converter).convert(this, sourceWrapper));
+                } else {
+                    return Optional.of(converter.convert(this, source));
+                }
             }
 
             MapImpl<S, D> map = (MapImpl<S, D>) MapperExecutorSelector.getBestMatchingMap(
@@ -125,6 +133,18 @@ class MapperImpl implements Mapper {
                             sourceClass, destinationClass),
                     ex);
         }
+    }
+
+    private <S> Object[] getArrayOfPrimitiveTypeWrapper(Class sourceClass, final S source) throws IllegalArgumentException, NegativeArraySizeException, ArrayIndexOutOfBoundsException {
+        Class<?> arrayElementWrapperClass
+                = ClassUtils.primitiveToWrapper(sourceClass.getComponentType());
+        int arrayLength = Array.getLength(source);
+        Object[] sourceWrapper = (Object[]) Array.newInstance(
+                arrayElementWrapperClass, arrayLength);
+        for (int i = 0 ; i < arrayLength ; i++) {
+            sourceWrapper[i] = Array.get(source, i);
+        }
+        return sourceWrapper;
     }
 
     @Override
@@ -169,7 +189,7 @@ class MapperImpl implements Mapper {
         return false;
     }
 
-    @SuppressWarnings({"TooBroadCatch", "UseSpecificCatch"})
+    @SuppressWarnings({ "TooBroadCatch", "UseSpecificCatch" })
     private <D> D constructObjectUsingDefaultConstructor(
             final Class<D> destinationClass) throws MappingException {
         try {
