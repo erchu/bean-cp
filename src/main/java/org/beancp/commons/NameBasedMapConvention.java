@@ -214,7 +214,7 @@ public class NameBasedMapConvention implements MapConvention {
 
     /**
      * Convention will fail during map building (see
-     * {@link #build(org.beancp.MappingInfo, java.lang.Class, java.lang.Class)} method) if not all
+     * {@link #getBindings(org.beancp.MappingInfo, java.lang.Class, java.lang.Class)} method) if not all
      * destination properties are mapped.
      *
      * @return this (for method chaining)
@@ -227,7 +227,7 @@ public class NameBasedMapConvention implements MapConvention {
 
     /**
      * Convention will fail during map building (see
-     * {@link #build(org.beancp.MappingInfo, java.lang.Class, java.lang.Class)} method) if not all
+     * {@link #getBindings(org.beancp.MappingInfo, java.lang.Class, java.lang.Class)} method) if not all
      * source properties are mapped.
      *
      * @return this (for method chaining)

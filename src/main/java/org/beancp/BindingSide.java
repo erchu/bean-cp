@@ -38,7 +38,7 @@ public interface BindingSide {
 
     /**
      * Extracts value from passed object and returns it. If there is no getter available then
-     * {@link MappingException) will be trown.
+     * {@link MappingException} will be trown.
      *
      * @param object value source.
      * @return value for passed object.
@@ -47,10 +47,10 @@ public interface BindingSide {
 
     /**
      * Sets value for passed object. If there is no setter available then
-     * {@link MappingException) will be trown.
+     * {@link MappingException} will be trown.
      *
-     * @param object
-     * @param value
+     * @param object value object.
+     * @param value value to set.
      */
     void setValue(final Object object, final Object value) throws MappingException;
 
