@@ -18,7 +18,6 @@
 package org.beancp;
 
 import java.lang.reflect.Field;
-import java.util.Objects;
 
 /**
  * Binding to field.

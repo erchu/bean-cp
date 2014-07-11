@@ -23,7 +23,9 @@ package org.beancp;
  */
 public class MapperConfigurationException extends RuntimeException {
 
-    /**
+	private static final long serialVersionUID = 1L;
+
+	/**
      * Creates a new instance of <code>MapDefinitionException</code> without detail message.
      */
     public MapperConfigurationException() {

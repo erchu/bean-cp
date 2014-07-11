@@ -133,7 +133,7 @@ public class ConstructDestinationObjectUsingTest {
         sourceInstance.setX(2);
 
         // WHEN
-        Mapper mapper = new MapperBuilder().addMap(Source.class, Destination.class,
+        new MapperBuilder().addMap(Source.class, Destination.class,
                 (config, source, destination) -> config
                 .beforeMap(() -> {
                 })
@@ -156,7 +156,7 @@ public class ConstructDestinationObjectUsingTest {
         sourceInstance.setX(2);
 
         // WHEN
-        Mapper mapper = new MapperBuilder().addMap(Source.class, Destination.class,
+        new MapperBuilder().addMap(Source.class, Destination.class,
                 (config, source, destination) -> config
                 .bind(source::getX, destination::setA)
                 .constructDestinationObjectUsing(() -> {
@@ -177,7 +177,7 @@ public class ConstructDestinationObjectUsingTest {
         sourceInstance.setX(2);
 
         // WHEN
-        Mapper mapper = new MapperBuilder().addMap(Source.class, Destination.class,
+        new MapperBuilder().addMap(Source.class, Destination.class,
                 (config, source, destination) -> config
                 .bindConstant(9, destination::setA)
                 .constructDestinationObjectUsing(() -> {
@@ -198,7 +198,7 @@ public class ConstructDestinationObjectUsingTest {
         sourceInstance.setX(2);
 
         // WHEN
-        Mapper mapper = new MapperBuilder().addMap(Source.class, Destination.class,
+        new MapperBuilder().addMap(Source.class, Destination.class,
                 (config, source, destination) -> config
                 .afterMap(() -> {
                 })

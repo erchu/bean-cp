@@ -23,7 +23,9 @@ package org.beancp;
  */
 public class MappingException extends RuntimeException {
 
-    /**
+	private static final long serialVersionUID = 1L;
+
+	/**
      * Creates a new instance of <code>MappingException</code> without detail message.
      */
     public MappingException() {

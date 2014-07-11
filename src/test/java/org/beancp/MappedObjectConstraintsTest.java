@@ -331,7 +331,7 @@ public class MappedObjectConstraintsTest {
         sampleSource.setX("xval");
 
         // WHEN
-        Mapper mapper = new MapperBuilder()
+        new MapperBuilder()
                 .addMap(SourceWithWithProtectedDefaultConstructor.class, DestinationWithProtectedDefaultConstructor.class,
                         (config, source, destination) -> config
                         .bind(source::getX, destination::setA))
@@ -374,7 +374,7 @@ public class MappedObjectConstraintsTest {
         sampleSource.setX("xval");
 
         // WHEN
-        Mapper mapper = new MapperBuilder()
+        new MapperBuilder()
                 .addMap(Source.class, FinalDestination.class,
                         (config, source, destination) -> config
                         .bind(source::getX, destination::setA))
@@ -391,7 +391,7 @@ public class MappedObjectConstraintsTest {
         sampleSource.setX("xval");
 
         // WHEN
-        Mapper mapper = new MapperBuilder()
+        new MapperBuilder()
                 .addMap(Source.class, FinalDestinationWithProtectedDefaultConstructor.class,
                         (config, source, destination) -> config
                         .bind(source::getX, destination::setA))

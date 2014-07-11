@@ -236,7 +236,7 @@ public class NameBasedConventionFlateningFeatureTest {
                         -> config.useConvention(NameBasedMapConvention.get()))
                 .buildMapper();
 
-        DestinationForSourceLevel3 result = mapper.map(sourceInstance, DestinationForSourceLevel3.class);
+        mapper.map(sourceInstance, DestinationForSourceLevel3.class);
 
         // THEN: expect exception, because no source member match destination member
     }
