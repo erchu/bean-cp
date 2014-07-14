@@ -15,197 +15,348 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library.
  */
-
 package org.beancp.integration_tests;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import java.lang.Thread.UncaughtExceptionHandler;
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.Collection;
+import java.util.Date;
+import java.util.LinkedList;
 import java.util.Random;
 
 import org.beancp.Mapper;
 import org.beancp.MapperBuilder;
+import org.beancp.commons.CollectionConverters;
 import org.beancp.commons.NameBasedMapConvention;
+import org.beancp.commons.NumberConverters;
 import org.junit.Test;
 
-// Warning: this test is ugly and proves almost nothing, but still is better to have it ;-)
 public class ParallelMappingsTest {
-	
-	private static final int NUMBER_OF_THREADS = 10;
-	
-	private static final int TEST_DURATION_SECONDS = 10;
 
-	public static class SourceInner {
+    private static final int NUMBER_OF_THREADS = 10;
 
-		private int z;
+    private static final int TEST_DURATION_SECONDS = 10;
+    
+    public static class AuditLog {  // Test addMapAnyByConvention
+        
+        private Date createdOn;
+        
+        private Date updatedOn;
 
-		public int getZ() {
-			return z;
-		}
+        public Date getCreatedOn() {
+            return createdOn;
+        }
 
-		public void setZ(int z) {
-			this.z = z;
-		}
-	}
+        public void setCreatedOn(Date createdOn) {
+            this.createdOn = createdOn;
+        }
 
-	public static class Source {
+        public Date getUpdatedOn() {
+            return updatedOn;
+        }
 
-		private int x;
+        public void setUpdatedOn(Date updatedOn) {
+            this.updatedOn = updatedOn;
+        }
+    }
 
-		public int y;
+    public static class AuthorInfo {    // Test converter (to String)
 
-		private SourceInner inner;
+        private String name;
 
-		public int getX() {
-			return x;
-		}
+        public static AuthorInfo getFromName(final String name) {
+            AuthorInfo result = new AuthorInfo();
+            result.name = name;
 
-		public void setX(int x) {
-			this.x = x;
-		}
+            return result;
+        }
 
-		public int getY() {
-			return y;
-		}
+        public String getName() {
+            return name;
+        }
+    }
 
-		public void setY(int y) {
-			this.y = y;
-		}
+    public static class PointExtension {    // Test flattening
 
-		public SourceInner getInner() {
-			return inner;
-		}
+        private Long z;     // Test NumberConverter
+        
+        private final Collection<Integer> otherDimensions;  // Test CollectionConverters
+        
+        public PointExtension() {
+            this.otherDimensions = new LinkedList<>();
+        }
 
-		public void setInner(SourceInner inner) {
-			this.inner = inner;
-		}
-	}
+        public Collection<Integer> getOtherDimensions() {
+            return otherDimensions;
+        }
 
-	public static class Destination {
+        public Long getZ() {
+            return z;
+        }
 
-		private int xPlusY;
+        public void setZ(Long z) {
+            this.z = z;
+        }
+    }
 
-		private int innerZ;
+    public static class Point {     // Test NameBasedConvention, including
+                                    // failIfNotAllDestinationMembersMapped option
 
-		public int getXPlusY() {
-			return xPlusY;
-		}
+        private int x;  // Test Map.bind()
 
-		public void setXPlusY(int xPlusY) {
-			this.xPlusY = xPlusY;
-		}
+        public int y;  // Test Map.bind()
 
-		public int getInnerZ() {
-			return innerZ;
-		}
+        private AuthorInfo author;
+        
+        private AuditLog audit;
 
-		public void setInnerZ(int innerZ) {
-			this.innerZ = innerZ;
-		}
-	}
+        private PointExtension extension;
 
-	private class MappingThread implements Runnable {
+        public AuditLog getAudit() {
+            return audit;
+        }
 
-		private Mapper mapper;
-		
-		private Random random;
+        public void setAudit(AuditLog audit) {
+            this.audit = audit;
+        }
 
-		public MappingThread(final Mapper mapper) {
-			this.mapper = mapper;
-			this.random = new Random();
-		}
+        public int getX() {
+            return x;
+        }
 
-		@Override
-		public void run() {
-			LocalDateTime start = LocalDateTime.now();
-			
-			do {
-				executeMapping();
-			} while (testTimeElapsed(start) == false);
-		}
+        public void setX(int x) {
+            this.x = x;
+        }
 
-		private boolean testTimeElapsed(final LocalDateTime start) {
-			Duration testDuration = Duration.between(start, LocalDateTime.now());
-			
-			return (testDuration.getSeconds() > TEST_DURATION_SECONDS);
-		}
+        public PointExtension getExtension() {
+            return extension;
+        }
 
-		private void executeMapping() {
-			SourceInner inner = new SourceInner();
-			inner.setZ(random.nextInt());
-			
-			Source source = new Source();
-			source.setX(random.nextInt());
-			source.setY(random.nextInt());
-			source.setInner(inner);
-			
-			Destination result = mapper.map(source, Destination.class);
-			
-			assertEquals(source.getX() + source.getY(), result.getXPlusY());
-			assertEquals(source.getInner().getZ(), result.getInnerZ());
-		}
-	}
-	
-	private static class VolatileBooleanHolder {
-		
-		private volatile boolean value;
+        public void setExtension(PointExtension extension) {
+            this.extension = extension;
+        }
 
-		public VolatileBooleanHolder(final boolean value) {
-			this.value = value;
-		}
-		
-		public boolean getValue() {
-			return value;
-		}
+        public AuthorInfo getAuthor() {
+            return author;
+        }
 
-		public void setValue(boolean value) {
-			this.value = value;
-		}
-	}
+        public void setAuthor(AuthorInfo author) {
+            this.author = author;
+        }
+    }
 
-	@Test
-	public void mapper_should_be_able_to_map_objects_in_parallel_threads()
-			throws InterruptedException {
-		// GIVEN
-		Mapper mapper = new MapperBuilder().addMap(
-				Source.class,
-				Destination.class,
-				(config, source, destination) -> config.useConvention(
-						NameBasedMapConvention.get().enableFlattening()).bind(
-						() -> source.getX() + source.getY(),
-						destination::setXPlusY)).buildMapper();
+    public static class PointInfo {
 
-		// WHEN
-		Thread[] threads = new Thread[NUMBER_OF_THREADS];
-		VolatileBooleanHolder success = new VolatileBooleanHolder(true);
+        private int metric;
 
-		for (int i = 0; i < threads.length; i++) {
-			Thread iThread = new Thread(new MappingThread(mapper), "Test #" + i);
-			
-			iThread.setUncaughtExceptionHandler(new UncaughtExceptionHandler() {
-				
-				@Override
-				public void uncaughtException(Thread t, Throwable e) {
-					success.setValue(false);
-					
-					System.err.println(e);
-				}
-			});
-			
-			threads[i] = iThread;
+        private int extensionZ;
 
-			iThread.start();
-		}
+        private int[] extensionOtherDimensions;
 
-		for (Thread i : threads) {
-			i.join();
-		}
+        private String author;
+        
+        private AuditLogInfo audit;
 
-		// THEN
+        public AuditLogInfo getAudit() {
+            return audit;
+        }
 
-		assertTrue("Something went wrong...", success.getValue());
-	}
+        public void setAudit(AuditLogInfo audit) {
+            this.audit = audit;
+        }
+
+        public String getAuthor() {
+            return author;
+        }
+
+        public void setAuthor(String author) {
+            this.author = author;
+        }
+
+        public int getMetric() {
+            return metric;
+        }
+
+        public void setMetric(int metric) {
+            this.metric = metric;
+        }
+
+        public int getExtensionZ() {
+            return extensionZ;
+        }
+
+        public void setExtensionZ(int extensionZ) {
+            this.extensionZ = extensionZ;
+        }
+
+        public int[] getExtensionOtherDimensions() {
+            return extensionOtherDimensions;
+        }
+
+        public void setExtensionOtherDimensions(int[] extensionOtherDimensions) {
+            this.extensionOtherDimensions = extensionOtherDimensions;
+        }
+    }
+    
+    public static class AuditLogInfo {
+        
+        private Date createdOn;
+        
+        private Date updatedOn;
+
+        public Date getCreatedOn() {
+            return createdOn;
+        }
+
+        public void setCreatedOn(Date createdOn) {
+            this.createdOn = createdOn;
+        }
+
+        public Date getUpdatedOn() {
+            return updatedOn;
+        }
+
+        public void setUpdatedOn(Date updatedOn) {
+            this.updatedOn = updatedOn;
+        }
+    }
+
+    private class MappingThread implements Runnable {
+
+        private final Mapper mapper;
+
+        private final Random random;
+
+        public MappingThread(final Mapper mapper) {
+            this.mapper = mapper;
+            this.random = new Random();
+        }
+
+        @Override
+        public void run() {
+            LocalDateTime start = LocalDateTime.now();
+
+            do {
+                executeMapping();
+            } while (testTimeElapsed(start) == false);
+        }
+
+        private boolean testTimeElapsed(final LocalDateTime start) {
+            Duration testDuration = Duration.between(start, LocalDateTime.now());
+
+            return (testDuration.getSeconds() > TEST_DURATION_SECONDS);
+        }
+
+        private void executeMapping() {
+            PointExtension pointExtension = new PointExtension();
+            pointExtension.setZ((long)random.nextInt());
+            
+            int otherDimensionNumber = random.nextInt(10);
+            
+            for (int i = 0; i < otherDimensionNumber; i++) {
+                pointExtension.getOtherDimensions().add(i);
+            }
+
+            Point source = new Point();
+            source.setX(random.nextInt());
+            source.y = random.nextInt();
+            source.setExtension(pointExtension);
+            source.setAuthor(AuthorInfo.getFromName("U" + random.nextInt()));
+            
+            AuditLog auditLog = new AuditLog();
+            auditLog.setCreatedOn(new Date());
+            auditLog.setUpdatedOn(new Date());
+            
+            source.setAudit(auditLog);
+
+            PointInfo result = mapper.map(source, PointInfo.class);
+
+            assertEquals(source.getX() + source.y, result.getMetric());
+            assertEquals(source.getExtension().getZ().intValue(), result.getExtensionZ());
+            assertEquals(source.getAuthor().getName(), result.getAuthor());
+            
+            assertEquals(
+                    source.getExtension().getOtherDimensions().size(),
+                    result.getExtensionOtherDimensions().length);
+            
+            for (int i = 0; i < result.getExtensionOtherDimensions().length; i++) {
+                assertEquals(i, result.getExtensionOtherDimensions()[i]);
+            }
+            
+            assertEquals(source.getAudit().getCreatedOn(), result.getAudit().getCreatedOn());
+            assertEquals(source.getAudit().getUpdatedOn(), result.getAudit().getUpdatedOn());
+        }
+    }
+
+    private static class ThreadStatus {
+
+        private volatile boolean success;
+
+        public ThreadStatus(final boolean success) {
+            this.success = success;
+        }
+
+        public boolean isSuccess() {
+            return success;
+        }
+
+        public void setSuccess() {
+            this.success = true;
+        }
+
+        public void setFailure() {
+            this.success = false;
+        }
+    }
+
+    @Test
+    public void mapper_should_be_able_to_map_objects_in_parallel_threads()
+            throws InterruptedException {
+        // GIVEN
+        Mapper mapper = new MapperBuilder()
+                .addMapAnyByConvention(NameBasedMapConvention.get())
+                .addConverter(AuthorInfo.class, String.class, source -> {
+                    return source.getName();
+                })
+                .addConverter(CollectionConverters.getCollectionToArray(int.class))
+                .addConverter(NumberConverters.get())
+                .addMap(
+                        Point.class,
+                        PointInfo.class,
+                        (config, source, destination) -> config
+                        .useConvention(NameBasedMapConvention.get()
+                                .enableFlattening()
+                                .excludeDestinationMembers("metric")
+                                .failIfNotAllDestinationMembersMapped())
+                        .bind(() -> source.getX() + source.y, destination::setMetric))
+                .buildMapper();
+
+        // WHEN
+        Thread[] threads = new Thread[NUMBER_OF_THREADS];
+        ThreadStatus status = new ThreadStatus(true);
+
+        for (int i = 0 ; i < threads.length ; i++) {
+            Thread iThread = new Thread(new MappingThread(mapper), "Test #" + i);
+
+            iThread.setUncaughtExceptionHandler((Thread t, Throwable e) -> {
+                status.setFailure();
+
+                System.err.println(e);
+            });
+
+            threads[i] = iThread;
+
+            iThread.start();
+        }
+
+        for (Thread i : threads) {
+            i.join();
+        }
+
+        // THEN
+        assertTrue("Something went wrong...", status.isSuccess());
+    }
 }

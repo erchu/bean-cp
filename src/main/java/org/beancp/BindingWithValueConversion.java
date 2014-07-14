@@ -63,7 +63,11 @@ public class BindingWithValueConversion extends Binding {
 
         BindingSide destinationMember = getDestinationMember();
 
-        Object mapResult = mapper.map(value, destinationMember.getValueClass());
+        Object mapResult =
+                (value == null)
+                ? null
+                : mapper.map(value, destinationMember.getValueClass());
+        
         super.setValueAtDestination(mapper, destination, mapResult);
     }
 }
