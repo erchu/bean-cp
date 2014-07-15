@@ -44,6 +44,8 @@ public interface Mapper extends MappingInfo {
      *
      * When there is more than one mapper of the same priority then is used the first one added to
      * {@link MapperBuilder}. If no mapper available then {@link MappingException} will be thrown.
+     * 
+     * Circular references will result in stack overflow.
      *
      * @param <S> source object class.
      * @param <D> destination object class.
@@ -73,6 +75,8 @@ public interface Mapper extends MappingInfo {
      * When there is more than one mapper of the same priority then is used the first one added to
      * {@link MapperBuilder}. If no mapper available then will return {@code}false{code}, otherwise
      * return {@code}true{code}.
+     * 
+     * Circular references will result in stack overflow.
      *
      * @param <S> source object class.
      * @param <D> destination object class.
@@ -105,6 +109,8 @@ public interface Mapper extends MappingInfo {
      *
      * When there is more than one mapper of the same priority then is used the first one added to
      * {@link MapperBuilder}. If no mapper available then {@link MappingException} will be thrown.
+     * 
+     * Circular references will result in stack overflow.
      *
      * @param <S> source object class.
      * @param <D> destination object class.
@@ -137,6 +143,8 @@ public interface Mapper extends MappingInfo {
      *
      * When there is more than one mapper of the same priority then is used the first one added to
      * {@link MapperBuilder}.
+     * 
+     * Circular references will result in stack overflow.
      *
      * @param <S> source object class.
      * @param <D> destination object class.
