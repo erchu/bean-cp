@@ -8,7 +8,23 @@
     <packaging>jar</packaging>
 
     <name>bean-cp</name>
+    <description>Object to object mapping library for Java 8+</description>
     <url>https://github.com/erchu/bean-cp</url>
+    
+    <licenses>
+        <license>
+            <name>
+                GNU Lesser General Public License as published by the Free Software Foundation;
+                either version 3.0 of the License, or (at your option) any later version.
+            </name>
+            <url>https://www.gnu.org/licenses/lgpl-3.0.html</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+    
+    <scm>
+        <url>https://github.com/erchu/bean-cp.git</url>
+    </scm>
 
     <build>
         <plugins>
