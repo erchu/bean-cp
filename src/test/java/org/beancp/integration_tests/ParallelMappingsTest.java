@@ -18,14 +18,18 @@
 package org.beancp.integration_tests;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Date;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Random;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 import org.beancp.Mapper;
 import org.beancp.MapperBuilder;
@@ -39,11 +43,11 @@ public class ParallelMappingsTest {
     private static final int NUMBER_OF_THREADS = 10;
 
     private static final int TEST_DURATION_SECONDS = 10;
-    
+
     public static class AuditLog {  // Test addMapAnyByConvention
-        
+
         private Date createdOn;
-        
+
         private Date updatedOn;
 
         public Date getCreatedOn() {
@@ -82,9 +86,9 @@ public class ParallelMappingsTest {
     public static class PointExtension {    // Test flattening
 
         private Long z;     // Test NumberConverter
-        
+
         private final Collection<Integer> otherDimensions;  // Test CollectionConverters
-        
+
         public PointExtension() {
             this.otherDimensions = new LinkedList<>();
         }
@@ -103,14 +107,14 @@ public class ParallelMappingsTest {
     }
 
     public static class Point {     // Test NameBasedConvention, including
-                                    // failIfNotAllDestinationMembersMapped option
+        // failIfNotAllDestinationMembersMapped option
 
         private int x;  // Test Map.bind()
 
         public int y;  // Test Map.bind()
 
         private AuthorInfo author;
-        
+
         private AuditLog audit;
 
         private PointExtension extension;
@@ -157,7 +161,7 @@ public class ParallelMappingsTest {
         private int[] extensionOtherDimensions;
 
         private String author;
-        
+
         private AuditLogInfo audit;
 
         public AuditLogInfo getAudit() {
@@ -200,11 +204,11 @@ public class ParallelMappingsTest {
             this.extensionOtherDimensions = extensionOtherDimensions;
         }
     }
-    
+
     public static class AuditLogInfo {
-        
+
         private Date createdOn;
-        
+
         private Date updatedOn;
 
         public Date getCreatedOn() {
@@ -252,11 +256,11 @@ public class ParallelMappingsTest {
 
         private void executeMapping() {
             PointExtension pointExtension = new PointExtension();
-            pointExtension.setZ((long)random.nextInt());
-            
+            pointExtension.setZ((long) random.nextInt());
+
             int otherDimensionNumber = random.nextInt(10);
-            
-            for (int i = 0; i < otherDimensionNumber; i++) {
+
+            for (int i = 0 ; i < otherDimensionNumber ; i++) {
                 pointExtension.getOtherDimensions().add(i);
             }
 
@@ -265,11 +269,11 @@ public class ParallelMappingsTest {
             source.y = random.nextInt();
             source.setExtension(pointExtension);
             source.setAuthor(AuthorInfo.getFromName("U" + random.nextInt()));
-            
+
             AuditLog auditLog = new AuditLog();
             auditLog.setCreatedOn(new Date());
             auditLog.setUpdatedOn(new Date());
-            
+
             source.setAudit(auditLog);
 
             PointInfo result = mapper.map(source, PointInfo.class);
@@ -277,44 +281,23 @@ public class ParallelMappingsTest {
             assertEquals(source.getX() + source.y, result.getMetric());
             assertEquals(source.getExtension().getZ().intValue(), result.getExtensionZ());
             assertEquals(source.getAuthor().getName(), result.getAuthor());
-            
+
             assertEquals(
                     source.getExtension().getOtherDimensions().size(),
                     result.getExtensionOtherDimensions().length);
-            
-            for (int i = 0; i < result.getExtensionOtherDimensions().length; i++) {
+
+            for (int i = 0 ; i < result.getExtensionOtherDimensions().length ; i++) {
                 assertEquals(i, result.getExtensionOtherDimensions()[i]);
             }
-            
+
             assertEquals(source.getAudit().getCreatedOn(), result.getAudit().getCreatedOn());
             assertEquals(source.getAudit().getUpdatedOn(), result.getAudit().getUpdatedOn());
         }
     }
 
-    private static class ThreadStatus {
-
-        private volatile boolean success;
-
-        public ThreadStatus(final boolean success) {
-            this.success = success;
-        }
-
-        public boolean isSuccess() {
-            return success;
-        }
-
-        public void setSuccess() {
-            this.success = true;
-        }
-
-        public void setFailure() {
-            this.success = false;
-        }
-    }
-
     @Test
     public void mapper_should_be_able_to_map_objects_in_parallel_threads()
-            throws InterruptedException {
+            throws InterruptedException, ExecutionException {
         // GIVEN
         Mapper mapper = new MapperBuilder()
                 .addMapAnyByConvention(NameBasedMapConvention.get())
@@ -335,28 +318,18 @@ public class ParallelMappingsTest {
                 .buildMapper();
 
         // WHEN
-        Thread[] threads = new Thread[NUMBER_OF_THREADS];
-        ThreadStatus status = new ThreadStatus(true);
+        ExecutorService executor = Executors.newFixedThreadPool(NUMBER_OF_THREADS);
+        List<Future<?>> tasks = new LinkedList<>();
 
-        for (int i = 0 ; i < threads.length ; i++) {
-            Thread iThread = new Thread(new MappingThread(mapper), "Test #" + i);
-
-            iThread.setUncaughtExceptionHandler((Thread t, Throwable e) -> {
-                status.setFailure();
-
-                System.err.println(e);
-            });
-
-            threads[i] = iThread;
-
-            iThread.start();
+        for (int i = 0 ; i < NUMBER_OF_THREADS ; i++) {
+            Future<?> iTask = executor.submit(new MappingThread(mapper));
+            tasks.add(iTask);
         }
-
-        for (Thread i : threads) {
-            i.join();
+        
+        for (Future<?> i : tasks) {
+            i.get();
         }
-
-        // THEN
-        assertTrue("Something went wrong...", status.isSuccess());
+        
+        // THEN: expect no exception
     }
 }
