@@ -35,10 +35,10 @@ import org.beancp.commons.NumberConverters;
 import org.junit.Test;
 
 public class ParallelMappingsTest {
-
+    
     private static final int NUMBER_OF_THREADS = 10;
 
-    private static final int TEST_DURATION_SECONDS = 10;
+    private static final int TEST_DURATION_SECONDS = 20;
     
     public static class AuditLog {  // Test addMapAnyByConvention
         
@@ -102,6 +102,32 @@ public class ParallelMappingsTest {
         }
     }
 
+    public static class ReferenceHolder<T> {
+
+        private final T reference;
+
+        public ReferenceHolder(final T reference) {
+            this.reference = reference;
+        }
+
+        public T getReference() {
+            return reference;
+        }
+    }
+
+    public static class PointHolder {
+
+        private final Point reference;
+
+        public PointHolder(final Point reference) {
+            this.reference = reference;
+        }
+
+        public Point getReference() {
+            return reference;
+        }
+    }
+
     public static class Point {     // Test NameBasedConvention, including
                                     // failIfNotAllDestinationMembersMapped option
 
@@ -114,6 +140,36 @@ public class ParallelMappingsTest {
         private AuditLog audit;
 
         private PointExtension extension;
+
+        private Point directReference;
+
+        private ReferenceHolder<Point> indirectReferenceToMap;
+
+        private PointHolder indirectReferenceToConvert;
+
+        public Point getDirectReference() {
+            return directReference;
+        }
+
+        public void setDirectReference(Point directReference) {
+            this.directReference = directReference;
+        }
+
+        public ReferenceHolder<Point> getIndirectReferenceToMap() {
+            return indirectReferenceToMap;
+        }
+
+        public void setIndirectReferenceToMap(ReferenceHolder<Point> indirectReferenceToMap) {
+            this.indirectReferenceToMap = indirectReferenceToMap;
+        }
+
+        public PointHolder getIndirectReferenceToConvert() {
+            return indirectReferenceToConvert;
+        }
+
+        public void setIndirectReferenceToConvert(PointHolder indirectReferenceToConvert) {
+            this.indirectReferenceToConvert = indirectReferenceToConvert;
+        }
 
         public AuditLog getAudit() {
             return audit;
@@ -159,6 +215,36 @@ public class ParallelMappingsTest {
         private String author;
         
         private AuditLogInfo audit;
+
+        private PointInfo directReference;
+
+        private ReferenceHolder<PointInfo> indirectReferenceToMap;
+
+        private PointInfo indirectReferenceToConvert;
+
+        public PointInfo getDirectReference() {
+            return directReference;
+        }
+
+        public void setDirectReference(PointInfo directReference) {
+            this.directReference = directReference;
+        }
+
+        public ReferenceHolder<PointInfo> getIndirectReferenceToMap() {
+            return indirectReferenceToMap;
+        }
+
+        public void setIndirectReferenceToMap(ReferenceHolder<PointInfo> indirectReferenceToMap) {
+            this.indirectReferenceToMap = indirectReferenceToMap;
+        }
+
+        public PointInfo getIndirectReferenceToConvert() {
+            return indirectReferenceToConvert;
+        }
+
+        public void setIndirectReferenceToConvert(PointInfo indirectReferenceToConvert) {
+            this.indirectReferenceToConvert = indirectReferenceToConvert;
+        }
 
         public AuditLogInfo getAudit() {
             return audit;
@@ -265,6 +351,9 @@ public class ParallelMappingsTest {
             source.y = random.nextInt();
             source.setExtension(pointExtension);
             source.setAuthor(AuthorInfo.getFromName("U" + random.nextInt()));
+            source.setDirectReference(source);
+            source.setIndirectReferenceToConvert(new PointHolder(source));
+            source.setIndirectReferenceToMap(new ReferenceHolder<>(source));
             
             AuditLog auditLog = new AuditLog();
             auditLog.setCreatedOn(new Date());
@@ -288,6 +377,11 @@ public class ParallelMappingsTest {
             
             assertEquals(source.getAudit().getCreatedOn(), result.getAudit().getCreatedOn());
             assertEquals(source.getAudit().getUpdatedOn(), result.getAudit().getUpdatedOn());
+            
+            // recursive references
+            assertEquals(result, result.getDirectReference());
+            assertEquals(result, result.getIndirectReferenceToConvert());
+            assertEquals(result, result.getIndirectReferenceToMap().getReference());
         }
     }
 
@@ -318,6 +412,8 @@ public class ParallelMappingsTest {
         // GIVEN
         Mapper mapper = new MapperBuilder()
                 .addMapAnyByConvention(NameBasedMapConvention.get())
+                .addConverter(PointHolder.class, PointInfo.class, (mapperRef, source)
+                        -> mapperRef.map(source.getReference(), PointInfo.class))
                 .addConverter(AuthorInfo.class, String.class, source -> {
                     return source.getName();
                 })
@@ -331,7 +427,14 @@ public class ParallelMappingsTest {
                                 .enableFlattening()
                                 .excludeDestinationMembers("metric")
                                 .failIfNotAllDestinationMembersMapped())
-                        .bind(() -> source.getX() + source.y, destination::setMetric))
+                        .bind(() -> source.getX() + source.y, destination::setMetric)
+                        .mapInner(
+                                () -> source.getIndirectReferenceToMap() != null ? source.getIndirectReferenceToMap().getReference() : null,
+                                (PointInfo value) -> {
+                                    destination.setIndirectReferenceToMap(new ReferenceHolder<>(value));
+                                },
+                                () -> destination.getIndirectReferenceToMap() != null ? destination.getIndirectReferenceToMap().getReference() : null,
+                                PointInfo.class))
                 .buildMapper();
 
         // WHEN

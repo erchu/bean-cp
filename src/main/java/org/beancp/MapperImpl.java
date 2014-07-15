@@ -58,11 +58,18 @@ class MapperImpl implements Mapper {
         notNull(source, "source");
         notNull(destination, "destination");
 
-        MapImpl<S, D> map = (MapImpl<S, D>) MapperExecutorSelector.getBestMatchingMap(
-                source.getClass(), destination.getClass(),
-                _maps);
+        try (MappingContext context = new MappingContext()) {
+            MapImpl<S, D> map = (MapImpl<S, D>) MapperExecutorSelector.getBestMatchingMap(
+                    source.getClass(), destination.getClass(),
+                    _maps);
 
-        return mapIfMapperAvailable(map, source, destination);
+            // We intentionally don't put result in context, because destination was object created
+            // outside of the mapper and we don't want reuse it.
+            return mapIfMapperAvailable(map, source, destination);
+        } catch (Exception ex) {
+            throw new MappingException(
+                    String.format("Failed to map %s to %s.", source, destination), ex);
+        }
     }
 
     @Override
@@ -90,7 +97,14 @@ class MapperImpl implements Mapper {
 
         Class sourceClass = source.getClass();
 
-        try {
+        try (MappingContext context = new MappingContext()) {
+            Optional<Object> alreadyAvailableResult
+                    = context.getMappingResult(source, destinationClass);
+
+            if (alreadyAvailableResult.isPresent()) {
+                return Optional.of((D) alreadyAvailableResult.get());
+            }
+
             Converter<S, D> converter
                     = (Converter<S, D>) MapperExecutorSelector.getBestMatchingConverter(
                             sourceClass, destinationClass, _converters);
@@ -98,11 +112,18 @@ class MapperImpl implements Mapper {
             if (converter != null) {
                 if (sourceClass.isArray() && sourceClass.getComponentType().isPrimitive()) {
                     Object[] sourceWrapper = getArrayOfPrimitiveTypeWrapper(sourceClass, source);
+                    D destination
+                            = (D) ((Converter<Object, D>) converter).convert(this, sourceWrapper);
 
-                    return Optional.of(
-                            ((Converter<Object, D>) converter).convert(this, sourceWrapper));
+                    context.addMappingResult(source, destination, destinationClass);
+
+                    return Optional.of(destination);
                 } else {
-                    return Optional.of(converter.convert(this, source));
+                    D destination = (D) converter.convert(this, source);
+
+                    context.addMappingResult(source, destination, destinationClass);
+
+                    return Optional.of(destination);
                 }
             }
 
@@ -119,23 +140,30 @@ class MapperImpl implements Mapper {
             // if MapImpl is not available or has no specific destination object builder
             if (destination == null) {
                 destination = constructObjectUsingDefaultConstructor(destinationClass);
+                context.addMappingResult(source, destination, destinationClass);
             }
 
             if (mapIfMapperAvailable(source, destination)) {
                 return Optional.of(destination);
             } else {
+                context.removeMappingResult(source, destinationClass);
+
                 return Optional.empty();
             }
         } catch (Exception ex) {
             throw new MappingException(
                     String.format(
-                            "Failed to map from %s to %s",
+                            "Failed to map from %s to %s class",
                             sourceClass, destinationClass),
                     ex);
         }
     }
 
-    private <S> Object[] getArrayOfPrimitiveTypeWrapper(Class sourceClass, final S source) throws IllegalArgumentException, NegativeArraySizeException, ArrayIndexOutOfBoundsException {
+    private <S> Object[] getArrayOfPrimitiveTypeWrapper(final Class sourceClass, final S source)
+            throws
+            IllegalArgumentException,
+            NegativeArraySizeException,
+            ArrayIndexOutOfBoundsException {
         Class<?> arrayElementWrapperClass
                 = ClassUtils.primitiveToWrapper(sourceClass.getComponentType());
         int arrayLength = Array.getLength(source);
