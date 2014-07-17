@@ -38,7 +38,7 @@ class MapConventionExecutor {
      * @param sourceClass source object class.
      * @param destinationClass destination object class.
      *
-     * @see org.beancp.Map#useConvention(org.beancp.MapConvention)
+     * @see org.beancp.DeclarativeMap#useConvention(org.beancp.MapConvention)
      * @see org.beancp.MapperBuilder#addMapAnyByConvention(org.beancp.MapConvention...)
      */
     void build(MappingInfo mappingInfo, Class sourceClass, Class destinationClass)
@@ -74,7 +74,7 @@ class MapConventionExecutor {
      * @param source source object.
      * @param destination destination object.
      *
-     * @see org.beancp.Map#useConvention(org.beancp.MapConvention)
+     * @see org.beancp.DeclarativeMap#useConvention(org.beancp.MapConvention)
      * @see org.beancp.MapperBuilder#addMapAnyByConvention(org.beancp.MapConvention...)
      */
     void map(Mapper mapper, Object source, Object destination) throws MappingException {
@@ -116,7 +116,7 @@ class MapConventionExecutor {
      * @return {@code}true{code} if mapping is supported for passed object types, otherwise
      * {@code}true{code}.
      *
-     * @see org.beancp.Map#useConvention(org.beancp.MapConvention)
+     * @see org.beancp.DeclarativeMap#useConvention(org.beancp.MapConvention)
      * @see org.beancp.MapperBuilder#addMapAnyByConvention(org.beancp.MapConvention...)
      */
     boolean tryMap(Mapper mapper, Object source, Object destination)
@@ -139,7 +139,7 @@ class MapConventionExecutor {
 
     /**
      * Returns {@code}true{code} mapping is supported for passed object types will return
-     * {@code}false{code}, otherwise return {@code}true{code}..
+     * {@code}false{code}, otherwise return {@code}true{code}.
      *
      * @param mappingsInfo available mappings information.
      * @param sourceClass source object class.
@@ -167,7 +167,8 @@ class MapConventionExecutor {
                 ? _bindings
                 // According to API specification it is build() method may be not executed before
                 // this method call. In this situation we generate bindings on the fly. Moreover API
-                // prohibits produce state that is shared state between calls, so next call
+                // prohibits produce state that is shared state between calls, so next call will
+                // generate bindings once again.
                 : getBindings(mappingsInfo, sourceClass, destinationClass);
 
         return bindingsToExecute;

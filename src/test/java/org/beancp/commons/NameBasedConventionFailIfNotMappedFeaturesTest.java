@@ -110,6 +110,7 @@ public class NameBasedConventionFailIfNotMappedFeaturesTest {
 
     @Test
     public void when_all_properties_are_mapped_then_should_be_no_error() {
+        // GIVEN
         Mapper mapper = new MapperBuilder()
                 .addMap(ExtendedSource.class, ExtendedDestination.class,
                         (config, source, destination)
@@ -119,11 +120,15 @@ public class NameBasedConventionFailIfNotMappedFeaturesTest {
                                 .failIfNotAllSourceMembersMapped()
                         )).buildMapper();
 
+        // WHEN
         mapper.map(new ExtendedSource(), ExtendedDestination.class);
+        
+        // THEN: expect no error
     }
 
     @Test(expected = MapperConfigurationException.class)
     public void when_failIfNotAllDestinationMembersMapped_options_is_used_and_no_all_destination_members_are_mapped_then_exception_should_be_thrown() {
+        // WHEN
         new MapperBuilder()
                 .addMap(MinimalSource.class, ExtendedDestination.class,
                         (config, source, destination)
@@ -131,20 +136,28 @@ public class NameBasedConventionFailIfNotMappedFeaturesTest {
                                 NameBasedMapConvention.get()
                                 .failIfNotAllDestinationMembersMapped()
                         )).buildMapper();
+
+        // THEN: expect exception
     }
 
     @Test
     public void when_failIfNotAllDestinationMembersMapped_options_is_NOT_used_and_no_all_destination_members_are_mapped_then_should_be_no_error() {
+        // GIVEN
         Mapper mapper = new MapperBuilder()
                 .addMap(MinimalSource.class, ExtendedDestination.class,
                         (config, source, destination)
                         -> config.useConvention(NameBasedMapConvention.get())).buildMapper();
 
+
+        // WHEN
         mapper.map(new MinimalSource(), ExtendedDestination.class);
+
+        // THEN: expect no error
     }
 
     @Test
     public void failIfNotAllDestinationMembersMapped_should_not_throw_exception_for_explicity_excluded_destination_members() {
+        // GIVEN
         Mapper mapper = new MapperBuilder()
                 .addMap(MinimalSource.class, ExtendedDestination.class,
                         (config, source, destination)
@@ -154,11 +167,16 @@ public class NameBasedConventionFailIfNotMappedFeaturesTest {
                                 .excludeDestinationMembers("z")
                         )).buildMapper();
 
+
+        // WHEN
         mapper.map(new MinimalSource(), ExtendedDestination.class);
+
+        // THEN: expect no error
     }
 
     @Test(expected = MapperConfigurationException.class)
     public void when_failIfNotAllSourceMembersMapped_options_is_used_and_no_all_source_members_are_mapped_then_exception_should_be_thrown() {
+        // WHEN
         new MapperBuilder()
                 .addMap(ExtendedSource.class, MinimalDestination.class,
                         (config, source, destination)
@@ -166,15 +184,21 @@ public class NameBasedConventionFailIfNotMappedFeaturesTest {
                                 NameBasedMapConvention.get()
                                 .failIfNotAllSourceMembersMapped()
                         )).buildMapper();
+
+        // THEN: expect exception
     }
 
     @Test
     public void when_failIfNotAllSourceMembersMapped_options_is_NOT_used_and_no_all_destination_members_are_mapped_then_should_be_no_error() {
+        // GIVEN
         Mapper mapper = new MapperBuilder()
                 .addMap(ExtendedSource.class, MinimalDestination.class,
                         (config, source, destination)
                         -> config.useConvention(NameBasedMapConvention.get())).buildMapper();
 
+        // WHEN
         mapper.map(new ExtendedSource(), MinimalDestination.class);
+
+        // THEN: expect no error
     }
 }

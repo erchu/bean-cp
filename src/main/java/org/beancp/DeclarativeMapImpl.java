@@ -22,13 +22,12 @@ import java.util.function.Supplier;
 import static org.apache.commons.lang3.Validate.*;
 
 /**
- * Defines mapping between source and destination class. Class is not thread safe. Source and
- * destination classes must have default public or private constructor.
+ * Default implementation of {@link DeclarativeMap} interface.
  *
  * @param <S> source class
  * @param <D> destination class
  */
-final class MapImpl<S, D> implements Map<S, D>, MappingExecutor<S, D> {
+final class DeclarativeMapImpl<S, D> implements DeclarativeMap<S, D>, MappingExecutor<S, D> {
 
     private static enum MapMode {
 
@@ -37,7 +36,7 @@ final class MapImpl<S, D> implements Map<S, D>, MappingExecutor<S, D> {
     }
 
     private final String INVALID_STATEMENT_ORDER_MESSAGE = "Invalid statement order. Check "
-            + Map.class.getSimpleName() + " interface API documentation for details.";
+            + DeclarativeMap.class.getSimpleName() + " interface API documentation for details.";
 
     private final Class<S> _sourceClass;
 
@@ -69,7 +68,7 @@ final class MapImpl<S, D> implements Map<S, D>, MappingExecutor<S, D> {
 
     private MappingInfo _configurationPhaseMappingsInfo;
 
-    public MapImpl(final Class<S> sourceClass, final Class<D> destinationClass,
+    public DeclarativeMapImpl(final Class<S> sourceClass, final Class<D> destinationClass,
             final MapSetup<S, D> configuration) {
         _configuration = configuration;
         _sourceClass = sourceClass;
@@ -77,7 +76,7 @@ final class MapImpl<S, D> implements Map<S, D>, MappingExecutor<S, D> {
     }
 
     @Override
-    public <T> Map<S, D> bind(
+    public <T> DeclarativeMap<S, D> bind(
             final Supplier<T> fromFunction,
             final Consumer<T> toMember,
             final BindingOption<S, D, T>... options) {
@@ -115,7 +114,7 @@ final class MapImpl<S, D> implements Map<S, D>, MappingExecutor<S, D> {
     }
 
     @Override
-    public <T> Map<S, D> bindConstant(
+    public <T> DeclarativeMap<S, D> bindConstant(
             final T constantValue,
             final Consumer<T> toMember,
             final BindingOption<S, D, T>... options) {
@@ -150,7 +149,7 @@ final class MapImpl<S, D> implements Map<S, D>, MappingExecutor<S, D> {
     }
 
     @Override
-    public <SI, DI> Map<S, D> mapInner(final Supplier<SI> supplierFunction,
+    public <SI, DI> DeclarativeMap<S, D> mapInner(final Supplier<SI> supplierFunction,
             final Consumer<DI> toMember,
             final Class<DI> toMemberClass,
             final BindingOption<S, D, DI>... options) {
@@ -158,7 +157,7 @@ final class MapImpl<S, D> implements Map<S, D>, MappingExecutor<S, D> {
     }
 
     @Override
-    public <SI, DI> Map<S, D> mapInner(final Supplier<SI> supplierFunction,
+    public <SI, DI> DeclarativeMap<S, D> mapInner(final Supplier<SI> supplierFunction,
             final Consumer<DI> toMember,
             final Supplier<DI> toMemberGetter,
             final Class<DI> toMemberClass,
@@ -201,9 +200,9 @@ final class MapImpl<S, D> implements Map<S, D>, MappingExecutor<S, D> {
     }
 
     @Override
-    public MapImpl<S, D> useConvention(final MapConvention mapConvention) {
+    public DeclarativeMapImpl<S, D> useConvention(final MapConvention mapConvention) {
         notNull(mapConvention, "mapConvention");
-        
+
         MapConventionExecutor conventionExecutor = new MapConventionExecutor(mapConvention);
 
         if (mode == MapMode.CONFIGURATION) {
@@ -233,12 +232,12 @@ final class MapImpl<S, D> implements Map<S, D>, MappingExecutor<S, D> {
     }
 
     @Override
-    public Map<S, D> beforeMap(final Action action) {
+    public DeclarativeMap<S, D> beforeMap(final Action action) {
         return beforeMap(notUsed -> action.invoke());
     }
 
     @Override
-    public Map<S, D> beforeMap(final Consumer<Mapper> action) {
+    public DeclarativeMap<S, D> beforeMap(final Consumer<Mapper> action) {
         if (mode == MapMode.CONFIGURATION) {
             if (_useConventionExecuted || _bindBindConstantOrMapExecuted || _afterMapExecuted) {
                 throw new MapperConfigurationException(INVALID_STATEMENT_ORDER_MESSAGE);
@@ -255,12 +254,12 @@ final class MapImpl<S, D> implements Map<S, D>, MappingExecutor<S, D> {
     }
 
     @Override
-    public Map<S, D> afterMap(final Action action) {
+    public DeclarativeMap<S, D> afterMap(final Action action) {
         return afterMap(notUsed -> action.invoke());
     }
 
     @Override
-    public Map<S, D> afterMap(final Consumer<Mapper> action) {
+    public DeclarativeMap<S, D> afterMap(final Consumer<Mapper> action) {
         if (mode == MapMode.CONFIGURATION) {
             _afterMapExecuted = true;
         }
@@ -273,7 +272,7 @@ final class MapImpl<S, D> implements Map<S, D>, MappingExecutor<S, D> {
     }
 
     @Override
-    public Map<S, D> constructDestinationObjectUsing(
+    public DeclarativeMap<S, D> constructDestinationObjectUsing(
             final Supplier<D> destinationObjectBuilder) {
         notNull(destinationObjectBuilder, "destinationObjectBuilder");
 
@@ -308,7 +307,7 @@ final class MapImpl<S, D> implements Map<S, D>, MappingExecutor<S, D> {
         _beforeMapExecuted = _bindBindConstantOrMapExecuted = _afterMapExecuted = false;
         _configurationPhaseMappingsInfo = configurationPhaseMappingsInfo;
 
-        // Source and destination object instances are not required by MapImpl 
+        // Source and destination object instances are not required by DeclarativeMapImpl 
         // in CONFIGURATION mode, but Java lambda handling mechanizm requires 
         // non-null value, so we need to create proxy instance. Unfortunatelly
         // this enforces constraint on source and destination classes as in javadoc.

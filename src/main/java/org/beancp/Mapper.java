@@ -27,8 +27,11 @@ public interface Mapper extends MappingInfo {
     /**
      * Copies data from source object to destination object.
      *
+     * <p>
      * When the are more than one mapper valid for source and destination classes then mapper is
      * chose according to priority (first option has highest priority):
+     * </p>
+     * 
      * <ol>
      * <li>source class equals to mapper source class and destination class equals to mapper
      * destination class</li>
@@ -42,10 +45,14 @@ public interface Mapper extends MappingInfo {
      * {@link MapperBuilder#addMapAnyByConvention(org.beancp.MapConvention...)}</li>
      * </ol>
      *
+     * <p>
      * When there is more than one mapper of the same priority then is used the first one added to
      * {@link MapperBuilder}. If no mapper available then {@link MappingException} will be thrown.
-     * 
+     * </p>
+     *
+     * <p>
      * Circular references will result in stack overflow.
+     * </p>
      *
      * @param <S> source object class.
      * @param <D> destination object class.
@@ -57,8 +64,11 @@ public interface Mapper extends MappingInfo {
     /**
      * Copies data from source object to destination object.
      *
+     * <p>
      * When the are more than one mapper valid for source and destination classes then mapper is
      * chose according to priority (first option has highest priority):
+     * </p>
+     * 
      * <ol>
      * <li>source class equals to mapper source class and destination class equals to mapper
      * destination class</li>
@@ -72,11 +82,14 @@ public interface Mapper extends MappingInfo {
      * {@link MapperBuilder#addMapAnyByConvention(org.beancp.MapConvention...)}</li>
      * </ol>
      *
+     * <p>
      * When there is more than one mapper of the same priority then is used the first one added to
      * {@link MapperBuilder}. If no mapper available then will return {@code}false{code}, otherwise
      * return {@code}true{code}.
-     * 
+     *
+     * <p>
      * Circular references will result in stack overflow.
+     * </p>
      *
      * @param <S> source object class.
      * @param <D> destination object class.
@@ -89,11 +102,14 @@ public interface Mapper extends MappingInfo {
     /**
      * Constructs destination object and copies data from source object to newly created destination
      * object. Destination object is created by destination object builder defined by
-     * {@link Map#constructDestinationObjectUsing(java.util.function.Supplier)} or if destination
-     * object builder is not available by default constructor.
+     * {@link DeclarativeMap#constructDestinationObjectUsing(java.util.function.Supplier)} or if
+     * destination object builder is not available by default constructor.
      *
+     * <p>
      * When the are more than one mapper valid for source and destination classes then mapper is
      * chose according to priority (first option has highest priority):
+     * </p>
+     * 
      * <ol>
      * <li>source class equals to mapper source class and destination class equals to mapper
      * destination class</li>
@@ -107,9 +123,12 @@ public interface Mapper extends MappingInfo {
      * {@link MapperBuilder#addMapAnyByConvention(org.beancp.MapConvention...)}</li>
      * </ol>
      *
+     * <p>
      * When there is more than one mapper of the same priority then is used the first one added to
      * {@link MapperBuilder}. If no mapper available then {@link MappingException} will be thrown.
-     * 
+     * </p>
+     *
+     * <p>
      * Circular references will result in stack overflow.
      *
      * @param <S> source object class.
@@ -123,11 +142,14 @@ public interface Mapper extends MappingInfo {
     /**
      * Constructs destination object and copies data from source object to newly created destination
      * object. Destination object is created by destination object builder defined by
-     * {@link Map#constructDestinationObjectUsing(java.util.function.Supplier)} or if destination
-     * object builder is not available by default constructor.
+     * {@link DeclarativeMap#constructDestinationObjectUsing(java.util.function.Supplier)} or if
+     * destination object builder is not available by default constructor.
      *
+     * <p>
      * When the are more than one mapper valid for source and destination classes then mapper is
      * chose according to priority (first option has highest priority):
+     * </p>
+     * 
      * <ol>
      * <li>source class equals to mapper source class and destination class equals to mapper
      * destination class</li>
@@ -141,10 +163,14 @@ public interface Mapper extends MappingInfo {
      * {@link MapperBuilder#addMapAnyByConvention(org.beancp.MapConvention...)}</li>
      * </ol>
      *
+     * <p>
      * When there is more than one mapper of the same priority then is used the first one added to
      * {@link MapperBuilder}.
-     * 
+     * </p>
+     *
+     * <p>
      * Circular references will result in stack overflow.
+     * </p>
      *
      * @param <S> source object class.
      * @param <D> destination object class.

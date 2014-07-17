@@ -80,7 +80,7 @@ public final class Converter<S, D> implements MappingExecutor<S, D> {
 
     /**
      * Returns source class supported by this converter.
-     * 
+     *
      * @return source class supported by this converter.
      */
     @Override
@@ -90,7 +90,7 @@ public final class Converter<S, D> implements MappingExecutor<S, D> {
 
     /**
      * Returns destination class supported by this converter.
-     * 
+     *
      * @return destination class supported by this converter.
      */
     @Override
@@ -98,7 +98,14 @@ public final class Converter<S, D> implements MappingExecutor<S, D> {
         return _destinationClass;
     }
 
-    D convert(final Mapper caller, final S source) {
+    /**
+     * Performs conversion. Must be thread-safe.
+     *
+     * @param caller mapper requesting this operation.
+     * @param source source object.
+     * @return conversion result.
+     */
+    public D convert(final Mapper caller, final S source) {
         return _convertionAction.apply(caller, source);
     }
 }

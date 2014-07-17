@@ -23,109 +23,109 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 
 public class NameBasedConventionIncludeAndExcludeDestinationMembersFeature {
-    
+
     public static class SampleSource {
-        
+
         private int _abc;
-        
+
         private int _abcd;
-        
+
         public int abc;
-        
+
         public int abcd;
-        
+
         private int _xyz;
-        
+
         private int _efg;
-        
+
         public int xyz;
-        
+
         public int efg;
-        
+
         public int getAbc() {
             return _abc;
         }
-        
+
         public void setAbc(int _abc) {
             this._abc = _abc;
         }
-        
+
         public int getAbcd() {
             return _abcd;
         }
-        
+
         public void setAbcd(int _abcd) {
             this._abcd = _abcd;
         }
-        
+
         public int getXyz() {
             return _xyz;
         }
-        
+
         public void setXyz(int _xyz) {
             this._xyz = _xyz;
         }
-        
+
         public int getEfg() {
             return _efg;
         }
-        
+
         public void setEfg(int _efg) {
             this._efg = _efg;
         }
     }
-    
+
     public static class SampleDestination {
-        
+
         private int _abc;
-        
+
         private int _abcd;
-        
+
         public int abc;
-        
+
         public int abcd;
-        
+
         private int _xyz;
-        
+
         private int _efg;
-        
+
         public int xyz;
-        
+
         public int efg;
-        
+
         public int getAbc() {
             return _abc;
         }
-        
+
         public void setAbc(int _abc) {
             this._abc = _abc;
         }
-        
+
         public int getAbcd() {
             return _abcd;
         }
-        
+
         public void setAbcd(int _abcd) {
             this._abcd = _abcd;
         }
-        
+
         public int getXyz() {
             return _xyz;
         }
-        
+
         public void setXyz(int _xyz) {
             this._xyz = _xyz;
         }
-        
+
         public int getEfg() {
             return _efg;
         }
-        
+
         public void setEfg(int _efg) {
             this._efg = _efg;
         }
     }
-    
+
     @Test
     public void when_includeDestinationMembers_and_exlcudeDestinationMembers_option_is_NOT_used_the_all_members_should_be_mapped() {
         // GIVEN
@@ -139,12 +139,12 @@ public class NameBasedConventionIncludeAndExcludeDestinationMembersFeature {
         sourceObject.setEfg(7);
         sourceObject.setXyz(8);
 
-        // WHEN
         Mapper mapper = new MapperBuilder()
                 .addMap(SampleSource.class, SampleDestination.class, (config, source, destination)
                         -> config.useConvention(NameBasedMapConvention.get())
                 ).buildMapper();
-        
+
+        // WHEN
         SampleDestination result = mapper.map(sourceObject, SampleDestination.class);
 
         // THEN (all members should be mapped)
@@ -157,7 +157,7 @@ public class NameBasedConventionIncludeAndExcludeDestinationMembersFeature {
         assertEquals("Invalid result.efg value", sourceObject.efg, result.efg);
         assertEquals("Invalid result.getEfg() value", sourceObject.getEfg(), result.getEfg());
     }
-    
+
     @Test
     public void when_includeDestinationMembers_option_is_used_only_match_inclusion_regex_members_should_be_mapped() {
         // GIVEN
@@ -171,12 +171,12 @@ public class NameBasedConventionIncludeAndExcludeDestinationMembersFeature {
         sourceObject.setEfg(7);
         sourceObject.setXyz(8);
 
-        // WHEN
         Mapper mapper = new MapperBuilder()
                 .addMap(SampleSource.class, SampleDestination.class, (config, source, destination)
                         -> config.useConvention(NameBasedMapConvention.get().includeDestinationMembers("abc.*", "X.Z"))
                 ).buildMapper();
-        
+
+        // WHEN
         SampleDestination result = mapper.map(sourceObject, SampleDestination.class);
 
         // THEN
@@ -192,7 +192,7 @@ public class NameBasedConventionIncludeAndExcludeDestinationMembersFeature {
         assertEquals("Invalid result.efg value", 0, result.efg);
         assertEquals("Invalid result.getEfg() value", 0, result.getEfg());
     }
-    
+
     @Test
     public void when_exlcudeDestinationMembers_option_is_used_only_match_exclusion_regex_members_should_be_mapped() {
         // GIVEN
@@ -206,19 +206,19 @@ public class NameBasedConventionIncludeAndExcludeDestinationMembersFeature {
         sourceObject.setEfg(7);
         sourceObject.setXyz(8);
 
-        // WHEN
         Mapper mapper = new MapperBuilder()
                 .addMap(SampleSource.class, SampleDestination.class, (config, source, destination)
                         -> config.useConvention(NameBasedMapConvention.get().excludeDestinationMembers("abc.*", "X.Z"))
                 ).buildMapper();
-        
+
+        // WHEN
         SampleDestination result = mapper.map(sourceObject, SampleDestination.class);
 
         // THEN
         // included members
         assertEquals("Invalid result.efg value", sourceObject.efg, result.efg);
         assertEquals("Invalid result.getEfg() value", sourceObject.getEfg(), result.getEfg());
-        
+
         // excluded members
         assertEquals("Invalid result.abc value", 0, result.abc);
         assertEquals("Invalid result.abcd value", 0, result.abcd);
@@ -227,7 +227,7 @@ public class NameBasedConventionIncludeAndExcludeDestinationMembersFeature {
         assertEquals("Invalid result.xyz value", 0, result.xyz);
         assertEquals("Invalid result.getXyz() value", 0, result.getXyz());
     }
-    
+
     @Test
     public void exlcudeDestinationMembers_option_has_higner_priority_than_includeDestinationMembers() {
         // GIVEN
@@ -241,14 +241,14 @@ public class NameBasedConventionIncludeAndExcludeDestinationMembersFeature {
         sourceObject.setEfg(7);
         sourceObject.setXyz(8);
 
-        // WHEN
         Mapper mapper = new MapperBuilder()
                 .addMap(SampleSource.class, SampleDestination.class, (config, source, destination)
                         -> config.useConvention(NameBasedMapConvention.get()
                                 .includeDestinationMembers("abc.*", "X.Z")
                                 .excludeDestinationMembers("abc..*"))
                 ).buildMapper();
-        
+
+        // WHEN
         SampleDestination result = mapper.map(sourceObject, SampleDestination.class);
 
         // THEN

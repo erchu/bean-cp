@@ -15,7 +15,6 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library.
  */
-
 package org.beancp;
 
 import java.util.Optional;
@@ -32,10 +31,10 @@ public class TryMapTest {
 
     @Test
     public void tryMap_for_existing_objects_should_return_false_if_no_mapping_is_available() {
-        // GIVEN: source and destination class
+        // GIVEN
+        Mapper mapper = new MapperBuilder().buildMapper();
 
         // WHEN
-        Mapper mapper = new MapperBuilder().buildMapper();
         boolean result = mapper.mapIfMapperAvailable(new Source(), new Destination());
 
         // THEN
@@ -44,14 +43,13 @@ public class TryMapTest {
 
     @Test
     public void tryMap_for_existing_objects_should_return_true_if_mapping_is_available() {
-        // GIVEN: source and destination class
-
-        // WHEN
+        // GIVEN
         Mapper mapper = new MapperBuilder()
                 .addMap(Source.class, Destination.class, (config, source, destination) -> {
                 })
                 .buildMapper();
 
+        // WHEN
         boolean result = mapper.mapIfMapperAvailable(new Source(), new Destination());
 
         // THEN
@@ -60,10 +58,10 @@ public class TryMapTest {
 
     @Test
     public void tryMap_for_mapping_to_new_destination_object_should_return_false_if_no_mapping_is_available() {
-        // GIVEN: source and destination class
+        // GIVEN
+        Mapper mapper = new MapperBuilder().buildMapper();
 
         // WHEN
-        Mapper mapper = new MapperBuilder().buildMapper();
         Optional<Destination> result = mapper.mapIfMapperAvailable(new Source(), Destination.class);
 
         // THEN
@@ -72,14 +70,13 @@ public class TryMapTest {
 
     @Test
     public void tryMap_for_mapping_to_new_destination_object_should_return_true_if_mapping_is_available() {
-        // GIVEN: source and destination class
-
-        // WHEN
+        // GIVEN
         Mapper mapper = new MapperBuilder()
                 .addMap(Source.class, Destination.class, (config, source, destination) -> {
                 })
                 .buildMapper();
 
+        // WHEN
         Optional<Destination> result = mapper.mapIfMapperAvailable(new Source(), Destination.class);
 
         // THEN

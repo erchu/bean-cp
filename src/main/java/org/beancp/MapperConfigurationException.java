@@ -17,15 +17,14 @@
  */
 package org.beancp;
 
-
 /**
  * Indicates error in mappings configuration.
  */
 public class MapperConfigurationException extends RuntimeException {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	/**
+    /**
      * Creates a new instance of <code>MapDefinitionException</code> without detail message.
      */
     public MapperConfigurationException() {

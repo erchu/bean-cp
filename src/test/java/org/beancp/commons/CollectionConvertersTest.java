@@ -89,7 +89,7 @@ public class CollectionConvertersTest {
     }
 
     @Test
-    public void should_be_able_to_map_any_array_to_any_collection() {
+    public void should_map_any_array_to_any_collection() {
         // GIVEN
         T[] sourceInstance = new T[] { new T(1), new T(2), new T(3) };
         Collection<Class<? extends Collection>> collectionTypes
@@ -123,7 +123,7 @@ public class CollectionConvertersTest {
     }
 
     @Test
-    public void should_be_able_to_map_any_collection_to_array()
+    public void should_map_any_collection_to_array()
             throws InstantiationException, IllegalAccessException {
         // GIVEN
         T[] testValues = new T[] { new T(1), new T(2), new T(3) };
@@ -139,7 +139,7 @@ public class CollectionConvertersTest {
             if (sourceCollection.isInterface() || Modifier.isAbstract(sourceCollection.getModifiers())) {
                 continue;
             }
-            
+
             Collection collectionInstance = sourceCollection.newInstance();
 
             Arrays.stream(testValues).forEach(collectionInstance::add);
@@ -158,7 +158,7 @@ public class CollectionConvertersTest {
     }
 
     @Test
-    public void should_be_able_to_map_any_collection_to_any_collection()
+    public void should_map_any_collection_to_any_collection()
             throws InstantiationException, IllegalAccessException {
         // GIVEN
         T[] testValues = new T[] { new T(1), new T(2), new T(3) };
@@ -207,7 +207,7 @@ public class CollectionConvertersTest {
     }
 
     @Test
-    public void should_be_able_to_map_array_of_primitive_type_to_collection() {
+    public void should_map_array_of_primitive_type_to_collection() {
         // GIVEN
         long[] sourceInstance = new long[] { 1, 2, 3 };
 
@@ -232,7 +232,7 @@ public class CollectionConvertersTest {
     }
 
     @Test
-    public void should_be_able_to_map_any_collection_to_array_of_primitive_type() {
+    public void should_map_any_collection_to_array_of_primitive_type() {
         // GIVEN
         long[] testValues = new long[] { 1, 2, 3 };
 

@@ -17,23 +17,21 @@
  */
 package org.beancp;
 
-
 /**
  * Indicates error during mapping.
  */
 public class MappingException extends RuntimeException {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	/**
+    /**
      * Creates a new instance of <code>MappingException</code> without detail message.
      */
     public MappingException() {
     }
 
     /**
-     * Constructs an instance of <code>MappingException</code> with the specified detail
-     * message.
+     * Constructs an instance of <code>MappingException</code> with the specified detail message.
      *
      * @param message The detail message.
      */
@@ -42,8 +40,7 @@ public class MappingException extends RuntimeException {
     }
 
     /**
-     * Constructs an instance of <code>MappingException</code> with the specified inner
-     * exception.
+     * Constructs an instance of <code>MappingException</code> with the specified inner exception.
      *
      * @param throwable The inner exception.
      */
@@ -52,8 +49,8 @@ public class MappingException extends RuntimeException {
     }
 
     /**
-     * Constructs an instance of <code>MappingException</code> with the specified detail
-     * message and inner exception.
+     * Constructs an instance of <code>MappingException</code> with the specified detail message and
+     * inner exception.
      *
      * @param message The detail message.
      * @param throwable The inner exception.

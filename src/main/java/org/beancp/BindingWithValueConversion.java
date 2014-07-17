@@ -20,16 +20,16 @@ package org.beancp;
 import static org.apache.commons.lang3.Validate.*;
 
 /**
- * Biding with additional source value conversion using {@link Converter} (before it is set to
- * destination).
+ * Biding with additional source value conversion using {@link Converter} before it is assigned to
+ * destination member.
  */
 public class BindingWithValueConversion extends Binding {
 
     /**
-     * Creates binding from series of bindings from source (AKA path) to destination member.
+     * Creates binding from series of bindings from source to destination member.
      *
-     * @param sourcePath series of bindings from source where n+1 binding returns field or property
-     * value from object returned by n-th binding.
+     * @param sourcePath series of bindings from source where n+1 binding returns member of object
+     * returned by n-th binding.
      * @param destinationMember destination member.
      */
     public BindingWithValueConversion(
@@ -63,11 +63,11 @@ public class BindingWithValueConversion extends Binding {
 
         BindingSide destinationMember = getDestinationMember();
 
-        Object mapResult =
-                (value == null)
-                ? null
-                : mapper.map(value, destinationMember.getValueClass());
-        
+        Object mapResult
+                = (value == null)
+                        ? null
+                        : mapper.map(value, destinationMember.getValueClass());
+
         super.setValueAtDestination(mapper, destination, mapResult);
     }
 }

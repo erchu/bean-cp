@@ -131,7 +131,6 @@ public class BindTest {
         sampleSource.setX("xval");
         sampleSource.setY("yval");
 
-        // WHEN
         Mapper mapper = new MapperBuilder()
                 .addMap(SourceWithProperties.class, DestinationWithProperties.class,
                         (config, source, destination) -> config
@@ -139,11 +138,12 @@ public class BindTest {
                         .bind(source::getY, destination::setB))
                 .buildMapper();
 
+        // WHEN
         DestinationWithProperties result = mapper.map(sampleSource, DestinationWithProperties.class);
 
         // THEN
-        assertEquals("Property 'x' is not mapped correctly.", "xval", result.getA());
-        assertEquals("Property 'y' is not mapped correctly.", "yval", result.getB());
+        assertEquals("Property 'x' is not mapped correctly.", sampleSource.getX(), result.getA());
+        assertEquals("Property 'y' is not mapped correctly.", sampleSource.getY(), result.getB());
     }
 
     @Test
@@ -153,7 +153,6 @@ public class BindTest {
         sampleSource.x = "xval";
         sampleSource.y = "yval";
 
-        // WHEN
         Mapper mapper = new MapperBuilder()
                 .addMap(SourceWithFields.class, DestinationWithFields.class,
                         (config, source, destination) -> config
@@ -161,17 +160,16 @@ public class BindTest {
                         .bind(() -> source.y, v -> destination.b = v))
                 .buildMapper();
 
+        // WHEN
         DestinationWithFields result = mapper.map(sampleSource, DestinationWithFields.class);
 
         // THEN
-        assertEquals(
-                "Property 'x' is not mapped correctly.", "xval", result.a);
-        assertEquals(
-                "Property 'y' is not mapped correctly.", "yval", result.b);
+        assertEquals("Property 'x' is not mapped correctly.", sampleSource.x, result.a);
+        assertEquals("Property 'y' is not mapped correctly.", sampleSource.y, result.b);
     }
 
     @Test
-    public void mapper_should_be_able_to_bind_inner_classes() {
+    public void mapper_should_bind_inner_classes() {
         // GIVEN
         AnotherSourceWithInnerSource sourceInstance = new AnotherSourceWithInnerSource();
 
@@ -181,7 +179,6 @@ public class BindTest {
         sourceInstance.getInnerSource().getInnerSource().setX("xval");
         sourceInstance.getInnerSource().getInnerSource().setY("yval");
 
-        // WHEN
         Mapper mapper = new MapperBuilder()
                 .addMap(AnotherSourceWithInnerSource.class, DestinationWithProperties.class,
                         (config, source, destination) -> config
@@ -193,11 +190,20 @@ public class BindTest {
                                 destination::setB))
                 .buildMapper();
 
-        DestinationWithProperties destination = mapper.map(sourceInstance, DestinationWithProperties.class);
+        // WHEN
+        DestinationWithProperties destination = mapper.map(
+                sourceInstance, DestinationWithProperties.class);
 
         // THEN
-        assertEquals("Property 'x' is not mapped correctly.", "xval", destination.getA());
-        assertEquals("Property 'y' is not mapped correctly.", "yval", destination.getB());
+        assertEquals(
+                "Property 'x' is not mapped correctly.",
+                sourceInstance.getInnerSource().getInnerSource().getX(),
+                destination.getA());
+
+        assertEquals(
+                "Property 'y' is not mapped correctly.",
+                sourceInstance.getInnerSource().getInnerSource().getY(),
+                destination.getB());
     }
 
     @Test
@@ -207,7 +213,6 @@ public class BindTest {
         sourceInstance.setX("xval");
         sourceInstance.setY("yval");
 
-        // WHEN
         Mapper mapper = new MapperBuilder()
                 .addMap(SourceWithProperties.class, DestinationWithProperties.class,
                         (config, source, destination) -> config
@@ -215,12 +220,19 @@ public class BindTest {
                         .bind(() -> source.getY() + "2", destination::setB))
                 .buildMapper();
 
-        DestinationWithProperties destination = mapper.map(sourceInstance, DestinationWithProperties.class);
+        // WHEN
+        DestinationWithProperties destination = mapper.map(
+                sourceInstance, DestinationWithProperties.class);
 
         // THEN
         assertEquals(
-                "Property 'x' is not mapped correctly.", "xvalyval", destination.getA());
+                "Property 'x' is not mapped correctly.",
+                "xvalyval", // source.getX() + source.getY()
+                destination.getA());
+
         assertEquals(
-                "Property 'y' is not mapped correctly.", "yval2", destination.getB());
+                "Property 'y' is not mapped correctly.",
+                "yval2", // source.getY() + "2"
+                destination.getB());
     }
 }

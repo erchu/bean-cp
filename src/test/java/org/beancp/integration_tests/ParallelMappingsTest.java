@@ -109,9 +109,9 @@ public class ParallelMappingsTest {
     public static class Point {     // Test NameBasedConvention, including
         // failIfNotAllDestinationMembersMapped option
 
-        private int x;  // Test Map.bind()
+        private int x;  // Test DeclarativeMap.bind()
 
-        public int y;  // Test Map.bind()
+        public int y;  // Test DeclarativeMap.bind()
 
         private AuthorInfo author;
 
@@ -255,6 +255,7 @@ public class ParallelMappingsTest {
         }
 
         private void executeMapping() {
+            // GIVEN
             PointExtension pointExtension = new PointExtension();
             pointExtension.setZ((long) random.nextInt());
 
@@ -276,8 +277,10 @@ public class ParallelMappingsTest {
 
             source.setAudit(auditLog);
 
+            // WHEN
             PointInfo result = mapper.map(source, PointInfo.class);
 
+            // THEN
             assertEquals(source.getX() + source.y, result.getMetric());
             assertEquals(source.getExtension().getZ().intValue(), result.getExtensionZ());
             assertEquals(source.getAuthor().getName(), result.getAuthor());
@@ -296,7 +299,7 @@ public class ParallelMappingsTest {
     }
 
     @Test
-    public void mapper_should_be_able_to_map_objects_in_parallel_threads()
+    public void mapper_should_map_objects_in_parallel_threads()
             throws InterruptedException, ExecutionException {
         // GIVEN
         Mapper mapper = new MapperBuilder()
@@ -325,11 +328,11 @@ public class ParallelMappingsTest {
             Future<?> iTask = executor.submit(new MappingThread(mapper));
             tasks.add(iTask);
         }
-        
+
         for (Future<?> i : tasks) {
             i.get();
         }
-        
+
         // THEN: expect no exception
     }
 }

@@ -45,13 +45,13 @@ class MapperExecutorSelector {
             final MappingInfo mappingsInfo,
             final Class sourceClass,
             final Class destinationClass,
-            final Collection<MapImpl<?, ?>> maps,
+            final Collection<DeclarativeMapImpl<?, ?>> maps,
             final Collection<MapConventionExecutor> mapAnyConventions) {
         notNull(sourceClass, "sourceClass");
         notNull(destinationClass, "destinationClass");
         notNull(maps, "maps");
 
-        if (getBestMatchingMap(sourceClass, destinationClass, maps) != null) {
+        if (getBestMatchingDeclarativeMap(sourceClass, destinationClass, maps) != null) {
             return true;
         }
 
@@ -82,11 +82,11 @@ class MapperExecutorSelector {
                 MapperExecutorMatchMode.STRICT_DESTINATION);
     }
 
-    public static MapImpl<?, ?> getBestMatchingMap(
+    public static DeclarativeMapImpl<?, ?> getBestMatchingDeclarativeMap(
             final Class sourceClass,
             final Class destinationClass,
-            final Collection<MapImpl<?, ?>> executors) {
-        return (MapImpl<?, ?>) getBestMatchingMappingExecutor(
+            final Collection<DeclarativeMapImpl<?, ?>> executors) {
+        return (DeclarativeMapImpl<?, ?>) getBestMatchingMappingExecutor(
                 sourceClass,
                 destinationClass,
                 executors,

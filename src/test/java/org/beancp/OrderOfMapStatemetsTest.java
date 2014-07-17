@@ -149,7 +149,8 @@ public class OrderOfMapStatemetsTest {
 
         // WHEN
         new MapperBuilder()
-                .addMap(InnerSource.class, InnerDestination.class, (config, source, destination) -> {})
+                .addMap(InnerSource.class, InnerDestination.class, (config, source, destination) -> {
+                })
                 .addMap(Source.class, Destination.class, (config, source, destination) -> config
                         .mapInner(source::getInner, destination::setInner, InnerDestination.class)
                         .beforeMap(() -> destination.setC(destination.getA() + destination.getB()))
@@ -195,7 +196,8 @@ public class OrderOfMapStatemetsTest {
 
         // WHEN
         new MapperBuilder()
-                .addMap(InnerSource.class, InnerDestination.class, (config, source, destination) -> {})
+                .addMap(InnerSource.class, InnerDestination.class, (config, source, destination) -> {
+                })
                 .addMap(Source.class, Destination.class, (config, source, destination) -> config
                         .beforeMap(() -> destination.setC(destination.getA() + destination.getB()))
                         .bind(source::getY, destination::setB)
@@ -256,7 +258,8 @@ public class OrderOfMapStatemetsTest {
 
         // WHEN
         new MapperBuilder()
-                .addMap(InnerSource.class, InnerDestination.class, (config, source, destination) -> {})
+                .addMap(InnerSource.class, InnerDestination.class, (config, source, destination) -> {
+                })
                 .addMap(Source.class, Destination.class, (config, source, destination) -> config
                         .beforeMap(() -> destination.setC(destination.getA() + destination.getB()))
                         .mapInner(source::getInner, destination::setInner, InnerDestination.class)

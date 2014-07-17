@@ -60,12 +60,11 @@ public class ConstructDestinationObjectUsingTest {
     }
 
     @Test
-    public void constructDestinationObjectUsing_should_be_used_to_construct_destination_object_if_available() {
+    public void if_constructDestinationObjectUsing_is_available_then_should_be_used_to_construct_destination_object() {
         // GIVEN
         Source sourceInstance = new Source();
         sourceInstance.setX(2);
 
-        // WHEN
         Mapper mapper = new MapperBuilder().addMap(Source.class, Destination.class,
                 (config, source, destination) -> config
                 .constructDestinationObjectUsing(() -> {
@@ -77,19 +76,23 @@ public class ConstructDestinationObjectUsingTest {
                 .bind(source::getX, destination::setA))
                 .buildMapper();
 
+        // WHEN
         Destination result = mapper.map(sourceInstance, Destination.class);
 
         // THEN
-        assertEquals("Invalid 'a' value.", 2, result.getA());
-        assertEquals("Invalid 'b' value.", 7, result.getB());
+        assertEquals("Invalid 'a' value.", sourceInstance.getX(), result.getA());
+
+        assertEquals(
+                "Invalid 'b' value.",
+                7, // value from constructDestinationObjectUsing
+                result.getB());
     }
 
     @Test(expected = MappingException.class)
-    public void when_constructDestinationObjectUsing_returned_other_method_that_expected_the_mapper_should_throw_exception() {
+    public void when_constructDestinationObjectUsing_returned_other_class_that_expected_the_mapper_should_throw_exception() {
         // GIVEN
         Source sourceInstance = new Source();
 
-        // WHEN
         Mapper mapper = new MapperBuilder().addMap(Source.class, Destination.class,
                 (config, source, destination) -> config
                 .constructDestinationObjectUsing(() -> {
@@ -100,17 +103,17 @@ public class ConstructDestinationObjectUsingTest {
                 }))
                 .buildMapper();
 
+        // WHEN
         mapper.map(sourceInstance, InheritedFromDestination.class);
 
         // THEN: exception expected
     }
 
     @Test
-    public void when_constructDestinationObjectUsing_returned_inherited_class_the_should_be_accepted() {
+    public void when_constructDestinationObjectUsing_returned_inherited_class_from_requested_then_it_should_be_accepted() {
         // GIVEN
         Source sourceInstance = new Source();
 
-        // WHEN
         Mapper mapper = new MapperBuilder().addMap(Source.class, Destination.class,
                 (config, source, destination) -> config
                 .constructDestinationObjectUsing(() -> {
@@ -121,6 +124,7 @@ public class ConstructDestinationObjectUsingTest {
                 }))
                 .buildMapper();
 
+        // WHEN
         mapper.map(sourceInstance, Destination.class);
 
         // THEN: exception expected

@@ -15,7 +15,6 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library.
  */
-
 package org.beancp.commons;
 
 import java.util.Random;
@@ -229,13 +228,13 @@ public class NameBasedConventionFlateningFeatureTest {
         // GIVEN
         SourceLevel3 sourceInstance = getSampleSourceLevel3();
 
-        // WHEN
         Mapper mapper = new MapperBuilder()
                 .addMap(SourceLevel3.class, DestinationForSourceLevel3.class,
                         (config, source, destination)
                         -> config.useConvention(NameBasedMapConvention.get()))
                 .buildMapper();
 
+        // WHEN
         mapper.map(sourceInstance, DestinationForSourceLevel3.class);
 
         // THEN: expect exception, because no source member match destination member
@@ -246,13 +245,13 @@ public class NameBasedConventionFlateningFeatureTest {
         // GIVEN
         SourceLevel3 sourceInstance = getSampleSourceLevel3();
 
-        // WHEN
         Mapper mapper = new MapperBuilder()
                 .addMap(SourceLevel3.class, DestinationForSourceLevel3.class,
                         (config, source, destination)
                         -> config.useConvention(NameBasedMapConvention.get().enableFlattening()))
                 .buildMapper();
 
+        // WHEN
         DestinationForSourceLevel3 result = mapper.map(sourceInstance, DestinationForSourceLevel3.class);
 
         // THEN
@@ -270,13 +269,13 @@ public class NameBasedConventionFlateningFeatureTest {
         SourceLevel3 sourceInstance = getSampleSourceLevel3();
         sourceInstance.setFirst(null);
 
-        // WHEN
         Mapper mapper = new MapperBuilder()
                 .addMap(SourceLevel3.class, DestinationForSourceLevel3.class,
                         (config, source, destination)
                         -> config.useConvention(NameBasedMapConvention.get().enableFlattening()))
                 .buildMapper();
 
+        // WHEN
         DestinationForSourceLevel3 result = mapper.map(sourceInstance, DestinationForSourceLevel3.class);
 
         // THEN
@@ -288,13 +287,13 @@ public class NameBasedConventionFlateningFeatureTest {
         // GIVEN
         SourceTopLevel sourceInstance = getSampleSourceTopLevel();
 
-        // WHEN
         Mapper mapper = new MapperBuilder()
                 .addMap(SourceTopLevel.class, DestinationForSourceTopLevel.class,
                         (config, source, destination)
                         -> config.useConvention(NameBasedMapConvention.get().enableFlattening()))
                 .buildMapper();
 
+        // WHEN
         DestinationForSourceTopLevel result = mapper.map(sourceInstance, DestinationForSourceTopLevel.class);
 
         // THEN
@@ -309,13 +308,13 @@ public class NameBasedConventionFlateningFeatureTest {
         // GIVEN
         SourceLevel2 sourceInstance = getSampleSourceLevel2();
 
-        // WHEN
         Mapper mapper = new MapperBuilder()
                 .addMap(SourceLevel2.class, DestinationForSourceLevel2.class,
                         (config, source, destination)
                         -> config.useConvention(NameBasedMapConvention.get().enableFlattening()))
                 .buildMapper();
 
+        // WHEN
         DestinationForSourceLevel2 result = mapper.map(sourceInstance, DestinationForSourceLevel2.class);
 
         // THEN
