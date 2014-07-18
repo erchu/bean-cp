@@ -24,6 +24,7 @@
     
     <scm>
         <url>https://github.com/erchu/bean-cp.git</url>
+        <connection>scm:git:https://github.com/erchu/bean-cp.git</connection>
     </scm>
 
     <build>
@@ -81,4 +82,11 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
+    
+    <developers>
+        <developer>
+            <id>erchu</id>
+            <name>Rafal Chojnacki</name>
+        </developer>
+    </developers>
 </project>
