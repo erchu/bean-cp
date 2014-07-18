@@ -1,0 +1,240 @@
+/*
+ * bean-cp
+ * Copyright (c) 2014, Rafal Chojnacki, All rights reserved.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 3.0 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library.
+ */
+package com.github.erchu.beancp;
+
+import com.github.erchu.beancp.MapperBuilder;
+import com.github.erchu.beancp.Mapper;
+import org.junit.Test;
+import static org.junit.Assert.*;
+
+public class BindTest {
+
+    public static class SourceWithProperties {
+
+        private String x;
+
+        private String y;
+
+        public String getX() {
+            return x;
+        }
+
+        public void setX(String x) {
+            this.x = x;
+        }
+
+        public String getY() {
+            return y;
+        }
+
+        public void setY(String y) {
+            this.y = y;
+        }
+    }
+
+    public static class DestinationWithProperties {
+
+        private String a;
+
+        private String b;
+
+        public String getA() {
+            return a;
+        }
+
+        public void setA(String a) {
+            this.a = a;
+        }
+
+        public String getB() {
+            return b;
+        }
+
+        public void setB(String b) {
+            this.b = b;
+        }
+    }
+
+    public static class SourceWithFields {
+
+        public String x;
+
+        public String y;
+    }
+
+    public static class DestinationWithFields {
+
+        public String a;
+
+        private String b;
+    }
+
+    public static class SourceInnerSource {
+
+        private SourceWithProperties innerSource;
+
+        public SourceWithProperties getInnerSource() {
+            return innerSource;
+        }
+
+        public void setInnerSource(SourceWithProperties innerSource) {
+            this.innerSource = innerSource;
+        }
+    }
+
+    public static class AnotherSourceWithInnerSource {
+
+        private SourceInnerSource innerSource;
+
+        public SourceInnerSource getInnerSource() {
+            return innerSource;
+        }
+
+        public void setInnerSource(SourceInnerSource innerSource) {
+            this.innerSource = innerSource;
+        }
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void mapper_should_not_allow_null_as_source_expression() {
+        new MapperBuilder()
+                .addMap(SourceWithProperties.class, DestinationWithProperties.class,
+                        (config, source, destination) -> config
+                        .bind(null, destination::setA));
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void mapper_should_not_allow_null_as_destination_expression() {
+        new MapperBuilder()
+                .addMap(SourceWithProperties.class, DestinationWithProperties.class,
+                        (config, source, destination) -> config
+                        .bind(source::getX, null));
+    }
+
+    @Test
+    public void mapper_should_bind_properties() {
+        // GIVEN
+        SourceWithProperties sampleSource = new SourceWithProperties();
+        sampleSource.setX("xval");
+        sampleSource.setY("yval");
+
+        Mapper mapper = new MapperBuilder()
+                .addMap(SourceWithProperties.class, DestinationWithProperties.class,
+                        (config, source, destination) -> config
+                        .bind(source::getX, destination::setA)
+                        .bind(source::getY, destination::setB))
+                .buildMapper();
+
+        // WHEN
+        DestinationWithProperties result = mapper.map(sampleSource, DestinationWithProperties.class);
+
+        // THEN
+        assertEquals("Property 'x' is not mapped correctly.", sampleSource.getX(), result.getA());
+        assertEquals("Property 'y' is not mapped correctly.", sampleSource.getY(), result.getB());
+    }
+
+    @Test
+    public void mapper_should_bind_fields() {
+        // GIVEN
+        SourceWithFields sampleSource = new SourceWithFields();
+        sampleSource.x = "xval";
+        sampleSource.y = "yval";
+
+        Mapper mapper = new MapperBuilder()
+                .addMap(SourceWithFields.class, DestinationWithFields.class,
+                        (config, source, destination) -> config
+                        .bind(() -> source.x, v -> destination.a = v)
+                        .bind(() -> source.y, v -> destination.b = v))
+                .buildMapper();
+
+        // WHEN
+        DestinationWithFields result = mapper.map(sampleSource, DestinationWithFields.class);
+
+        // THEN
+        assertEquals("Property 'x' is not mapped correctly.", sampleSource.x, result.a);
+        assertEquals("Property 'y' is not mapped correctly.", sampleSource.y, result.b);
+    }
+
+    @Test
+    public void mapper_should_bind_inner_classes() {
+        // GIVEN
+        AnotherSourceWithInnerSource sourceInstance = new AnotherSourceWithInnerSource();
+
+        sourceInstance.setInnerSource(new SourceInnerSource());
+        sourceInstance.getInnerSource().setInnerSource(new SourceWithProperties());
+
+        sourceInstance.getInnerSource().getInnerSource().setX("xval");
+        sourceInstance.getInnerSource().getInnerSource().setY("yval");
+
+        Mapper mapper = new MapperBuilder()
+                .addMap(AnotherSourceWithInnerSource.class, DestinationWithProperties.class,
+                        (config, source, destination) -> config
+                        .bind(
+                                () -> source.getInnerSource().getInnerSource().getX(),
+                                destination::setA)
+                        .bind(
+                                () -> source.getInnerSource().getInnerSource().getY(),
+                                destination::setB))
+                .buildMapper();
+
+        // WHEN
+        DestinationWithProperties destination = mapper.map(
+                sourceInstance, DestinationWithProperties.class);
+
+        // THEN
+        assertEquals(
+                "Property 'x' is not mapped correctly.",
+                sourceInstance.getInnerSource().getInnerSource().getX(),
+                destination.getA());
+
+        assertEquals(
+                "Property 'y' is not mapped correctly.",
+                sourceInstance.getInnerSource().getInnerSource().getY(),
+                destination.getB());
+    }
+
+    @Test
+    public void mapper_should_bind_calculated_values() {
+        // GIVEN
+        SourceWithProperties sourceInstance = new SourceWithProperties();
+        sourceInstance.setX("xval");
+        sourceInstance.setY("yval");
+
+        Mapper mapper = new MapperBuilder()
+                .addMap(SourceWithProperties.class, DestinationWithProperties.class,
+                        (config, source, destination) -> config
+                        .bind(() -> source.getX() + source.getY(), destination::setA)
+                        .bind(() -> source.getY() + "2", destination::setB))
+                .buildMapper();
+
+        // WHEN
+        DestinationWithProperties destination = mapper.map(
+                sourceInstance, DestinationWithProperties.class);
+
+        // THEN
+        assertEquals(
+                "Property 'x' is not mapped correctly.",
+                "xvalyval", // source.getX() + source.getY()
+                destination.getA());
+
+        assertEquals(
+                "Property 'y' is not mapped correctly.",
+                "yval2", // source.getY() + "2"
+                destination.getB());
+    }
+}
