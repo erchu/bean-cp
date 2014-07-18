@@ -109,24 +109,23 @@ public class MappedObjectConstraintsTest {
     }
 
     @Test
-    public void mapper_should_work_when_mapped_properties_are_final()
-            throws NoSuchFieldException {
+    public void mapper_should_work_when_mapped_properties_are_final() throws NoSuchFieldException {
         // GIVEN
         SourceWithFinalMembers sampleSource = new SourceWithFinalMembers();
         sampleSource.setX("xval");
 
-        // WHEN
         Mapper mapper = new MapperBuilder()
                 .addMap(SourceWithFinalMembers.class, DestinationWithFinalMembers.class,
                         (config, source, destination) -> config
                         .bind(source::getX, destination::setA))
                 .buildMapper();
 
+        // WHEN
         DestinationWithFinalMembers result = new DestinationWithFinalMembers();
         mapper.map(sampleSource, result);
 
         // THEN
-        assertEquals("Property 'x' is not mapped correctly.", "xval", result.getA());
+        assertEquals("Property 'x' is not mapped correctly.", sampleSource.getX(), result.getA());
     }
 
     public static class SourceWithFinalMembers {
@@ -309,13 +308,13 @@ public class MappedObjectConstraintsTest {
         FinalSource sampleSource = new FinalSource();
         sampleSource.setX("xval");
 
-        // WHEN
         Mapper mapper = new MapperBuilder()
                 .addMap(FinalSource.class, Destination.class,
                         (config, source, destination) -> config
                         .bind(source::getX, destination::setA))
                 .buildMapper();
 
+        // WHEN
         Destination result = new Destination();
         mapper.map(sampleSource, result);
 
@@ -369,10 +368,6 @@ public class MappedObjectConstraintsTest {
     @Test
     public void mapper_should_accept_final_destination_classes_when_default_constructor_is_public()
             throws NoSuchFieldException {
-        // GIVEN
-        Source sampleSource = new Source();
-        sampleSource.setX("xval");
-
         // WHEN
         new MapperBuilder()
                 .addMap(Source.class, FinalDestination.class,
@@ -386,10 +381,6 @@ public class MappedObjectConstraintsTest {
     @Test(expected = MapperConfigurationException.class)
     public void mapper_should_accept_final_destination_classes_with_protected_default_constructor()
             throws NoSuchFieldException {
-        // GIVEN
-        Source sampleSource = new Source();
-        sampleSource.setX("xval");
-
         // WHEN
         new MapperBuilder()
                 .addMap(Source.class, FinalDestinationWithProtectedDefaultConstructor.class,
@@ -403,54 +394,72 @@ public class MappedObjectConstraintsTest {
     @Test(expected = MapperConfigurationException.class)
     public void mapper_should_not_accept_source_classes_with_private_default_constructor()
             throws NoSuchFieldException {
+        // WHEN
         new MapperBuilder()
                 .addMap(PrivateDefaultConstructorSource.class, Destination.class,
                         (config, source, destination) -> {
                         });
+
+        // THEN: exception expected
     }
 
     @Test(expected = MapperConfigurationException.class)
     public void mapper_should_not_accept_destination_classes_with_private_default_constructor()
             throws NoSuchFieldException {
+        // WHEN
         new MapperBuilder()
                 .addMap(Source.class, PrivateDefaultConstructorDestination.class,
                         (config, source, destination) -> {
                         });
+
+        // THEN: exception expected
     }
 
     @Test(expected = MapperConfigurationException.class)
     public void mapper_should_not_accept_non_static_source_classes()
             throws NoSuchFieldException {
+        // WHEN
         new MapperBuilder()
                 .addMap(NonStaticSource.class, Destination.class,
                         (config, source, destination) -> {
                         });
+
+        // THEN: exception expected
     }
 
     @Test(expected = MapperConfigurationException.class)
     public void mapper_should_not_accept_non_static_destination_classes()
             throws NoSuchFieldException {
+        // WHEN
         new MapperBuilder()
                 .addMap(Source.class, NonStaticDestination.class,
                         (config, source, destination) -> {
                         });
+
+        // THEN: exception expected
     }
 
     @Test(expected = MapperConfigurationException.class)
     public void mapper_should_not_accept_source_classes_with_no_default_constructor()
             throws NoSuchFieldException {
+        // WHEN
         new MapperBuilder()
                 .addMap(NoDefaultConstructorSource.class, Destination.class,
                         (config, source, destination) -> {
                         });
+
+        // THEN: exception expected
     }
 
     @Test(expected = MapperConfigurationException.class)
     public void mapper_should_not_accept_destination_classes_with_no_default_constructor_when_constructDestinationObjectUsing_is_not_privided()
             throws NoSuchFieldException {
+        // WHEN
         new MapperBuilder()
                 .addMap(Source.class, NoDefaultConstructorDestination.class,
                         (config, source, destination) -> {
                         });
+
+        // THEN: exception expected
     }
 }

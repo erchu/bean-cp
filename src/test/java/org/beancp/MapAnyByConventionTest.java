@@ -162,7 +162,7 @@ public class MapAnyByConventionTest {
     }
 
     @Test
-    public void when_source_and_destination_classes_has_properties_of_the_same_name_and_type_then_should_be_mapped_also_when_is_not_declared_implicity() {
+    public void when_source_and_destination_classes_has_properties_of_the_same_name_and_type_then_should_be_mapped_also_when_it_is_not_declared_implicity() {
         // GIVEN
         SimpleSourceWithProperties sourceInstance = new SimpleSourceWithProperties();
         sourceInstance.setA(7);
@@ -171,11 +171,11 @@ public class MapAnyByConventionTest {
         sourceInstance.setZ(10);
         sourceInstance.setInner(new InnerClass("hello"));
 
-        // WHEN
         Mapper mapper = new MapperBuilder()
                 .addMapAnyByConvention(NameBasedMapConvention.get())
                 .buildMapper();
 
+        // WHEN
         SimpleDestinationWithProperties result = mapper.map(sourceInstance, SimpleDestinationWithProperties.class);
 
         // THEN
@@ -194,7 +194,7 @@ public class MapAnyByConventionTest {
     }
 
     @Test
-    public void when_source_and_destination_classes_has_fields_of_the_same_name_and_type_then_should_be_mapped_also_when_is_not_declared_implicity() {
+    public void when_source_and_destination_classes_has_fields_of_the_same_name_and_type_then_should_be_mapped_also_when_it_is_not_declared_implicity() {
         // GIVEN
         SimpleSourceWithFields sourceInstance = new SimpleSourceWithFields();
         sourceInstance.a = 7;
@@ -203,11 +203,11 @@ public class MapAnyByConventionTest {
         sourceInstance.z = 10;
         sourceInstance.inner = new InnerClass("hello");
 
-        // WHEN
         Mapper mapper = new MapperBuilder()
                 .addMapAnyByConvention(NameBasedMapConvention.get())
                 .buildMapper();
 
+        // WHEN
         SimpleDestinationWithFields result = mapper.map(sourceInstance, SimpleDestinationWithFields.class);
 
         // THEN

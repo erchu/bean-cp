@@ -204,7 +204,7 @@ public class MapperSelectionTest {
         // THEN
         assertEquals("Property 'x' is not mapped correctly.", "xval4", result.getA());
     }
-    
+
     @Test
     public void map_should_accept_array_of_inherited_elements_if_no_specific_option_is_not_available() {
         // GIVEN

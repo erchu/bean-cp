@@ -31,7 +31,7 @@ import static org.apache.commons.lang3.Validate.*;
  */
 public final class MapperBuilder implements MappingInfo {
 
-    private final List<MapImpl<?, ?>> _maps = new LinkedList<>();
+    private final List<DeclarativeMapImpl<?, ?>> _maps = new LinkedList<>();
 
     private final List<Converter<?, ?>> _converters = new LinkedList<>();
 
@@ -44,7 +44,8 @@ public final class MapperBuilder implements MappingInfo {
      * <ul>
      * <li>Must have default public constructor or have not been final and have default protected
      * constructor. This requirement is valid even if destination object builder is provided by
-     * {@link Map#constructDestinationObjectUsing(java.util.function.Supplier)} method.</li>
+     * {@link DeclarativeMap#constructDestinationObjectUsing(java.util.function.Supplier)}
+     * method.</li>
      * <li>Cannot be inner non-static classes.</li>
      * </ul>
      *
@@ -60,7 +61,7 @@ public final class MapperBuilder implements MappingInfo {
             final MapSetup<S, D> mapConfiguration) throws MapperConfigurationException {
         validateAddMappingAction(sourceClass, destinationClass);
 
-        MapImpl map = new MapImpl(sourceClass, destinationClass, mapConfiguration);
+        DeclarativeMapImpl map = new DeclarativeMapImpl(sourceClass, destinationClass, mapConfiguration);
         map.configure(this);
 
         _maps.add(map);
@@ -198,7 +199,7 @@ public final class MapperBuilder implements MappingInfo {
             throw new MapperConfigurationException("Mapper already builded. No changes allowed.");
         }
 
-        for (MapImpl<?, ?> i : _maps) {
+        for (DeclarativeMapImpl<?, ?> i : _maps) {
             if (i.getSourceClass().equals(sourceClass)
                     && i.getDestinationClass().equals(destinationClass)) {
                 throw new MapperConfigurationException(String.format(

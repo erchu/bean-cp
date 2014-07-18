@@ -146,7 +146,6 @@ public class NameBasedConventionCastOrMapFeatureTest {
         Source sourceInstance = new Source();
         sourceInstance.setInner(innerSource);
 
-        // WHEN
         Mapper mapper = new MapperBuilder()
                 .addMap(InnerSource.class, InnerDestination.class, (config, source, destination)
                         -> config.bind(() -> source.getValue() + source.getValue(), destination::setValueDuplicated))
@@ -154,6 +153,7 @@ public class NameBasedConventionCastOrMapFeatureTest {
                         -> config.useConvention(NameBasedMapConvention.get()))
                 .buildMapper();
 
+        // WHEN
         Destination result = mapper.map(sourceInstance, Destination.class);
 
         // THEN
@@ -180,7 +180,6 @@ public class NameBasedConventionCastOrMapFeatureTest {
         Destination destinationInstance = new Destination();
         destinationInstance.setInner(innerDestination);
 
-        // WHEN
         Mapper mapper = new MapperBuilder()
                 .addMap(InnerSource.class, InnerDestination.class, (config, source, destination)
                         -> config.bind(source::getValue, destination::setValueDuplicated))
@@ -188,10 +187,14 @@ public class NameBasedConventionCastOrMapFeatureTest {
                         -> config.useConvention(NameBasedMapConvention.get()))
                 .buildMapper();
 
+        // WHEN
         mapper.map(sourceInstance, destinationInstance);
 
         // THEN
-        assertEquals("Why flag value has been changed?", initialFlagValue, destinationInstance.getInner().getFlag());
+        assertEquals(
+                "Why flag value has been changed?",
+                initialFlagValue,
+                destinationInstance.getInner().getFlag());
     }
 
     @Test
@@ -201,15 +204,15 @@ public class NameBasedConventionCastOrMapFeatureTest {
         sourceInstance.setCanBeCastedInherited(new LinkedList<>());
         sourceInstance.setHaveToBeSkipped(new LinkedList<>());
 
-        // WHEN
         Mapper mapper = new MapperBuilder()
-                .addMap(SourceForCastingTest.class, DestinationForCastingTest.class, (config, source, destination) ->
-                        config.useConvention(NameBasedMapConvention.get())
+                .addMap(SourceForCastingTest.class, DestinationForCastingTest.class, (config, source, destination)
+                        -> config.useConvention(NameBasedMapConvention.get())
                 )
                 .buildMapper();
-        
+
+        // WHEN
         DestinationForCastingTest result = mapper.map(sourceInstance, DestinationForCastingTest.class);
-        
+
         // THEN
         assertTrue("Invalid 'canBeCastedInherited' value.", sourceInstance.getCanBeCastedInherited() == result.getCanBeCastedInherited());
         assertNull("Invalid 'haveToBeSkipped' value.", result.getHaveToBeSkipped());

@@ -15,15 +15,11 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library.
  */
-
 package org.beancp;
 
-import org.beancp.Mapper;
-import org.beancp.MapperBuilder;
 import org.beancp.commons.NameBasedMapConvention;
 import org.junit.Test;
 import static org.junit.Assert.*;
-
 
 public class MappingObjectGraphByConventionTest {
 
@@ -167,28 +163,48 @@ public class MappingObjectGraphByConventionTest {
         SourceOuter sourceOuter = new SourceOuter();
         sourceOuter.innerField = sourceInnerForField;
         sourceOuter.setInnerProperty(sourceInnerForProperty);
-        
-        // WHEN
+
         Mapper mapper = new MapperBuilder()
                 .addMapAnyByConvention(NameBasedMapConvention.get())
                 .buildMapper();
-        
-        DestinationOuter result = mapper.map(sourceOuter, DestinationOuter.class);
-        
-        // THEN
 
+        // WHEN
+        DestinationOuter result = mapper.map(sourceOuter, DestinationOuter.class);
+
+        // THEN
         assertNotNull("Result should be not null.", result);
         assertNotNull("result.innerField should be not null.", result.innerField);
         assertNotNull("result.getInnerProperty() should be not null.", result.getInnerProperty());
-        assertNotNull("result.innerField.getInner() should be not null.", result.innerField.getInner());
-        assertNotNull("result.getInnerProperty().getInner() should be not null.", result.getInnerProperty().getInner());
-        
-        assertEquals("Invalid result.innerField.getX() value.", sourceOuter.innerField.getX(), result.innerField.getX());
-        assertEquals("Invalid result.innerField.getY() value.", sourceOuter.innerField.getY(), result.innerField.getY());
-        assertEquals("Invalid result.innerField.getInner().getX() value.", sourceOuter.innerField.getInner().getX(), result.innerField.getInner().getX());
-        
-        assertEquals("Invalid result.getInnerProperty().getX() value.", sourceOuter.getInnerProperty().getX(), result.getInnerProperty().getX());
-        assertEquals("Invalid result.getInnerProperty().getY() value.", sourceOuter.getInnerProperty().getY(), result.getInnerProperty().getY());
-        assertEquals("Invalid result.getInnerProperty().getInner().getX() value.", sourceOuter.getInnerProperty().getInner().getX(), result.getInnerProperty().getInner().getX());
+        assertNotNull(
+                "result.innerField.getInner() should be not null.", result.innerField.getInner());
+        assertNotNull(
+                "result.getInnerProperty().getInner() should be not null.",
+                result.getInnerProperty().getInner());
+
+        assertEquals(
+                "Invalid result.innerField.getX() value.",
+                sourceOuter.innerField.getX(),
+                result.innerField.getX());
+        assertEquals(
+                "Invalid result.innerField.getY() value.",
+                sourceOuter.innerField.getY(),
+                result.innerField.getY());
+        assertEquals(
+                "Invalid result.innerField.getInner().getX() value.",
+                sourceOuter.innerField.getInner().getX(),
+                result.innerField.getInner().getX());
+
+        assertEquals(
+                "Invalid result.getInnerProperty().getX() value.",
+                sourceOuter.getInnerProperty().getX(),
+                result.getInnerProperty().getX());
+        assertEquals(
+                "Invalid result.getInnerProperty().getY() value.",
+                sourceOuter.getInnerProperty().getY(),
+                result.getInnerProperty().getY());
+        assertEquals(
+                "Invalid result.getInnerProperty().getInner().getX() value.",
+                sourceOuter.getInnerProperty().getInner().getX(),
+                result.getInnerProperty().getInner().getX());
     }
 }

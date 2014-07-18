@@ -21,9 +21,9 @@ import java.util.function.Supplier;
 
 /**
  * Binding options used in
- * {@link Map#bind(java.util.function.Supplier, java.util.function.Consumer, org.beancp.BindingOption...)}
+ * {@link DeclarativeMap#bind(java.util.function.Supplier, java.util.function.Consumer, org.beancp.BindingOption...)}
  * and
- * {@link Map#bindConstant(java.lang.Object, java.util.function.Consumer, org.beancp.BindingOption...)}.
+ * {@link DeclarativeMap#bindConstant(java.lang.Object, java.util.function.Consumer, org.beancp.BindingOption...)}.
  *
  * @param <S> source object type.
  * @param <D> destination object type.
@@ -73,7 +73,7 @@ public final class BindingOption<S, D, T> {
 
     /**
      * If from source value getter will return null then value will be substituted with result from
- _nullSubstitution lambda.
+     * _nullSubstitution lambda.
      *
      * @param <S> source object type.
      * @param <D> destination object type.

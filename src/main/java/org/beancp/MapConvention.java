@@ -25,7 +25,7 @@ import java.util.List;
 public interface MapConvention {
 
     /**
-     * Returns list o bindings for specified source and destination classes;
+     * Returns list o bindings for specified source and destination classes. Must be thread-safe.
      *
      * @param mappingsInfo current mapping information.
      * @param sourceClass source class.

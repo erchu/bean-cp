@@ -75,18 +75,26 @@ public class BindingOptionTest {
         destinationObject.setA("aorig");
         destinationObject.setB("borig");
 
-        // WHEN
         Mapper mapper = new MapperBuilder()
                 .addMap(Source.class, Destination.class, (config, source, destination) -> config
                         .bind(source::getX, destination::setA)
                         .bind(source::getY, destination::setB,
                                 BindingOption.mapWhen(() -> source.getX().length() == 1)) // is true
                 ).buildMapper();
+
+        // WHEN
         mapper.map(sourceObject, destinationObject);
 
         // THEN
-        assertEquals("Invalid 'a' property value.", "7", destinationObject.getA());
-        assertEquals("Invalid 'b' property value.", "8", destinationObject.getB());  // value from source object
+        assertEquals(
+                "Invalid 'a' property value.",
+                sourceObject.getX(),
+                destinationObject.getA());
+
+        assertEquals(
+                "Invalid 'b' property value.",
+                sourceObject.getY(), // mapWhen returns true -> value from source object
+                destinationObject.getB());
     }
 
     @Test
@@ -110,8 +118,15 @@ public class BindingOptionTest {
         mapper.map(sourceObject, destinationObject);
 
         // THEN
-        assertEquals("Invalid 'a' property value.", "7", destinationObject.getA());
-        assertEquals("Invalid 'b' property value.", "borig", destinationObject.getB());  // value not mapped
+        assertEquals(
+                "Invalid 'a' property value.",
+                sourceObject.getX(),
+                destinationObject.getA());
+
+        assertEquals(
+                "Invalid 'b' property value.",
+                "borig", // mapWhen returns false -> value not mapped
+                destinationObject.getB());
     }
 
     @Test
@@ -135,8 +150,15 @@ public class BindingOptionTest {
         mapper.map(sourceObject, destinationObject);
 
         // THEN
-        assertEquals("Invalid 'a' property value.", "7", destinationObject.getA());
-        assertEquals("Invalid 'b' property value.", "yconst", destinationObject.getB());  // value from const
+        assertEquals(
+                "Invalid 'a' property value.",
+                sourceObject.getX(),
+                destinationObject.getA());
+
+        assertEquals(
+                "Invalid 'b' property value.",
+                "yconst", // mapWhen returns true -> value from const
+                destinationObject.getB());
     }
 
     @Test
@@ -160,8 +182,15 @@ public class BindingOptionTest {
         mapper.map(sourceObject, destinationObject);
 
         // THEN
-        assertEquals("Invalid 'a' property value.", "7", destinationObject.getA());
-        assertEquals("Invalid 'b' property value.", "borig", destinationObject.getB());  // value not mapped
+        assertEquals(
+                "Invalid 'a' property value.",
+                sourceObject.getX(),
+                destinationObject.getA());
+
+        assertEquals(
+                "Invalid 'b' property value.",
+                "borig", // mapWhen returns false -> value not mapped
+                destinationObject.getB());
     }
 
     @Test
@@ -179,14 +208,22 @@ public class BindingOptionTest {
         Mapper mapper = new MapperBuilder()
                 .addMap(Source.class, Destination.class, (config, source, destination) -> config
                         .bind(source::getX, destination::setA)
-                        .bind(source::getY, destination::setB,
+                        .bind(
+                                source::getY, destination::setB,
                                 BindingOption.withNullSubstitution("XYZ"))
                 ).buildMapper();
         mapper.map(sourceObject, destinationObject);
 
         // THEN
-        assertEquals("Invalid 'a' property value.", "7", destinationObject.getA());
-        assertEquals("Invalid 'b' property value.", "XYZ", destinationObject.getB());  // value from source object
+        assertEquals(
+                "Invalid 'a' property value.",
+                sourceObject.getX(),
+                destinationObject.getA());
+
+        assertEquals(
+                "Invalid 'b' property value.",
+                "XYZ", // value from null substitution
+                destinationObject.getB());
     }
 
     @Test
@@ -210,8 +247,15 @@ public class BindingOptionTest {
         mapper.map(sourceObject, destinationObject);
 
         // THEN
-        assertEquals("Invalid 'a' property value.", "7", destinationObject.getA());
-        assertEquals("Invalid 'b' property value.", "8", destinationObject.getB());  // value from source object
+        assertEquals(
+                "Invalid 'a' property value.",
+                sourceObject.getX(),
+                destinationObject.getA());
+
+        assertEquals(
+                "Invalid 'b' property value.",
+                sourceObject.getY(), // value from source is not null -> no null substitution
+                destinationObject.getB());
     }
 
     @Test(expected = MapperConfigurationException.class)
@@ -245,14 +289,21 @@ public class BindingOptionTest {
                 .addMap(Source.class, Destination.class, (config, source, destination) -> config
                         .bind(source::getX, destination::setA)
                         .bind(source::getY, destination::setB,
-                                BindingOption.withNullSubstitution("XYZ"),  // null substitution enabled
+                                BindingOption.withNullSubstitution("XYZ"), // null substitution enabled
                                 BindingOption.mapWhen(() -> source.getX().length() == 0)) // is false
                 ).buildMapper();
         mapper.map(sourceObject, destinationObject);
 
         // THEN
-        assertEquals("Invalid 'a' property value.", "7", destinationObject.getA());
-        assertEquals("Invalid 'b' property value.", "borig", destinationObject.getB());
+        assertEquals(
+                "Invalid 'a' property value.",
+                sourceObject.getX(),
+                destinationObject.getA());
+
+        assertEquals(
+                "Invalid 'b' property value.",
+                "borig", // not mapped
+                destinationObject.getB());
     }
 
     @Test
@@ -271,13 +322,20 @@ public class BindingOptionTest {
                 .addMap(Source.class, Destination.class, (config, source, destination) -> config
                         .bind(source::getX, destination::setA)
                         .bind(source::getY, destination::setB,
-                                BindingOption.withNullSubstitution("XYZ"),  // null substitution enabled
+                                BindingOption.withNullSubstitution("XYZ"), // null substitution enabled
                                 BindingOption.mapWhen(() -> source.getX().length() == 1)) // is true
                 ).buildMapper();
         mapper.map(sourceObject, destinationObject);
 
         // THEN
-        assertEquals("Invalid 'a' property value.", "7", destinationObject.getA());
-        assertEquals("Invalid 'b' property value.", "XYZ", destinationObject.getB());
+        assertEquals(
+                "Invalid 'a' property value.",
+                sourceObject.getX(),
+                destinationObject.getA());
+
+        assertEquals(
+                "Invalid 'b' property value.",
+                "XYZ", // value from null substitution
+                destinationObject.getB());
     }
 }

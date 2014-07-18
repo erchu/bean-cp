@@ -46,7 +46,7 @@ import org.beancp.MappingException;
 
 /**
  * Converters between from arrays to collections, from collections to arrays and from collections to
- * collections. Supported collection classes:
+ * collections. Supported destination collection classes:
  *
  * <ul>
  * <li>List</li>
@@ -87,10 +87,22 @@ public class CollectionConverters {
     private CollectionConverters() {
     }
 
+    /**
+     * Returns collection to collection converters.
+     *
+     * @return collection to collection converters.
+     */
     public static Converter[] get() {
         return _collectionToCollectionConverters;
     }
 
+    /**
+     * Returns collection to array converters.
+     *
+     * @param <T> element type.
+     * @param collectionElementClass element type.
+     * @return collection to array converters.
+     */
     public static <T> Converter getCollectionToArray(
             final Class<T> collectionElementClass) {
         return new Converter(
@@ -113,6 +125,13 @@ public class CollectionConverters {
         );
     }
 
+    /**
+     * Returns array to collection converters.
+     *
+     * @param <T> element type.
+     * @param collectionElementClass element type.
+     * @return array to collection converters.
+     */
     public static <T> Converter[] getArrayToCollection(
             final Class<T> collectionElementClass) {
         Converter[] result = new Converter[_collectionTypes.size()];

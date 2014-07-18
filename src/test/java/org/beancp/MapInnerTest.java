@@ -169,7 +169,6 @@ public class MapInnerTest {
         sourceOuter.innerField = sourceInnerForField;
         sourceOuter.setInnerProperty(sourceInnerForProperty);
 
-        // WHEN
         Mapper mapper = new MapperBuilder()
                 .addMap(SourceSecondInner.class, DestinationSecondInner.class,
                         (config, source, destination) -> config
@@ -194,6 +193,7 @@ public class MapInnerTest {
                         }, DestinationInner.class))
                 .buildMapper();
 
+        // WHEN
         DestinationOuter destinationOuter = new DestinationOuter();
         mapper.map(sourceOuter, destinationOuter);
 
@@ -241,7 +241,7 @@ public class MapInnerTest {
         sourceOuter.setInnerProperty(sourceInnerForProperty);
 
         final int sampleInt1 = 50, sampleInt2 = 60;
-        
+
         DestinationSecondInner destinationSecondInner = new DestinationSecondInner();
         destinationSecondInner.setB(sampleInt1);
 
@@ -252,7 +252,6 @@ public class MapInnerTest {
         DestinationOuter destinationOuter = new DestinationOuter();
         destinationOuter.setInnerDestinationProperty(destinationInner);
 
-        // WHEN
         Mapper mapper = new MapperBuilder()
                 .addMap(SourceSecondInner.class, DestinationSecondInner.class,
                         (config, source, destination) -> config
@@ -277,6 +276,7 @@ public class MapInnerTest {
                         }, DestinationInner.class))
                 .buildMapper();
 
+        // WHEN
         mapper.map(sourceOuter, destinationOuter);
 
         // THEN
@@ -289,6 +289,5 @@ public class MapInnerTest {
                 "Invalid value for destinationOuter.getInnerDestinationProperty().getSecondDestinationInner().getB()",
                 sampleInt1,
                 destinationOuter.getInnerDestinationProperty().getSecondDestinationInner().getB());
-
     }
 }

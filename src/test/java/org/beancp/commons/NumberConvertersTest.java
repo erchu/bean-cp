@@ -15,7 +15,6 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library.
  */
-
 package org.beancp.commons;
 
 import org.beancp.Mapper;
@@ -37,7 +36,6 @@ import static org.junit.Assert.*;
 //java.lang.Long
 //java.lang.Float
 //java.lang.Double
-
 public class NumberConvertersTest {
 
     public static class Source {
@@ -2569,7 +2567,7 @@ public class NumberConvertersTest {
         Destination result = mapper.map(sourceInstance, Destination.class);
 
         // THEN
-        assertEquals((byte) 8, (byte)result.getByteWrapperValue());
+        assertEquals((byte) 8, (byte) result.getByteWrapperValue());
     }
 
     @Test

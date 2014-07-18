@@ -18,7 +18,7 @@
 package org.beancp;
 
 /**
- * Interface for lambda expression used to configure map.
+ * Interface for lambda expression used to define {@link DeclarativeMap}.
  *
  * Example shows how to use this interface, to bind <code>getX()</code> to <code>setA()</code>:
  *
@@ -44,5 +44,5 @@ public interface MapSetup<S, D> {
      * @param source source and destination object
      * @param destination destination and destination object
      */
-    void apply(final Map<S, D> config, final S source, final D destination);
+    void apply(final DeclarativeMap<S, D> config, final S source, final D destination);
 }

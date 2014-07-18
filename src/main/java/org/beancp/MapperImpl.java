@@ -28,7 +28,7 @@ import static org.apache.commons.lang3.Validate.*;
 
 class MapperImpl implements Mapper {
 
-    private final Collection<MapImpl<?, ?>> _maps;
+    private final Collection<DeclarativeMapImpl<?, ?>> _maps;
 
     private final Collection<Converter<?, ?>> _converters;
 
@@ -36,7 +36,7 @@ class MapperImpl implements Mapper {
 
     MapperImpl(
             final Collection<Converter<?, ?>> converters,
-            final List<MapImpl<?, ?>> maps,
+            final List<DeclarativeMapImpl<?, ?>> maps,
             final List<MapConventionExecutor> mapAnyConvention) {
         this._converters = Collections.unmodifiableCollection(converters);
         this._maps = Collections.unmodifiableCollection(maps);
@@ -58,7 +58,7 @@ class MapperImpl implements Mapper {
         notNull(source, "source");
         notNull(destination, "destination");
 
-        MapImpl<S, D> map = (MapImpl<S, D>) MapperExecutorSelector.getBestMatchingMap(
+        DeclarativeMapImpl<S, D> map = (DeclarativeMapImpl<S, D>) MapperExecutorSelector.getBestMatchingDeclarativeMap(
                 source.getClass(), destination.getClass(),
                 _maps);
 
@@ -106,7 +106,7 @@ class MapperImpl implements Mapper {
                 }
             }
 
-            MapImpl<S, D> map = (MapImpl<S, D>) MapperExecutorSelector.getBestMatchingMap(
+            DeclarativeMapImpl<S, D> map = (DeclarativeMapImpl<S, D>) MapperExecutorSelector.getBestMatchingDeclarativeMap(
                     sourceClass, destinationClass, _maps);
 
             D destination = null;
@@ -116,7 +116,7 @@ class MapperImpl implements Mapper {
                         map.getDestinationObjectBuilder(), destinationClass);
             }
 
-            // if MapImpl is not available or has no specific destination object builder
+            // if DeclarativeMapImpl is not available or has no specific destination object builder
             if (destination == null) {
                 destination = constructObjectUsingDefaultConstructor(destinationClass);
             }
@@ -173,7 +173,7 @@ class MapperImpl implements Mapper {
     }
 
     private <D, S> boolean mapIfMapperAvailable(
-            final MapImpl<S, D> MapImpl, final S source, final D destination) {
+            final DeclarativeMapImpl<S, D> MapImpl, final S source, final D destination) {
         if (MapImpl != null) {
             MapImpl.execute(this, source, destination);
 

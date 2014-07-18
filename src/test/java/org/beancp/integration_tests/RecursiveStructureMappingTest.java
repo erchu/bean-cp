@@ -24,16 +24,16 @@ import static org.junit.Assert.*;
 import org.junit.Test;
 
 public class RecursiveStructureMappingTest {
-    
+
     public static class SourceTreeNodeWrapper {
-        
+
         private final SourceTreeNode node;
-        
+
         public SourceTreeNodeWrapper(SourceTreeNode node) {
             if (node == null) {
                 throw new NullPointerException("Null not allowed for 'node' parameter.");
             }
-            
+
             this.node = node;
         }
 
@@ -49,7 +49,7 @@ public class RecursiveStructureMappingTest {
         private SourceTreeNode right;
 
         private String name;
-        
+
         private SourceTreeNodeWrapper wrapped;
 
         public SourceTreeNode getLeft() {
@@ -129,15 +129,15 @@ public class RecursiveStructureMappingTest {
     }
 
     @Test
-    public void map_any_name_based_convention_should_be_able_to_map_recursive_structures() {
+    public void map_any_name_based_convention_should_map_recursive_structures() {
         // GIVEN
         SourceTreeNode top = getSampleSourceData();
 
-        // WHEN
         Mapper mapper = new MapperBuilder()
                 .addMapAnyByConvention(NameBasedMapConvention.get().enableFlattening())
                 .buildMapper();
 
+        // WHEN
         DestinationTreeNode result = mapper.map(top, DestinationTreeNode.class);
 
         // THEN
@@ -145,17 +145,17 @@ public class RecursiveStructureMappingTest {
     }
 
     @Test
-    public void name_based_convention_should_be_able_to_map_recursive_structures() {
+    public void name_based_convention_should_map_recursive_structures() {
         // GIVEN
         SourceTreeNode top = getSampleSourceData();
 
-        // WHEN
         Mapper mapper = new MapperBuilder()
                 .addMap(SourceTreeNode.class, DestinationTreeNode.class,
                         (config, source, destination)
                         -> config.useConvention(NameBasedMapConvention.get().enableFlattening())
                 ).buildMapper();
 
+        // WHEN
         DestinationTreeNode result = mapper.map(top, DestinationTreeNode.class);
 
         // THEN
@@ -163,11 +163,10 @@ public class RecursiveStructureMappingTest {
     }
 
     @Test
-    public void declarative_map_should_be_able_to_map_recursive_structures() {
+    public void declarative_map_should_map_recursive_structures() {
         // GIVEN
         SourceTreeNode top = getSampleSourceData();
 
-        // WHEN
         Mapper mapper = new MapperBuilder()
                 .addMap(SourceTreeNode.class, DestinationTreeNode.class,
                         (config, source, destination)
@@ -180,6 +179,7 @@ public class RecursiveStructureMappingTest {
                                 DestinationTreeNode.class)
                 ).buildMapper();
 
+        // WHEN
         DestinationTreeNode result = mapper.map(top, DestinationTreeNode.class);
 
         // THEN
@@ -187,11 +187,10 @@ public class RecursiveStructureMappingTest {
     }
 
     @Test
-    public void converter_should_be_able_to_map_recursive_structures() {
+    public void converter_should_map_recursive_structures() {
         // GIVEN
         SourceTreeNode top = getSampleSourceData();
 
-        // WHEN
         Mapper mapper = new MapperBuilder()
                 .addConverter(SourceTreeNode.class, DestinationTreeNode.class,
                         (mapperRef, source) -> {
@@ -202,10 +201,10 @@ public class RecursiveStructureMappingTest {
                                 destination.setLeft(mapperRef.map(source.getLeft(), DestinationTreeNode.class));
                             }
 
-                            if (source.getRight()!= null) {
+                            if (source.getRight() != null) {
                                 destination.setRight(mapperRef.map(source.getRight(), DestinationTreeNode.class));
                             }
-                            
+
                             if (source.getWrapped() != null) {
                                 destination.setWrappedNode(mapperRef.map(source.getWrapped().getNode(), DestinationTreeNode.class));
                             }
@@ -213,6 +212,7 @@ public class RecursiveStructureMappingTest {
                             return destination;
                         }).buildMapper();
 
+        // WHEN
         DestinationTreeNode result = mapper.map(top, DestinationTreeNode.class);
 
         // THEN
@@ -250,7 +250,7 @@ public class RecursiveStructureMappingTest {
         assertEquals("Invalid node name property value.", source.getName(), destination.getName());
         assertTrue("Invalid left node value.", ((source.getLeft() == null) == (destination.getLeft() == null)));
         assertTrue("Invalid right node value.", ((source.getRight() == null) == (destination.getRight() == null)));
-        assertTrue("Invalid wrapped node value.", ((source.getWrapped()== null) == (destination.getWrappedNode() == null)));
+        assertTrue("Invalid wrapped node value.", ((source.getWrapped() == null) == (destination.getWrappedNode() == null)));
 
         if (source.getLeft() != null) {
             assertTreeEquals(source.getLeft(), destination.getLeft());

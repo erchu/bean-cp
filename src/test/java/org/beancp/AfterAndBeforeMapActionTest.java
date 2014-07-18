@@ -83,19 +83,23 @@ public class AfterAndBeforeMapActionTest {
         destinationObject.setA("aorig");
         destinationObject.setB("borig");
 
-        // WHEN
         Mapper mapper = new MapperBuilder()
                 .addMap(Source.class, Destination.class, (config, source, destination) -> config
                         .beforeMap(() -> destination.setC(destination.getA() + destination.getB()))
                         .bind(source::getX, destination::setA)
                         .bind(source::getY, destination::setB)
                 ).buildMapper();
+
+        // WHEN
         mapper.map(sourceObject, destinationObject);
 
         // THEN
-        assertEquals("Invalid 'A' property value.", "abc", destinationObject.getA());
-        assertEquals("Invalid 'b' property value.", "xyz", destinationObject.getB());
-        assertEquals("Invalid 'c' property value.", "aorigborig", destinationObject.getC());
+        assertEquals("Invalid 'A' property value.", sourceObject.getX(), destinationObject.getA());
+        assertEquals("Invalid 'b' property value.", sourceObject.getY(), destinationObject.getB());
+        assertEquals(
+                "Invalid 'c' property value.",
+                "aorigborig", // destination.getA() + destination.getB()
+                destinationObject.getC());
     }
 
     @Test
@@ -109,18 +113,22 @@ public class AfterAndBeforeMapActionTest {
         destinationObject.setA("aorig");
         destinationObject.setB("borig");
 
-        // WHEN
         Mapper mapper = new MapperBuilder()
                 .addMap(Source.class, Destination.class, (config, source, destination) -> config
                         .bind(source::getX, destination::setA)
                         .bind(source::getY, destination::setB)
                         .afterMap(() -> destination.setC(destination.getA() + destination.getB()))
                 ).buildMapper();
+
+        // WHEN
         mapper.map(sourceObject, destinationObject);
 
         // THEN
-        assertEquals("Invalid 'A' property value.", "abc", destinationObject.getA());
-        assertEquals("Invalid 'b' property value.", "xyz", destinationObject.getB());
-        assertEquals("Invalid 'c' property value.", "abcxyz", destinationObject.getC());
+        assertEquals("Invalid 'A' property value.", sourceObject.getX(), destinationObject.getA());
+        assertEquals("Invalid 'b' property value.", sourceObject.getY(), destinationObject.getB());
+        assertEquals(
+                "Invalid 'c' property value.",
+                "abcxyz", // destination.getA() + destination.getB()
+                destinationObject.getC());
     }
 }

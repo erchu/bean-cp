@@ -76,19 +76,19 @@ public class BindConstantTest {
     }
 
     @Test
-    public void mapper_should_be_able_to_bind_to_constants() {
+    public void mapper_should_bind_constants() {
         // GIVEN
         Source sampleSource = new Source();
         sampleSource.setX("xval");
         sampleSource.setY("yval");
 
-        // WHEN
         Mapper mapper = new MapperBuilder()
                 .addMap(Source.class, Destination.class,
                         (config, source, destination) -> config
                         .bindConstant("const", destination::setA))
                 .buildMapper();
 
+        // WHEN
         Destination result = mapper.map(sampleSource, Destination.class);
 
         // THEN

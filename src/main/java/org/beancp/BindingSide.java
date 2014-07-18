@@ -46,8 +46,8 @@ public interface BindingSide {
     Object getValue(final Object object) throws MappingException;
 
     /**
-     * Sets value for passed object. If there is no setter available then
-     * {@link MappingException} will be trown.
+     * Sets value for passed object. If there is no setter available then {@link MappingException}
+     * will be trown.
      *
      * @param object value object.
      * @param value value to set.
@@ -56,14 +56,14 @@ public interface BindingSide {
 
     /**
      * Returns {@code true} if getter is available, otherwise {@code false}.
-     * 
+     *
      * @return {@code true} if getter is available, otherwise {@code false}.
      */
     boolean isGetterAvailable();
 
     /**
      * Returns {@code true} if setter is available, otherwise {@code false}.
-     * 
+     *
      * @return {@code true} if setter is available, otherwise {@code false}.
      */
     boolean isSetterAvailable();

@@ -21,7 +21,8 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 /**
- * Map configuration. Interface methods must be executed in following order:
+ * Defines mapping between source and destination class. Source and destination classes must have
+ * default public or private constructor. Interface methods must be executed in following order:
  *
  * <ol>
  * <li>{@link #constructDestinationObjectUsing(java.util.function.Supplier)} zero or one time</li>
@@ -39,33 +40,33 @@ import java.util.function.Supplier;
  * @param <S> source class
  * @param <D> destination class
  */
-public interface Map<S, D> {
+public interface DeclarativeMap<S, D> {
 
     /**
-     * Operation used to build destination object.
+     * Operation used to build destination object. Must be thread-safe.
      *
      * @param destinationObjectBuilder destination object builder, must be thread-safe.
      * @return this (for method chaining)
      */
-    Map<S, D> constructDestinationObjectUsing(final Supplier<D> destinationObjectBuilder);
+    DeclarativeMap<S, D> constructDestinationObjectUsing(final Supplier<D> destinationObjectBuilder);
 
     /**
-     * Action to be performed after mappings.
+     * Action to be performed after mappings. Must be thread-safe.
      *
      * @param action action to be executed after mappings, must be thread-safe.
      *
      * @return this (for method chaining)
      */
-    Map<S, D> beforeMap(final Action action);
+    DeclarativeMap<S, D> beforeMap(final Action action);
 
     /**
-     * Action to be performed after mappings.
+     * Action to be performed after mappings. Must be thread-safe.
      *
      * @param action action to be executed after mappings, must be thread-safe.
      *
      * @return this (for method chaining)
      */
-    Map<S, D> beforeMap(final Consumer<Mapper> action);
+    DeclarativeMap<S, D> beforeMap(final Consumer<Mapper> action);
 
     /**
      * Adds mappings using convention. Convention mappings are performed before other mappings
@@ -74,14 +75,14 @@ public interface Map<S, D> {
      * and
      * {@link #bindConstant(java.lang.Object, java.util.function.Consumer, org.beancp.BindingOption...)}.
      *
-     * @param MapConvention convention to use.
+     * @param MapConvention convention to use. Must be thread-safe.
      *
      * @return this (for method chaining)
      */
-    Map<S, D> useConvention(final MapConvention MapConvention);
+    DeclarativeMap<S, D> useConvention(final MapConvention MapConvention);
 
     /**
-     * Adds calculated member binding to destination member or members.
+     * Adds calculated member binding to destination member or members. Must be thread-safe.
      *
      * @param <T> value data type
      * @param fromFunction calculated member function, must be thread-safe.
@@ -90,13 +91,13 @@ public interface Map<S, D> {
      *
      * @return this (for method chaining)
      */
-    <T> Map<S, D> bind(
+    <T> DeclarativeMap<S, D> bind(
             final Supplier<T> fromFunction,
             final Consumer<T> toMember,
             final BindingOption<S, D, T>... options);
 
     /**
-     * Adds constant binding to destination member or members.
+     * Adds constant binding to destination member or members. Must be thread-safe.
      *
      * @param <T> value data type
      * @param constantValue constant value
@@ -105,13 +106,13 @@ public interface Map<S, D> {
      *
      * @return this (for method chaining)
      */
-    <T> Map<S, D> bindConstant(
+    <T> DeclarativeMap<S, D> bindConstant(
             final T constantValue,
             final Consumer<T> toMember,
             final BindingOption<S, D, T>... options);
 
     /**
-     * Adds inner object mapping.
+     * Adds inner object mapping. Must be thread-safe.
      *
      * @param <SI> source value data type
      * @param <DI> destination value data type
@@ -123,7 +124,7 @@ public interface Map<S, D> {
      *
      * @return this (for method chaining)
      */
-    <SI, DI> Map<S, D> mapInner(
+    <SI, DI> DeclarativeMap<S, D> mapInner(
             final Supplier<SI> fromFunction,
             final Consumer<DI> toMember,
             final Supplier<DI> toMemberGetter,
@@ -131,7 +132,7 @@ public interface Map<S, D> {
             final BindingOption<S, D, DI>... options);
 
     /**
-     * Adds inner object mapping.
+     * Adds inner object mapping. Must be thread-safe.
      *
      * @param <SI> source value data type
      * @param <DI> destination value data type
@@ -142,27 +143,27 @@ public interface Map<S, D> {
      *
      * @return this (for method chaining)
      */
-    <SI, DI> Map<S, D> mapInner(
+    <SI, DI> DeclarativeMap<S, D> mapInner(
             final Supplier<SI> fromFunction,
             final Consumer<DI> toMember,
             final Class<DI> toMemberClass,
             final BindingOption<S, D, DI>... options);
 
     /**
-     * Action to be performed before mappings.
+     * Action to be performed before mappings. Must be thread-safe.
      *
      * @param action action to be executed before mappings, must be thread-safe.
      *
      * @return this (for method chaining)
      */
-    Map<S, D> afterMap(final Action action);
+    DeclarativeMap<S, D> afterMap(final Action action);
 
     /**
-     * Action to be performed before mappings.
+     * Action to be performed before mappings. Must be thread-safe.
      *
      * @param action action to be executed before mappings, must be thread-safe.
      *
      * @return this (for method chaining)
      */
-    Map<S, D> afterMap(final Consumer<Mapper> action);
+    DeclarativeMap<S, D> afterMap(final Consumer<Mapper> action);
 }

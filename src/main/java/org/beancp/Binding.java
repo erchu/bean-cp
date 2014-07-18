@@ -33,8 +33,8 @@ public class Binding {
     /**
      * Creates binding from series of bindings from source (path) to destination member.
      *
-     * @param sourcePath series of bindings from source where n+1 binding returns field or property
-     * value from object returned by n-th binding.
+     * @param sourcePath series of bindings from source where n+1 binding returns member of object
+     * returned by n-th binding.
      * @param destinationMember destination member.
      */
     public Binding(final BindingSide[] sourcePath, final BindingSide destinationMember) {
@@ -57,11 +57,11 @@ public class Binding {
     }
 
     /**
-     * Returns binding source path (series of bindings from source where n+1 binding returns value
-     * from object (value) returned by n-th binding).
+     * Returns binding source path (series of bindings from source where n+1 binding returns member
+     * of object returned by n-th binding).
      *
-     * @return source path (series of bindings from source where n+1 binding returns field or
-     * property value from object returned by n-th binding).
+     * @return source path (series of bindings from source where n+1 binding returns member of
+     * object returned by n-th binding).
      */
     public BindingSide[] getSourcePath() {
         return _sourcePath;
@@ -110,14 +110,14 @@ public class Binding {
     protected void setValueAtDestination(
             final Mapper mapper, final Object destination, final Object value) {
         notNull(destination, "destination");
-        
+
         _destinationMember.setValue(destination, value);
     }
 
     private Object getValue(final BindingSide bindingSide, final Object object) {
         notNull(bindingSide, "bindingSide");
         notNull(object, "object");
-        
+
         if (_destinationMember.isGetterAvailable() == false) {
             throw new MappingException("Getter not available for " + bindingSide);
         }

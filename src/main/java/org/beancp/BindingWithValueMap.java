@@ -27,8 +27,8 @@ public class BindingWithValueMap extends Binding {
     /**
      * Creates binding from series of bindings from source (AKA path) to destination member.
      *
-     * @param sourcePath series of bindings from source where n+1 binding returns field or property
-     * value from object returned by n-th binding.
+     * @param sourcePath series of bindings from source where n+1 binding returns member of object
+     * returned by n-th binding.
      * @param destinationMember destination member.
      */
     public BindingWithValueMap(
