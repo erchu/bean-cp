@@ -15,11 +15,8 @@ git clone --quiet --branch=gh-pages https://${GH_TOKEN}@github.com/erchu/bean-cp
 
 cd $HOME/gh-pages
 rm -rf ./apidocs/*
-cp $HOME/build/erchu/bean-cp/target/beancp-*.jar ./upload
-cp -R $HOME/build/erchu/bean-cp/target/apidocs/* ./apidocs
-
-# API specs pop-up disabled
-# cp -f ./apidocs-custom/* ./apidocs/
+cp $HOME/build/erchu/bean-cp/target/beancp-*.jar ./download/development/
+cp -R $HOME/build/erchu/bean-cp/target/apidocs/* ./apidocs/development/
 
 # Commit and push the changes
 
