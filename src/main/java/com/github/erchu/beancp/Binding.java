@@ -22,7 +22,8 @@ import static org.apache.commons.lang3.Validate.*;
 /**
  * Binding from source member to destination member defined using reflection.
  *
- * @see MapConvention#getBindings(org.beancp.MappingInfo, java.lang.Class, java.lang.Class)
+ * @see MapConvention#getBindings(com.github.erchu.beancp.MappingInfo, java.lang.Class,
+ * java.lang.Class)
  */
 public class Binding {
 
@@ -47,7 +48,7 @@ public class Binding {
     }
 
     /**
-     * Creates biding from source member to destination member.
+     * Creates Binding from source member to destination member.
      *
      * @param sourceMember source member.
      * @param destinationMember destination member.

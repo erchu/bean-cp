@@ -58,7 +58,7 @@ public final class MapperBuilder implements MappingInfo {
      * @return this (for method chaining)
      */
     public <S, D> MapperBuilder addMap(final Class<S> sourceClass, final Class<D> destinationClass,
-            final MapSetup<S, D> mapConfiguration) throws MapperConfigurationException {
+            final DeclarativeMapSetup<S, D> mapConfiguration) throws MapperConfigurationException {
         validateAddMappingAction(sourceClass, destinationClass);
 
         DeclarativeMapImpl map = new DeclarativeMapImpl(sourceClass, destinationClass, mapConfiguration);
@@ -135,7 +135,7 @@ public final class MapperBuilder implements MappingInfo {
 
     /**
      * If two data types has no mapping defined by
-     * {@link #addMap(java.lang.Class, java.lang.Class, org.beancp.MapSetup)} or any of
+     * {@link #addMap(java.lang.Class, java.lang.Class, com.github.erchu.beancp.MapSetup)} or any of
      * {@code addConverter} methods then this convention will be used.
      *
      * @param conventions convention to add.

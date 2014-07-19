@@ -31,10 +31,10 @@ package com.github.erchu.beancp;
  * @param <S> mapping source
  * @param <D> mapping destination
  *
- * @see MapperBuilder#addMap(java.lang.Class, java.lang.Class, org.beancp.MapSetup)
+ * @see MapperBuilder#addMap(java.lang.Class, java.lang.Class, com.github.erchu.beancp.MapSetup)
  */
 @FunctionalInterface
-public interface MapSetup<S, D> {
+public interface DeclarativeMapSetup<S, D> {
 
     /**
      * Defines new map configuration. Implementation must be thread safe and has no side effects

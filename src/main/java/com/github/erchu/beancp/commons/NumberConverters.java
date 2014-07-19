@@ -15,7 +15,6 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library.
  */
-
 package com.github.erchu.beancp.commons;
 
 import java.util.function.Function;
@@ -23,7 +22,7 @@ import com.github.erchu.beancp.Converter;
 
 /**
  * Conversions between primitive number types and its wrappers:
- * 
+ *
  * <ul>
  * <li>byte</li>
  * <li>short</li>
@@ -50,11 +49,11 @@ public class NumberConverters {
 
     /**
      * Returns number converters.
-     * 
+     *
      * @return number converters.
      */
     public static Converter[] get() {
-        return new Converter[]{
+        return new Converter[] {
             new Converter(byte.class, Byte.class, ((Function<Byte, Byte>) (source -> source))),
             new Converter(short.class, Short.class, ((Function<Short, Short>) (source -> source))),
             new Converter(int.class, Integer.class, ((Function<Integer, Integer>) (source -> source))),

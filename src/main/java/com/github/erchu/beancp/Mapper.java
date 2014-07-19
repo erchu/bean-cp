@@ -31,7 +31,7 @@ public interface Mapper extends MappingInfo {
      * When the are more than one mapper valid for source and destination classes then mapper is
      * chose according to priority (first option has highest priority):
      * </p>
-     * 
+     *
      * <ol>
      * <li>source class equals to mapper source class and destination class equals to mapper
      * destination class</li>
@@ -42,7 +42,7 @@ public interface Mapper extends MappingInfo {
      * <li>source class inherits from mapper source class and destination class inherits from mapper
      * destination class</li>
      * <li>convention defined by
-     * {@link MapperBuilder#addMapAnyByConvention(org.beancp.MapConvention...)}</li>
+     * {@link MapperBuilder#addMapAnyByConvention(com.github.erchu.beancp.MapConvention...)}</li>
      * </ol>
      *
      * <p>
@@ -68,7 +68,7 @@ public interface Mapper extends MappingInfo {
      * When the are more than one mapper valid for source and destination classes then mapper is
      * chose according to priority (first option has highest priority):
      * </p>
-     * 
+     *
      * <ol>
      * <li>source class equals to mapper source class and destination class equals to mapper
      * destination class</li>
@@ -79,7 +79,7 @@ public interface Mapper extends MappingInfo {
      * <li>source class inherits from mapper source class and destination class inherits from mapper
      * destination class</li>
      * <li>convention defined by
-     * {@link MapperBuilder#addMapAnyByConvention(org.beancp.MapConvention...)}</li>
+     * {@link MapperBuilder#addMapAnyByConvention(com.github.erchu.beancp.MapConvention...)}</li>
      * </ol>
      *
      * <p>
@@ -109,7 +109,7 @@ public interface Mapper extends MappingInfo {
      * When the are more than one mapper valid for source and destination classes then mapper is
      * chose according to priority (first option has highest priority):
      * </p>
-     * 
+     *
      * <ol>
      * <li>source class equals to mapper source class and destination class equals to mapper
      * destination class</li>
@@ -120,7 +120,7 @@ public interface Mapper extends MappingInfo {
      * <li>source class inherits from mapper source class and destination class inherits from mapper
      * destination class</li>
      * <li>convention defined by
-     * {@link MapperBuilder#addMapAnyByConvention(org.beancp.MapConvention...)}</li>
+     * {@link MapperBuilder#addMapAnyByConvention(com.github.erchu.beancp.MapConvention...)}</li>
      * </ol>
      *
      * <p>
@@ -149,7 +149,7 @@ public interface Mapper extends MappingInfo {
      * When the are more than one mapper valid for source and destination classes then mapper is
      * chose according to priority (first option has highest priority):
      * </p>
-     * 
+     *
      * <ol>
      * <li>source class equals to mapper source class and destination class equals to mapper
      * destination class</li>
@@ -160,7 +160,7 @@ public interface Mapper extends MappingInfo {
      * <li>source class inherits from mapper source class and destination class inherits from mapper
      * destination class</li>
      * <li>convention defined by
-     * {@link MapperBuilder#addMapAnyByConvention(org.beancp.MapConvention...)}</li>
+     * {@link MapperBuilder#addMapAnyByConvention(com.github.erchu.beancp.MapConvention...)}</li>
      * </ol>
      *
      * <p>

@@ -214,8 +214,8 @@ public class NameBasedMapConvention implements MapConvention {
 
     /**
      * Convention will fail during map building (see
-     * {@link #getBindings(org.beancp.MappingInfo, java.lang.Class, java.lang.Class)} method) if not all
-     * destination properties are mapped.
+     * {@link #getBindings(com.github.erchu.beancp.MappingInfo, java.lang.Class, java.lang.Class)}
+     * method) if not all destination properties are mapped.
      *
      * @return this (for method chaining)
      */
@@ -227,8 +227,8 @@ public class NameBasedMapConvention implements MapConvention {
 
     /**
      * Convention will fail during map building (see
-     * {@link #getBindings(org.beancp.MappingInfo, java.lang.Class, java.lang.Class)} method) if not all
-     * source properties are mapped.
+     * {@link #getBindings(com.github.erchu.beancp.MappingInfo, java.lang.Class, java.lang.Class)}
+     * method) if not all source properties are mapped.
      *
      * @return this (for method chaining)
      */
@@ -281,7 +281,7 @@ public class NameBasedMapConvention implements MapConvention {
                     BindingSide[] sourceBindingSideArray
                             = sourceBindingSide.stream().toArray(BindingSide[]::new);
 
-                    Binding binding = getBidingIfAvailable(
+                    Binding binding = getBindingIfAvailable(
                             sourceClass,
                             destinationClass,
                             mappingsInfo,
@@ -313,7 +313,7 @@ public class NameBasedMapConvention implements MapConvention {
                 BindingSide[] sourceBindingSideArray
                         = sourceBindingSide.stream().toArray(BindingSide[]::new);
 
-                Binding binding = getBidingIfAvailable(
+                Binding binding = getBindingIfAvailable(
                         sourceClass,
                         destinationClass,
                         mappingsInfo,
@@ -346,7 +346,7 @@ public class NameBasedMapConvention implements MapConvention {
                     if (sourceMember.getDeclaringClass().equals(Object.class)) {
                         continue;
                     }
-                    
+
                     BindingSide sourceBindingSide = new PropertyBindingSide(sourceProperty);
 
                     if (isSourceMemberMapped(result, sourceBindingSide) == false) {
@@ -549,7 +549,7 @@ public class NameBasedMapConvention implements MapConvention {
         }
     }
 
-    private Binding getBidingIfAvailable(
+    private Binding getBindingIfAvailable(
             final Class sourceClass,
             final Class destinationClass,
             final MappingInfo mappingsInfo,

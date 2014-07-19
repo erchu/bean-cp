@@ -42,7 +42,7 @@ final class DeclarativeMapImpl<S, D> implements DeclarativeMap<S, D>, MappingExe
 
     private final Class<D> _destinationClass;
 
-    private final MapSetup<S, D> _configuration;
+    private final DeclarativeMapSetup<S, D> _configuration;
 
     private Supplier<D> _destinationObjectBuilder;
 
@@ -69,7 +69,7 @@ final class DeclarativeMapImpl<S, D> implements DeclarativeMap<S, D>, MappingExe
     private MappingInfo _configurationPhaseMappingsInfo;
 
     public DeclarativeMapImpl(final Class<S> sourceClass, final Class<D> destinationClass,
-            final MapSetup<S, D> configuration) {
+            final DeclarativeMapSetup<S, D> configuration) {
         _configuration = configuration;
         _sourceClass = sourceClass;
         _destinationClass = destinationClass;

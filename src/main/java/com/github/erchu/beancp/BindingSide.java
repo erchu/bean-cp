@@ -18,7 +18,7 @@
 package com.github.erchu.beancp;
 
 /**
- * Source or destination part (for example property) referenced by binding.
+ * Source or destination member (for example property) referenced by binding.
  */
 public interface BindingSide {
 

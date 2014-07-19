@@ -20,12 +20,12 @@ package com.github.erchu.beancp;
 import static org.apache.commons.lang3.Validate.*;
 
 /**
- * Biding with additional source value mapping (before it is set to destination).
+ * Binding with additional source value mapping (before it is set to destination).
  */
 public class BindingWithValueMap extends Binding {
 
     /**
-     * Creates binding from series of bindings from source (AKA path) to destination member.
+     * Creates binding from series of bindings from source (path) to destination member.
      *
      * @param sourcePath series of bindings from source where n+1 binding returns member of object
      * returned by n-th binding.
@@ -37,7 +37,7 @@ public class BindingWithValueMap extends Binding {
     }
 
     /**
-     * Creates biding from source member to destination member.
+     * Creates Binding from source member to destination member.
      *
      * @param sourceMember source member.
      * @param destinationMember destination member.

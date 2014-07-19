@@ -38,8 +38,8 @@ class MapConventionExecutor {
      * @param sourceClass source object class.
      * @param destinationClass destination object class.
      *
-     * @see org.beancp.DeclarativeMap#useConvention(org.beancp.MapConvention)
-     * @see org.beancp.MapperBuilder#addMapAnyByConvention(org.beancp.MapConvention...)
+     * @see org.beancp.DeclarativeMap#useConvention(com.github.erchu.beancp.MapConvention)
+     * @see org.beancp.MapperBuilder#addMapAnyByConvention(com.github.erchu.beancp.MapConvention...)
      */
     void build(MappingInfo mappingInfo, Class sourceClass, Class destinationClass)
             throws MapperConfigurationException {
@@ -51,10 +51,11 @@ class MapConventionExecutor {
      *
      * <ol>
      * <li>when for particular instance
-     * {@link #build(org.beancp.MappingInfo, java.lang.Class, java.lang.Class)} <b>is not
-     * executed</b> before first execution of this method</li>
+     * {@link #build(com.github.erchu.beancp.MappingInfo, java.lang.Class, java.lang.Class)} <b>is
+     * not executed</b> before first execution of this method</li>
      * <li>when for particular instance
-     * {@link #build(org.beancp.MappingInfo, java.lang.Class, java.lang.Class)} <b>is executed</b>
+     * {@link #build(com.github.erchu.beancp.MappingInfo, java.lang.Class, java.lang.Class)} <b>is
+     * executed</b>
      * before first execution of this method (but <b>never</b> concurrently or after first call on
      * this method)</li>
      * </ol>
@@ -62,8 +63,8 @@ class MapConventionExecutor {
      * <p>
      * Implementation must be thread-safe in both of those scenarios. Implementation cannot produce
      * state that is shared state between calls, but may use data produced by
-     * {@link #build(org.beancp.MappingInfo, java.lang.Class, java.lang.Class)} method. Acquiring
-     * locks is not permitted.
+     * {@link #build(com.github.erchu.beancp.MappingInfo, java.lang.Class, java.lang.Class)} method.
+     * Acquiring locks is not permitted.
      * </p>
      *
      * <p>
@@ -74,8 +75,8 @@ class MapConventionExecutor {
      * @param source source object.
      * @param destination destination object.
      *
-     * @see org.beancp.DeclarativeMap#useConvention(org.beancp.MapConvention)
-     * @see org.beancp.MapperBuilder#addMapAnyByConvention(org.beancp.MapConvention...)
+     * @see org.beancp.DeclarativeMap#useConvention(com.github.erchu.beancp.MapConvention)
+     * @see org.beancp.MapperBuilder#addMapAnyByConvention(com.github.erchu.beancp.MapConvention...)
      */
     void map(Mapper mapper, Object source, Object destination) throws MappingException {
         if (tryMap(mapper, source, destination) == false) {
@@ -89,11 +90,12 @@ class MapConventionExecutor {
      *
      * <ol>
      * <li>when for particular instance
-     * {@link #build(org.beancp.MappingInfo, java.lang.Class, java.lang.Class)}
+     * {@link #build(com.github.erchu.beancp.MappingInfo, java.lang.Class, java.lang.Class)}
      * <b>is not executed</b>
      * before first execution of this method</li>
      * <li>when for particular instance
-     * {@link #build(org.beancp.MappingInfo, java.lang.Class, java.lang.Class)} <b>is executed</b>
+     * {@link #build(com.github.erchu.beancp.MappingInfo, java.lang.Class, java.lang.Class)} <b>is
+     * executed</b>
      * before first execution of this method (but <b>never</b> concurrently or after first call on
      * this method)</li>
      * </ol>
@@ -101,8 +103,8 @@ class MapConventionExecutor {
      * <p>
      * Implementation must be thread-safe in both of those scenarios. Implementation cannot produce
      * state that is shared state between calls, but may use data produced by
-     * {@link #build(org.beancp.MappingInfo, java.lang.Class, java.lang.Class)} method. Acquiring
-     * locks is not permitted.
+     * {@link #build(com.github.erchu.beancp.MappingInfo, java.lang.Class, java.lang.Class)} method.
+     * Acquiring locks is not permitted.
      * </p>
      *
      * <p>
@@ -116,8 +118,8 @@ class MapConventionExecutor {
      * @return {@code}true{code} if mapping is supported for passed object types, otherwise
      * {@code}true{code}.
      *
-     * @see org.beancp.DeclarativeMap#useConvention(org.beancp.MapConvention)
-     * @see org.beancp.MapperBuilder#addMapAnyByConvention(org.beancp.MapConvention...)
+     * @see org.beancp.DeclarativeMap#useConvention(com.github.erchu.beancp.MapConvention)
+     * @see org.beancp.MapperBuilder#addMapAnyByConvention(com.github.erchu.beancp.MapConvention...)
      */
     boolean tryMap(Mapper mapper, Object source, Object destination)
             throws MapperConfigurationException {

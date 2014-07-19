@@ -20,7 +20,7 @@ package com.github.erchu.beancp;
 import static org.apache.commons.lang3.Validate.*;
 
 /**
- * Biding with additional source value conversion using {@link Converter} before it is assigned to
+ * Binding with additional source value conversion using {@link Converter} before it is assigned to
  * destination member.
  */
 public class BindingWithValueConversion extends Binding {
@@ -38,7 +38,7 @@ public class BindingWithValueConversion extends Binding {
     }
 
     /**
-     * Creates biding from source member to destination member.
+     * Creates Binding from source member to destination member.
      *
      * @param sourceMember source member.
      * @param destinationMember destination member.

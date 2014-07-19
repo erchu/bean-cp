@@ -26,15 +26,15 @@ import java.util.function.Supplier;
  *
  * <ol>
  * <li>{@link #constructDestinationObjectUsing(java.util.function.Supplier)} zero or one time</li>
- * <li>{@link #beforeMap(org.beancp.Action)} zero or many times</li>
- * <li>{@link #useConvention(org.beancp.MapConvention) } zero or one time</li>
- * <li>{@link #bind(java.util.function.Supplier, java.util.function.Consumer, org.beancp.BindingOption...)},
- * {@link #bindConstant(java.lang.Object, java.util.function.Consumer, org.beancp.BindingOption...)},
- * {@link #mapInner(java.util.function.Supplier, java.util.function.Consumer, java.lang.Class, org.beancp.BindingOption[])}
+ * <li>{@link #beforeMap(com.github.erchu.beancp.Action)} zero or many times</li>
+ * <li>{@link #useConvention(com.github.erchu.beancp.MapConvention) } zero or one time</li>
+ * <li>{@link #bind(java.util.function.Supplier, java.util.function.Consumer, com.github.erchu.beancp.BindingOption...)},
+ * {@link #bindConstant(java.lang.Object, java.util.function.Consumer, com.github.erchu.beancp.BindingOption...)},
+ * {@link #mapInner(java.util.function.Supplier, java.util.function.Consumer, java.lang.Class, com.github.erchu.beancp.BindingOption[])}
  * and
- * {@link #mapInner(java.util.function.Supplier, java.util.function.Consumer, java.util.function.Supplier, java.lang.Class, org.beancp.BindingOption[])}
+ * {@link #mapInner(java.util.function.Supplier, java.util.function.Consumer, java.util.function.Supplier, java.lang.Class, com.github.erchu.beancp.BindingOption[])}
  * methods zero or many times in any order</li>
- * <li>{@link #afterMap(org.beancp.Action)} zero or many times</li>
+ * <li>{@link #afterMap(com.github.erchu.beancp.Action)} zero or many times</li>
  * </ol>
  *
  * @param <S> source class
@@ -71,9 +71,9 @@ public interface DeclarativeMap<S, D> {
     /**
      * Adds mappings using convention. Convention mappings are performed before other mappings
      * defined by
-     * {@link #bind(java.util.function.Supplier, java.util.function.Consumer, org.beancp.BindingOption...)}
+     * {@link #bind(java.util.function.Supplier, java.util.function.Consumer, com.github.erchu.beancp.BindingOption...)}
      * and
-     * {@link #bindConstant(java.lang.Object, java.util.function.Consumer, org.beancp.BindingOption...)}.
+     * {@link #bindConstant(java.lang.Object, java.util.function.Consumer, com.github.erchu.beancp.BindingOption...)}.
      *
      * @param MapConvention convention to use. Must be thread-safe.
      *
