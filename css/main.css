@@ -10,6 +10,9 @@
 
 html {
 	height: 100%;
+	
+	overflow: -moz-scrollbars-vertical; 
+	overflow-y: scroll;
 }
 	
 body {
@@ -40,9 +43,34 @@ div.page-content > header {
 	display: table;
 }
 
-div.page-main {
+#page-main {
+	display: table-row;
+	
 	width: 978px;
-	height: 100%;
+}
+
+#page-main-content {
+	display: table-cell;
+	
+	width: 100%;
+	
+	padding: 15px 22px;
+	
+	text-align: center;
+	vertical-align: middle;
+}
+
+#page-main-content > * {
+	text-align: left;
+}
+
+.page-main-info-message {
+	text-align: center !important;
+	padding: 100px 0 !important;
+}
+
+.page-doesnt-exists {
+	font-size: 16px;
 }
 
 #page-menu-panel {
@@ -62,7 +90,7 @@ div.page-main {
 	display: table-row;
 	border: 1px solid #808080;
 	background-color: rgba(255, 255, 255, 0.7);
-	width: 440px;
+	width: 438px;
 	padding: 1px;
 	float: right;
 }
@@ -143,16 +171,13 @@ div.page-main {
 }
 
 #main-content-section {
-	padding-top: 15px;
-	padding-left: 22px;
 	width: 70%;
 	float: left;
 }
 
 #project-download-section {
 	padding-left: 22px;
-	padding-right: 22px;
-	padding-top: 44px;
+	padding-top: 22px;
 	width: 30%;
 	float: right;
 	display: table;

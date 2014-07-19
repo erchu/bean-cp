@@ -1,38 +1,36 @@
-$( document ).ready(function() {
-	$("nav a").click(function(e) {
-		if ($(this).attr("href") === "#") {
-			e.preventDefault();
-			alert("Not available for now");
+$(document).ready(function() {
+	var app = Sammy('#page-main', function() {
+	
+		var $pageMain = $("#page-main");
+		var $pageMenu = $("#page-menu");
+
+		function _loadPageWithNoSecurityCheck(pageName) {
+			$pageMain.load("pages/" + pageName + ".html #page-main-content", function() {
+				_updateMenuStatus(pageName);
+			});
 		}
-	});
-	
-	function showApiSpecs() {
-		var apiDialog = $("#dialog");
-		var width = $(window).width();
-		var height = $(window).height();
+		
+		function _updateMenuStatus(pageName) {
+			$pageMenu.find("a.selected").each(function() {
+				$(this).removeClass("selected");
+			});
+			
+			$pageMenu.find("a[href=#" + pageName + "]").addClass("selected");
+		}
 
-		width = width - 50;
-		height = height - 120;
+		function loadPage(pageName) {
+			if (enabledPages.isEnabled(pageName)) {
+				_loadPageWithNoSecurityCheck(pageName);
+			} else {
+				_loadPageWithNoSecurityCheck("not-found");
+			}
+		}
 
-		$(apiDialog.children("iframe").get(0)).css("height", height + "px");
-
-		apiDialog.dialog({
-			modal: true,
-			height: "auto", // Set the height to auto so that it grows along with the iframe.
-			width: width
+		this.get('#:name', function() {
+				loadPage(this.params['name']);
+			});
 		});
-	}
-	
-	// API specs pop-up disabled
-	/*
-	$('#api-specs-link').click(function(e) {
-		e.preventDefault();
-		showApiSpecs();
-	});
-	
-	$('#footer-api-specs-link').click(function(e) {
-		e.preventDefault();
-		showApiSpecs();
-	});
-	*/
+
+	// start the application
+	app.run('#home');
 });
