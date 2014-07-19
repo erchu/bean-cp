@@ -14,7 +14,7 @@ git clone --quiet --branch=gh-pages https://${GH_TOKEN}@github.com/erchu/bean-cp
 # Copy and prepare files to push
 
 cd $HOME/gh-pages
-rm -rf ./apidocs/*
+rm -rf ./apidocs/development/*
 cp $HOME/build/erchu/bean-cp/target/beancp-*.jar ./download/development/
 cp -R $HOME/build/erchu/bean-cp/target/apidocs/* ./apidocs/development/
 
