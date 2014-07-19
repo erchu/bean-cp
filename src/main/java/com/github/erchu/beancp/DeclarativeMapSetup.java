@@ -31,7 +31,7 @@ package com.github.erchu.beancp;
  * @param <S> mapping source
  * @param <D> mapping destination
  *
- * @see MapperBuilder#addMap(java.lang.Class, java.lang.Class, com.github.erchu.beancp.MapSetup)
+ * @see MapperBuilder#addMap(java.lang.Class, java.lang.Class, com.github.erchu.beancp.DeclarativeMapSetup)
  */
 @FunctionalInterface
 public interface DeclarativeMapSetup<S, D> {

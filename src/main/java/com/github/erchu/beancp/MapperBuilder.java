@@ -135,7 +135,7 @@ public final class MapperBuilder implements MappingInfo {
 
     /**
      * If two data types has no mapping defined by
-     * {@link #addMap(java.lang.Class, java.lang.Class, com.github.erchu.beancp.MapSetup)} or any of
+     * {@link #addMap(java.lang.Class, java.lang.Class, com.github.erchu.beancp.DeclarativeMapSetup)} or any of
      * {@code addConverter} methods then this convention will be used.
      *
      * @param conventions convention to add.
