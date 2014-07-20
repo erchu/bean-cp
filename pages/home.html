@@ -28,13 +28,20 @@
 
 	<h2>Easy to read and standardized mapping code</h2>
 
-	<p><span class="work-in-progress">TODO</span></p>
+<pre class="brush: java">
+Mapper mapper = new MapperBuilder()
+    .addMap(Order.class, OrderOverviewDto.class, (conf, source, destination) -> conf
+        .bind(source::getDate, destination::setDate)
+        .bind(source::getStatus, destination::setStatus)
+        .bind(source::getTotal, destination::setTotal)
+        .bind(source.getCustomer()::getName, destination::setCustomerName))
+    .buildMapper();</pre>
 	
-	<h2>Map anything</h2>
+	<h2>Saves your time</h2>
 
 	<p><span class="work-in-progress">TODO</span></p>
 	
-	<h2>Saves your time</h2>
+	<h2>Map anything</h2>
 
 	<p><span class="work-in-progress">TODO</span></p>
 	
