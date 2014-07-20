@@ -27,11 +27,14 @@
 	<h1>Why bean-cp?</h1>
 
 	<h2>Easy to read and standardized mapping code</h2>
+	
+	<p>Lambda expressions and fluent API comes to play...</p>
 
 <pre class="brush: java">
 Mapper mapper = new MapperBuilder()
     .addMap(Order.class, OrderOverviewDto.class, (conf, source, destination) -> conf
         .bind(source::getDate, destination::setDate)
+        .bind(source::getPaymentDueDay, destination::setPaymentDueDay)
         .bind(source::getStatus, destination::setStatus)
         .bind(source::getTotal, destination::setTotal)
         .bind(source.getCustomer()::getName, destination::setCustomerName))
@@ -39,15 +42,35 @@ Mapper mapper = new MapperBuilder()
 	
 	<h2>Saves your time</h2>
 
-	<p><span class="work-in-progress">TODO</span></p>
+	<p>Conventions feature lets you define mapping quickly. Above example can be fully replaced by convention:</p>
+
+<pre class="brush: java">
+Mapper mapper = new MapperBuilder()
+    .addMap(Order.class, OrderOverviewDto.class, (conf, source, destination) -> conf
+        .useConvention(NameBasedMapConvention.get().enableFlattening()))
+    .buildMapper();</pre>
+	
+	<p>Both mechanism can be mixed:</p>
+	
+<pre class="brush: java">
+Mapper mapper = new MapperBuilder()
+    .addMap(Order.class, OrderOverviewDto.class, (conf, source, destination) -> conf
+        .useConvention(NameBasedMapConvention.get().enableFlattening())
+        .bind(() -&gt; source.getStatus() == OrderStatus.OVERDUE, destination::isOverdue))
+    .buildMapper();</pre>
 	
 	<h2>Map anything</h2>
 
-	<p><span class="work-in-progress">TODO</span></p>
+	<p>When you face non standard situation converters comes to rescue:</p>
+	
+<pre class="brush: java">
+Mapper mapper = new MapperBuilder()
+  .addConverter(int.class, Range.class, source -> Range.of(source, Integer.MAX_VALUE))
+  .buildMapper();</pre>
 	
 	<h2>Extensibility</h2>
 
-	<p>If you need something different than name-based convention? All you need to do is implement
+	<p>If you need something different than name-based convention you can implement your own mapping convention. See
 	<a href="http://localhost:8888/apidocs/release/1.0/com/github/erchu/beancp/MapConvention.html"><code>MapConvention</code></a>
 	interface. In fact <a href="http://localhost:8888/apidocs/release/1.0/com/github/erchu/beancp/commons/NameBasedMapConvention.html">
 	<code>NameBasedMapConvention</code></a> is provided as implementation of this interface with no extra magic.</p>
@@ -69,6 +92,10 @@ public interface MapConvention {
       final Class sourceClass,
       final Class destinationClass);
 }</pre>
+	
+	<h2>There is more</h2>
+	
+	<p>Bean-cp gives to you some useful utilities like common collections mapping or null substitution.</p>
 	
 	<h2>It is free for any use with source code publicly available</h2>
 
