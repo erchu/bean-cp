@@ -10,21 +10,23 @@ var mimeTypes = {
     "jpg": "image/jpeg",
     "png": "image/png",
     "js": "text/javascript",
-    "css": "text/css"};
+    "css": "text/css" };
 	
 http.createServer(function(request, response) {
 
   var uri = url.parse(request.url).pathname, filename = path.join(process.cwd(), uri);
   
   fs.exists(filename, function(exists) {
-    if(!exists) {
+    if (!exists) {
       response.writeHead(404, {"Content-Type": "text/plain"});
       response.write("404 Not Found\n");
       response.end();
       return;
     }
 
-    if (fs.statSync(filename).isDirectory()) filename += '/index.html';
+    if (fs.statSync(filename).isDirectory()) {
+		filename += '/index.html';
+	}
 
     fs.readFile(filename, "binary", function(err, file) {
       if (err) {        

@@ -294,7 +294,12 @@ h1 {
 	color: #b37000;
 }
 
-h1, p {
+h2 {
+	font-size: 14px;
+	font-weight: bold;
+}
+
+h1, h2, p {
 	margin-top: 20px;
 	margin-bottom: 20px;
 }
@@ -318,7 +323,52 @@ pre {
 }
 
 
+/* Download table */
+
+
+.download-set {
+	margin-left: 22px;
+}
+
+.download-set > tbody > tr:not(:last-child) {
+	border-bottom: 1px #ddd dotted;
+}
+
+.download-set > tbody > tr > td:nth-child(1) {
+	width: 250px;
+}
+
+.download-set > tbody > tr > td:nth-child(2) {
+	width: 250px;
+}
+
+.download-set > tbody > tr > td:nth-child(3) {
+	width: 100px;
+}
+
+.download-set > tbody > tr > td {
+	padding: 5px;
+}
+
+.download-set > tbody > tr > td:nth-child(3) > a {
+	margin-left: 20px;
+}
+
+.download-set .dependency > td:first-child {
+	padding-left: 22px;
+}
+
+.download-set .dependency > td {
+	font-size: 12px;
+}
+
+.download-set .dependency-info {
+	font-size: 10px;
+}
+
+
 /* jQuery UI overrides */
+
 
 .ui-dialog-title {
 	font-size: 13px !important;
