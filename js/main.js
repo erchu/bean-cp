@@ -7,6 +7,7 @@ $(document).ready(function() {
 		function _loadPageWithNoSecurityCheck(pageName) {
 			$pageMain.load("pages/" + pageName + ".html #page-main-content", function() {
 				_updateMenuStatus(pageName);
+				SyntaxHighlighter.highlight();
 			});
 		}
 		
