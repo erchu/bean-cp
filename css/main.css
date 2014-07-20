@@ -299,9 +299,18 @@ h2 {
 	font-weight: bold;
 }
 
-h1, h2, p {
+h1, h2 {
 	margin-top: 20px;
 	margin-bottom: 20px;
+}
+
+p {
+	text-align: justify;
+}
+
+p, ul, ol {
+	margin-top: 10px;
+	margin-bottom: 10px;
 }
 
 code, pre {
@@ -382,4 +391,8 @@ pre {
 .ui-dialog-titlebar > button {
 	border: none !important;
 }
+
+
+/* Bootstrap overrides */
+
 
