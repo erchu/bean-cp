@@ -64,26 +64,9 @@ div.page-content > header {
 	text-align: left;
 }
 
-.page-main-info-message {
-	text-align: center !important;
-	padding: 100px 0 !important;
-}
-
-.page-doesnt-exists {
-	font-size: 16px;
-}
-
 #page-menu-panel {
 	display: table-cell;
 	vertical-align: middle;
-}
-
-#footer-page-menu-panel {
-	display: table-cell;
-	vertical-align: top;
-	margin-top: 10px;
-	text-align: right;
-	float: right;
 }
 	
 #page-menu {
@@ -114,8 +97,69 @@ div.page-content > header {
 	margin: 0;
 }
 
+#page-menu a.selected {
+	background-color: rgba(255, 255, 255, 0.9);
+	border: 1px solid #d7b469;
+	padding-left: 14px;
+	padding-right: 14px;
+	padding-top: 0;
+}
+
+#page-menu a:hover,
+#page-menu a.selected:hover {
+	padding-left: 14px;
+	padding-right: 14px;
+	padding-top: 0;
+}
+
+#page-menu a:hover {
+	background-color: rgba(255, 255, 255, 0.9);
+	padding-bottom: 0;
+	margin: 1px;
+}
+
+#page-menu a.selected:hover {
+	border: 1px solid #d7b469;
+	margin: 0;
+}
+
+#page-logo-panel {
+	display: table-cell;
+	vertical-align: middle;
+}
+
+#main-content-section {
+	width: 75%;
+	float: left;
+}
+
+#project-maintenance-info > p {
+	font-size: 12px;
+	margin-top: 10px;
+	margin-bottom: 10px;
+}
+
+footer {
+	width: 978px;
+	height: 79px;
+	padding-left: 22px;
+	padding-right: 22px;
+	margin: 0;
+	background-image: url('../images/footer-background.png'); 
+	background-repeat: no-repeat;
+	display: table;
+}
+
 #footer-page-menu {
 	display: table-row;
+}
+
+#footer-page-menu-panel {
+	display: table-cell;
+	vertical-align: top;
+	margin-top: 10px;
+	text-align: right;
+	float: right;
 }
 
 #footer-page-menu > div {
@@ -132,37 +176,6 @@ div.page-content > header {
 	margin: 0;
 }
 
-#page-menu a.selected {
-	background-color: rgba(255, 255, 255, 0.9);
-	border: 1px solid #d7b469;
-	padding-left: 14px;
-	padding-right: 14px;
-	padding-top: 0;
-}
-
-#page-menu a:hover {
-	background-color: rgba(255, 255, 255, 0.9);
-	padding-left: 14px;
-	padding-right: 14px;
-	padding-top: 0;
-	padding-bottom: 0;
-	margin: 1px;
-}
-
-#page-menu a.selected:hover {
-	background-color: rgba(255, 255, 255, 0.9);
-	border: 1px solid #d7b469;
-	padding-left: 14px;
-	padding-right: 14px;
-	padding-top: 0;
-	margin: 0;
-}
-
-#page-logo-panel {
-	display: table-cell;
-	vertical-align: middle;
-}
-
 #footer-page-logo-panel {
 	display: table-cell;
 	vertical-align: top;
@@ -170,10 +183,22 @@ div.page-content > header {
 	float: left;
 }
 
-#main-content-section {
-	width: 75%;
-	float: left;
+
+/* Special pages */
+
+
+.page-main-info-message {
+	text-align: center !important;
+	padding: 100px 0 !important;
 }
+
+.page-doesnt-exists {
+	font-size: 16px;
+}
+
+
+/* Home page */
+
 
 #quick-step-section {
 	padding-left: 22px;
@@ -223,27 +248,6 @@ div.page-content > header {
 	background:  -o-linear-gradient(top, #f8f8f8 0%,#dddddd 100%);
 	background:  -ms-linear-gradient(top, #f8f8f8 0%,#dddddd 100%);
 	background:  linear-gradient(top, #f8f8f8 0%,#dddddd 100%);
-}
-
-#project-maintenance-info > p {
-	font-size: 12px;
-	margin-top: 10px;
-	margin-bottom: 10px;
-}
-
-footer {
-	width: 978px;
-	height: 79px;
-	padding-left: 22px;
-	padding-right: 22px;
-	margin: 0;
-	background-image: url('../images/footer-background.png'); 
-	background-repeat: no-repeat;
-	display: table;
-}
-
-#apidocs {
-	width: 100%;
 }
 
 
