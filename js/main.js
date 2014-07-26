@@ -4,24 +4,35 @@ $(document).ready(function() {
 		var $pageMain = $("#page-main");
 		var $pageMenu = $("#page-menu");
 
-		function _loadPageWithNoSecurityCheck(pageName) {
-			$pageMain.load("pages/" + pageName + ".html #page-main-content", function() {
-				_updateMenuStatus(pageName);
+		function _loadPageWithNoSecurityCheck(pagePath) {
+			$pageMain.load("pages/" + pagePath + ".html #page-main-content", function() {
+				_updateMenuStatus(pagePath);
 				SyntaxHighlighter.highlight();
 			});
 		}
 		
-		function _updateMenuStatus(pageName) {
+		function _updateMenuStatus(pagePath) {
 			$pageMenu.find("a.selected").each(function() {
 				$(this).removeClass("selected");
 			});
 			
-			$pageMenu.find("a[href=#" + pageName + "]").addClass("selected");
+			var indexOfFolderSeparator = pagePath.indexOf("/");
+			var modulePath;
+			
+			if (indexOfFolderSeparator != -1) {
+				modulePath = pagePath.substring(0, indexOfFolderSeparator);
+			} else {
+				modulePath = pagePath;
+			}
+			
+			$pageMenu.find("a[href=#" + modulePath + "]").addClass("selected");
 		}
 
 		function loadPage(pageName) {
-			if (enabledPages.isEnabled(pageName)) {
-				_loadPageWithNoSecurityCheck(pageName);
+			var pagePath = pageName.replace(",", "/");
+			
+			if (enabledPages.isEnabled(pagePath)) {
+				_loadPageWithNoSecurityCheck(pagePath);
 			} else {
 				_loadPageWithNoSecurityCheck("not-found");
 			}

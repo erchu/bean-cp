@@ -3,6 +3,7 @@ var enabledPages = (function() {
 		"home",
 		"download",
 		"user-manual",
+		"user-manual/get-started",
 		"support"
 	];
 
