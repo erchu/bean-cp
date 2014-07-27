@@ -2,6 +2,11 @@
 	padding: 57px 5px 5px 5px !important;
 }
 
+body.pin-table-of-contents #user-manual-table-of-contents > div.table-of-contents {
+	position: fixed;
+	top: 15px;
+}
+
 #user-manual-table-of-contents > div {
 	background-color: #fafafa;
 	margin-left: 10px;

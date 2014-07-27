@@ -3,7 +3,10 @@ $(document).ready(function() {
 	
 	var $pageMain = $("#page-main");
 	var $pageMenu = $("#page-menu");
+	var $root = $("html,body");
 	var $body = $("body");
+	var $window = $(window);
+	var $document = $(document);
 	
 	var currentPage = null;
 	
@@ -13,8 +16,18 @@ $(document).ready(function() {
 		if (anchor != null) {
 			var targetOffset = $("#" + anchor).offset().top - 20;
 			
-			$('html,body').animate({scrollTop: targetOffset}, "fast");
+			$root.animate({scrollTop: targetOffset}, "fast");
 		}
+	}
+	
+	function _setupTableOfContentsPosition() {
+		$window.scroll(function() {
+			if ($document.scrollTop() > 130) {
+				$body.addClass("pin-table-of-contents");
+			} else {
+				$body.removeClass("pin-table-of-contents");
+			}
+		});
 	}
 
 	function _loadWithNoSecurityCheck(address) {
@@ -23,9 +36,10 @@ $(document).ready(function() {
 		if (currentPage != pagePath) {
 			$pageMain.load("pages/" + pagePath + ".html #page-main-content", function() {
 				_updateMenuStatus(pagePath);
-				_scrollToAnchor(address);
 				SyntaxHighlighter.highlight();
+				_setupTableOfContentsPosition();
 				
+				_scrollToAnchor(address);
 				currentPage = pagePath;
 			});
 		} else {
