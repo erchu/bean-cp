@@ -1,0 +1,45 @@
+
+/* Home page */
+
+
+#quick-step-panel {
+	margin-top: 40px;
+}
+
+#quick-step-panel a {
+	display: block;
+	
+	font-size: 13px;
+	font-family: Arial, Helvetica, sans-serif;
+	font-weight: bold;
+	text-align: center;
+	
+	margin-bottom: 5px;
+	padding-top: 7px;
+	height: 36px;
+	width: 100%;
+
+	border-radius: 5px;	
+	border: 1px solid #d2d2d2;
+	box-shadow: inset #fff 0 1px 0, inset rgba(0,0,0,0.03) 0 -1px 0;
+
+	background-color:  #f0f0f0;
+	background:  -moz-linear-gradient(top, #f7f8f7 0%, #f0f0f0 100%);
+	background:  -webkit-gradient(linear, left top, left bottom, color-stop(0%,#f7f8f7), color-stop(100%,#f0f0f0));
+	background:  -webkit-linear-gradient(top, #f7f8f7 0%,#f0f0f0 100%);
+	background:  -o-linear-gradient(top, #f7f8f7 0%,#f0f0f0 100%);
+	background:  -ms-linear-gradient(top, #f7f8f7 0%,#f0f0f0 100%);
+	background:  linear-gradient(top, #f7f8f7 0%,#f0f0f0 100%);
+}
+
+#quick-step-panel a:hover {
+	text-decoration: none;
+	
+	background-color:  #eee;
+	background:  -moz-linear-gradient(top, #f8f8f8 0%, #dddddd 100%);
+	background:  -webkit-gradient(linear, left top, left bottom, color-stop(0%,#f8f8f8), color-stop(100%,#dddddd));
+	background:  -webkit-linear-gradient(top, #f8f8f8 0%,#dddddd 100%);
+	background:  -o-linear-gradient(top, #f8f8f8 0%,#dddddd 100%);
+	background:  -ms-linear-gradient(top, #f8f8f8 0%,#dddddd 100%);
+	background:  linear-gradient(top, #f8f8f8 0%,#dddddd 100%);
+}
