@@ -2,25 +2,41 @@
 	<section id="main-content-section">
 		<h1>User manual</h1>
 		
-		<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam convallis ut nibh quis vestibulum. Suspendisse tincidunt sodales sapien ut condimentum. In nec ligula ac eros luctus fringilla. Phasellus tortor metus, pharetra in lobortis sed, fermentum eget eros. Sed tempor felis erat, et pulvinar purus pellentesque quis. In ac sodales mauris. Maecenas gravida sapien id libero vehicula rutrum. Phasellus elit quam, lobortis suscipit lacinia ut, dapibus sagittis magna. Vivamus lobortis tempor neque, quis consequat nibh rhoncus quis. Donec accumsan vulputate ipsum, ut bibendum tellus pharetra vitae. Vivamus imperdiet mi dui, et sollicitudin orci faucibus non. Cras pulvinar gravida dui, et venenatis sapien dapibus ut. Vivamus vel bibendum elit, eu ullamcorper nisl.</p>
+		<p>This user manual describes how to set up and use bean-cp library. It covers all available features. Before you start you have to
+		have good knowledge of Java programming language including lambda expressions. If you get any trouble please checkout
+		<a href="#support">support</a> page.</p>
 		
-		<h2 id="get-started">Get started</h2>
+		<h2 id="setting-up">Setting up</h2>
 		
-		<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam convallis ut nibh quis vestibulum. Suspendisse tincidunt sodales sapien ut condimentum. In nec ligula ac eros luctus fringilla. Phasellus tortor metus, pharetra in lobortis sed, fermentum eget eros. Sed tempor felis erat, et pulvinar purus pellentesque quis. In ac sodales mauris. Maecenas gravida sapien id libero vehicula rutrum. Phasellus elit quam, lobortis suscipit lacinia ut, dapibus sagittis magna. Vivamus lobortis tempor neque, quis consequat nibh rhoncus quis. Donec accumsan vulputate ipsum, ut bibendum tellus pharetra vitae. Vivamus imperdiet mi dui, et sollicitudin orci faucibus non. Cras pulvinar gravida dui, et venenatis sapien dapibus ut. Vivamus vel bibendum elit, eu ullamcorper nisl.</p>
-		<p>Cras vitae porttitor lorem. Nulla venenatis lacus id justo tristique, sit amet faucibus risus lacinia. In congue felis magna, id aliquam lacus commodo a. Vivamus euismod blandit sapien ac dignissim. Etiam varius ligula a lacus tempor, vitae tristique lacus aliquam. Donec ultricies, dolor et pharetra aliquam, sem velit lacinia libero, a scelerisque augue massa non lorem. Praesent suscipit sodales nisi, dictum gravida dolor sollicitudin ac. Ut sit amet commodo diam, vel gravida orci. Fusce nec tellus mi. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Nam risus purus, pulvinar non porttitor eu, tempor vel sem. Praesent sodales ligula sed cursus cursus. Integer non felis a urna auctor tempus.</p>
-		<p>Sed rhoncus dapibus iaculis. Duis eget porta ante. In hac habitasse platea dictumst. Donec euismod convallis massa, vel tincidunt eros sollicitudin vel. Curabitur ac erat at erat rutrum eleifend ut in odio. Duis vitae vestibulum erat. Nulla eget sapien vel est vehicula rutrum. Nullam dictum nibh ipsum, eget dignissim nisi aliquam imperdiet. Aliquam mollis dignissim risus, a viverra leo tincidunt eget. Integer sit amet sagittis tellus. Mauris ac ipsum pellentesque, vehicula tortor quis, luctus sem. Aenean lacinia, justo sed gravida euismod, risus dolor tristique nisl, eget interdum urna massa quis mi.</p>
-
-		<h2 id="creating-convention">Create your own convention</h2>
+		<p>Firstly, bean-cp requires Java version 8 or later. If you don't have one please download it from
+		<a href="http://www.oracle.com/technetwork/java/javase/overview/index.html">Oracle website</a>, install and then continue with this
+		user manual.</p>
 		
-		<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam convallis ut nibh quis vestibulum. Suspendisse tincidunt sodales sapien ut condimentum. In nec ligula ac eros luctus fringilla. Phasellus tortor metus, pharetra in lobortis sed, fermentum eget eros. Sed tempor felis erat, et pulvinar purus pellentesque quis. In ac sodales mauris. Maecenas gravida sapien id libero vehicula rutrum. Phasellus elit quam, lobortis suscipit lacinia ut, dapibus sagittis magna. Vivamus lobortis tempor neque, quis consequat nibh rhoncus quis. Donec accumsan vulputate ipsum, ut bibendum tellus pharetra vitae. Vivamus imperdiet mi dui, et sollicitudin orci faucibus non. Cras pulvinar gravida dui, et venenatis sapien dapibus ut. Vivamus vel bibendum elit, eu ullamcorper nisl.</p>
-		<p>Cras vitae porttitor lorem. Nulla venenatis lacus id justo tristique, sit amet faucibus risus lacinia. In congue felis magna, id aliquam lacus commodo a. Vivamus euismod blandit sapien ac dignissim. Etiam varius ligula a lacus tempor, vitae tristique lacus aliquam. Donec ultricies, dolor et pharetra aliquam, sem velit lacinia libero, a scelerisque augue massa non lorem. Praesent suscipit sodales nisi, dictum gravida dolor sollicitudin ac. Ut sit amet commodo diam, vel gravida orci. Fusce nec tellus mi. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Nam risus purus, pulvinar non porttitor eu, tempor vel sem. Praesent sodales ligula sed cursus cursus. Integer non felis a urna auctor tempus.</p>
-		<p>Sed rhoncus dapibus iaculis. Duis eget porta ante. In hac habitasse platea dictumst. Donec euismod convallis massa, vel tincidunt eros sollicitudin vel. Curabitur ac erat at erat rutrum eleifend ut in odio. Duis vitae vestibulum erat. Nulla eget sapien vel est vehicula rutrum. Nullam dictum nibh ipsum, eget dignissim nisi aliquam imperdiet. Aliquam mollis dignissim risus, a viverra leo tincidunt eget. Integer sit amet sagittis tellus. Mauris ac ipsum pellentesque, vehicula tortor quis, luctus sem. Aenean lacinia, justo sed gravida euismod, risus dolor tristique nisl, eget interdum urna massa quis mi.</p>
+		<p>You have generally two options to get a copy of bean-cp:</p>
+		
+		<ol>
+			<li><strong>Download it from this website.</strong> Note that bean-cp has two dependencies: Apache Commons Lang and Javassist.
+			File <a href="download/release/1.0/beancp-1.0-all.zip">beancp-1.0-all.zip</a> contains library and all dependencies. Otherwise
+			you can download from this site only <a href="download/release/1.0/beancp-1.0.jar">beancp-1.0.jar</a> library file and get
+			dependencies from another source.</li>
+			<li><strong>Use build system like Maven and get library from repo1.</strong> The artifacts can be found in Maven's central repository.
+			Valid dependency declaration:
+<pre class="brush: xml; gutter: false;">
+<dependency>
+	<groupId>com.github.erchu</groupId>
+	<artifactId>beancp</artifactId>
+	<version>1.0</version>
+</dependency></pre>
+			</li>
+		</ol>
+		
+		
 	</section>
 	<section id="user-manual-table-of-contents">
 		<div class="table-of-contents">
 			<h1>Table of contents</h1>
 			<ul>
-				<li><a href="#user-manual,get-started">Get started</a></li>
+				<li><a href="#user-manual,setting-up">Get started</a></li>
 				<li><a href="#user-manual,creating-convention">Create your own convention</a></li>
 			</ul>
 		</div>
