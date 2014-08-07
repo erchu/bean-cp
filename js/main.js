@@ -22,7 +22,7 @@ $(document).ready(function() {
 	
 	function _setupTableOfContentsPosition() {
 		$window.scroll(function() {
-			if ($document.scrollTop() > 130) {
+			if ($document.scrollTop() > 88) {
 				$body.addClass("pin-table-of-contents");
 			} else {
 				$body.removeClass("pin-table-of-contents");

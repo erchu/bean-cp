@@ -1,5 +1,9 @@
 #user-manual-table-of-contents {
-	padding: 57px 5px 5px 5px !important;
+	padding: 15px 5px 5px 5px !important;
+}
+
+#user-manual-table-of-contents > div.table-of-contents {
+	width: 200px !important;
 }
 
 body.pin-table-of-contents #user-manual-table-of-contents > div.table-of-contents {
@@ -22,6 +26,14 @@ body.pin-table-of-contents #user-manual-table-of-contents > div.table-of-content
 }
 
 #user-manual-table-of-contents > div > ul {
-	list-style: none;
+	list-style-type: square;
+	font-size: 13px;
+	color: #ddd;
+	
+	margin-left: 20px;
 	padding-left: 0;
+}
+
+#user-manual-table-of-contents > div > ul > li:not(:last-child) {
+	padding-bottom: 8px;
 }

@@ -17,6 +17,7 @@ html {
 	
 body {
 	background: url('../images/background.png') repeat scroll top left #F2F2F2;
+	font-size: 14px;
 	font-family: 'Arimo', sans-serif;
 	min-height: 100%;
 	padding: 5px;
@@ -209,13 +210,13 @@ footer {
 
 
 h1 {
-	font-size: 18px;
+	font-size: 20px;
 	font-weight: bold;
 	color: #b37000;
 }
 
 h2 {
-	font-size: 16px;
+	font-size: 18px;
 	font-weight: normal;
 	color: #b37000;
 }
@@ -223,6 +224,7 @@ h2 {
 h1, h2 {
 	margin-top: 20px;
 	margin-bottom: 20px;
+	border-bottom: 1px dotted #aaa;
 }
 
 p {
@@ -240,12 +242,9 @@ code, pre {
   font-size: 12px;
 }
 
-pre {
+.syntaxhighlighter {
   padding: 8px 15px;
-  background:  #f7f8f7;  
-  border-radius: 5px;
-  border: 1px solid #e5e5e5;
-  overflow-x:  auto;
+  margin-left: 15px;
 }
 
 .work-in-progress {
