@@ -6,7 +6,7 @@
 		have good knowledge of Java programming language including lambda expressions. If you get any trouble please checkout
 		<a href="#support">support</a> page.</p>
 		
-		<h2 id="setting-up">Setting up</h2>
+		<h2 id="setting-up">Setting up environment</h2>
 		
 		<p>Firstly, bean-cp requires Java version 8 or later. If you don't have one please download it from
 		<a href="http://www.oracle.com/technetwork/java/javase/overview/index.html">Oracle website</a>, install and then continue with this
@@ -19,25 +19,218 @@
 			File <a href="download/release/1.0/beancp-1.0-all.zip">beancp-1.0-all.zip</a> contains library and all dependencies. Otherwise
 			you can download from this site only <a href="download/release/1.0/beancp-1.0.jar">beancp-1.0.jar</a> library file and get
 			dependencies from another source.</li>
-			<li><strong>Use build system like Maven and get library from repo1.</strong> The artifacts can be found in Maven's central repository.
-			Valid dependency declaration:
+			<li><strong>Use build system like Maven.</strong> The artifacts can be found in Maven's central repository.
+			Dependency declaration:
 <pre class="brush: xml; gutter: false;">
-<dependency>
-	<groupId>com.github.erchu</groupId>
-	<artifactId>beancp</artifactId>
-	<version>1.0</version>
-</dependency></pre>
+&lt;dependency&gt;
+	&lt;groupId&gt;com.github.erchu&lt;/groupId&gt;
+	&lt;artifactId&gt;beancp&lt;/artifactId&gt;
+	&lt;version&gt;1.0&lt;/version&gt;
+&lt;/dependency&gt;</pre>
 			</li>
 		</ol>
 		
+		<p>If you want to use different version of Apache Commons Lang or Javassist recommended way is to download
+		<a href="download/release/1.0/beancp-1.0-sources.jar">bean-cp source code</a> and fire all bean-cp unit tests against versions you would
+		like to use to prove compatibility.</p>
 		
+		<h2 id="first-mapping">First mapping</h2>
+		
+		<p>There are few mapping scenarios supported. We will start with declarative map used to map from one
+		<a href="http://en.wikipedia.org/wiki/JavaBeans">JavaBean</a> to another JavaBean.</p>
+
+		<p>Let's start with simple example. Suppose we have following two classes in our domain model:</p>
+		
+<pre class="brush: java; gutter: false;">
+public class Customer {
+		
+	private long id;
+	
+	private String fullName;
+
+	public long getId() {
+		return id;
+	}
+
+	public void setId(long id) {
+		this.id = id;
+	}
+
+	public String getFullName() {
+		return fullName;
+	}
+
+	public void setFullName(String fullName) {
+		this.fullName = fullName;
+	}
+}
+
+public class Order {
+	
+	private long id;
+	
+	private Customer customer;
+	
+	private BigDecimal totalAmount;
+
+	public long getId() {
+		return id;
+	}
+
+	public void setId(long id) {
+		this.id = id;
+	}
+
+	public Customer getCustomer() {
+		return customer;
+	}
+
+	public void setCustomer(Customer customer) {
+		this.customer = customer;
+	}
+
+	public BigDecimal getTotalAmount() {
+		return totalAmount;
+	}
+
+	public void setTotalAmount(BigDecimal totalAmount) {
+		this.totalAmount = totalAmount;
+	}
+}</pre>
+
+		<p>Our task is to map those classes to data transfer object:</p>
+		
+<pre class="brush: java; gutter: false;">
+public static class OrderOverviewDto {
+	
+	private long id;
+	
+	private String customerFullName;
+	
+	private BigDecimal totalAmount;
+
+	public long getId() {
+		return id;
+	}
+
+	public void setId(long id) {
+		this.id = id;
+	}
+
+	public String getCustomerFullName() {
+		return customerFullName;
+	}
+
+	public void setCustomerFullName(String customerFullName) {
+		this.customerFullName = customerFullName;
+	}
+
+	public BigDecimal getTotalAmount() {
+		return totalAmount;
+	}
+
+	public void setTotalAmount(BigDecimal totalAmount) {
+		this.totalAmount = totalAmount;
+	}
+}</pre>
+
+	<p>Hare is how to do that in bean-cp way:
+
+<pre class="brush: java">
+Mapper mapper
+	= new MapperBuilder()
+	.addMap(
+		Order.class,
+		OrderOverviewDto.class,
+		(conf, source, destination) -> conf
+			.bind(source::getId, destination::setId)
+			.bind(source.getCustomer()::getFullName, destination::setCustomerFullName)
+			.bind(source::getTotalAmount, destination::setTotalAmount))
+	.buildMapper();
+</pre>
+		
+		<p>When you use bean-cp you configure mappings and build mapper from configuration to preform mappings. To configure mappings you need to create
+		instance of <a href="apidocs/release/1.0/com/github/erchu/beancp/MapperBuilder.html"><code>MapperBuilder</code></a> (line 2), add one or mappings (line 3 - 9).
+		To perform mappings you need to call <a href="apidocs/release/1.0/com/github/erchu/beancp/MapperBuilder.html#buildMapper--"><code>buildMapper()</code></a>
+		method to get <a href="apidocs/release/1.0/com/github/erchu/beancp/Mapper.html"><code>Mapper</code></a> instance (line 10) and then use it to map objects.</p>
+		
+		<p>There are three options to add mapping configuration: declarative map, converter and convention. In this section we will focus on declarative maps.
+		They are used to map from one JavaBean to another. To add declarative map call
+		<a href="apidocs/release/1.0/com/github/erchu/beancp/MapperBuilder.html#addMap-java.lang.Class-java.lang.Class-com.github.erchu.beancp.DeclarativeMapSetup-"><code>addMap()</code></a>
+		method (line 3). This method takes three parameters: source class (in our example: <code>Order</code>), destination class (in our example:
+		<code>OrderOverviewDto</code>) and map declaration. Map declaration is lambda expression taking three parameters: configuration reference, source object
+		reference and destination object reference (line 6). Finally we define map using series of operations like binding from source member to destination member
+		using <a href="apidocs/release/1.0/com/github/erchu/beancp/DeclarativeMap.html#bind-java.util.function.Supplier-java.util.function.Consumer-com.github.erchu.beancp.BindingOption...-"><code>bind()</code></a>
+		(line 7, 8 and 9). Before we get through all of operators let see how to perform mapping using <a href="apidocs/release/1.0/com/github/erchu/beancp/Mapper.html"><code>Mapper</code></a>.
+		There are two options here. If you already have destination object instance and only want to fill it with data from source object then you write code like this:</p>
+		
+<pre class="brush: java">
+	Order source = new Order();
+	OrderOverviewDto destination = new OrderOverviewDto();
+	
+	// Some other stuff here
+	
+	mapper.map(source, destination);
+</pre>
+
+		<p>Otherwise bean-cp can create destination object instance for you:</p>
+		
+<pre class="brush: java">
+	Order source = new Order();
+	
+	// Some other stuff here
+	
+	OrderOverviewDto destination = mapper.map(source, OrderOverviewDto.class);
+</pre>
+
+		<p>That's it! First mapping is ready.</p>
+
+		<h2 id="declarative-maps">Declarative maps in deep</h2>
+
+		<p><span class="work-in-progress">Comming soon</span></p>
+
+		<h2 id="converters">Converters</h2>
+
+		<p><span class="work-in-progress">Comming soon</span></p>
+
+		<h2 id="conventions">Conventions</h2>
+
+		<p><span class="work-in-progress">Comming soon</span></p>
+
+		<h2 id="map-any">Map any convention</h2>
+
+		<p><span class="work-in-progress">Comming soon</span></p>
+
+		<h2 id="write-convention">Write your own convention</h2>
+
+		<p><span class="work-in-progress">Comming soon</span></p>
+
+		<h2 id="common-converters">Common converters</h2>
+
+		<p><span class="work-in-progress">Comming soon</span></p>
+
+		<h2 id="big-example">Put it all together</h2>
+
+		<p><span class="work-in-progress">Comming soon</span></p>
+
+		<h2 id="summary">Summary</h2>
+
+		<p><span class="work-in-progress">Comming soon</span></p>
 	</section>
 	<section id="user-manual-table-of-contents">
 		<div class="table-of-contents">
 			<h1>Table of contents</h1>
 			<ul>
-				<li><a href="#user-manual,setting-up">Get started</a></li>
-				<li><a href="#user-manual,creating-convention">Create your own convention</a></li>
+				<li><a href="#user-manual,setting-up">Setting up environment</a></li>
+				<li><a href="#user-manual,first-mapping">First mapping</a></li>
+				<li><a href="#user-manual,declarative-maps">Declarative maps in deep</a></li>
+				<li><a href="#user-manual,converters">Converters</a></li>
+				<li><a href="#user-manual,conventions">Conventions</a></li>
+				<li><a href="#user-manual,map-any">Map any convention</a></li>
+				<li><a href="#user-manual,write-convention">Write your own convention</a></li>
+				<li><a href="#user-manual,common-converters">Common converters</a></li>
+				<li><a href="#user-manual,big-example">Put it all together</a></li>
+				<li><a href="#user-manual,summary">Summary</a></li>
 			</ul>
 		</div>
 	</section>
