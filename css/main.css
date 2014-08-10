@@ -267,3 +267,27 @@ code, pre {
 .ui-dialog-titlebar > button {
 	border: none !important;
 }
+
+
+/* Responsive */
+
+@media (max-width: 1000px) {
+	#page-main-content > section:nth-child(2)	{
+		display: none;
+	}
+	
+	body > div.page-content,
+	div.page-content > header,
+	#page-main,
+	#page-main-content > section:nth-child(1),
+	div.page-content > footer {
+		width: 100%;
+	}
+}
+
+@media (max-width: 800px) {
+	
+	body  {
+		width: 780px;
+	}
+}
