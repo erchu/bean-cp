@@ -206,25 +206,90 @@ footer {
 }
 
 
+/* Table of contents */
+
+
+section.table-of-contents {
+	padding: 15px 5px 5px 5px !important;
+}
+
+section.table-of-contents > div.table-of-contents {
+	width: 200px !important;
+}
+
+body.pin-table-of-contents section.table-of-contents > div.table-of-contents {
+	position: fixed;
+	top: 15px;
+}
+
+section.table-of-contents > div {
+	background-color: #fafafa;
+	margin-left: 10px;
+	margin-right: 10px;
+	padding: 10px;
+}
+
+section.table-of-contents > div > h1 {
+	font-size: 14px;
+	font-weight: normal;
+	
+	margin-top: 2px;
+}
+
+section.table-of-contents > div > ul {
+	list-style-type: square;
+	font-size: 13px;
+	color: #ddd;
+	
+	margin-left: 20px;
+	padding-left: 0;
+}
+
+section.table-of-contents > div > ul > li > ul {
+	list-style-type: square;
+	padding-left: 25px;
+}
+
+section.table-of-contents > div > ul > li > ul > li {
+	font-size: 12px;
+}
+
+section.table-of-contents > div > ul > li:not(:last-child) {
+	padding-bottom: 8px;
+}
+
+section.table-of-contents > div > ul > li > ul > li:not(:last-child) {
+	padding-bottom: 4px;
+}
+
+
 /* Content */
 
 
 h1 {
 	font-size: 20px;
 	font-weight: bold;
-	color: #b37000;
 }
 
 h2 {
 	font-size: 18px;
 	font-weight: normal;
-	color: #b37000;
+}
+
+h3 {
+	font-size: 14px;
+	font-weight: normal;
 }
 
 h1, h2 {
+	border-bottom: 1px dotted #aaa;
+}
+
+h1, h2, h3 {
 	margin-top: 20px;
 	margin-bottom: 20px;
-	border-bottom: 1px dotted #aaa;
+	
+	color: #b37000;
 }
 
 p {
@@ -270,6 +335,7 @@ code, pre {
 
 
 /* Responsive */
+
 
 @media (max-width: 1000px) {
 	#page-main-content > section:nth-child(2)	{

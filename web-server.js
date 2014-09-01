@@ -1,3 +1,8 @@
+/*
+ * This is minimal WebServer for static content only. You need nodejs
+ * to run this script.
+ */
+
 var http = require("http"),
     url = require("url"),
     path = require("path"),

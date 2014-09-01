@@ -31,7 +31,7 @@
 		</ol>
 		
 		<p>If you want to use different version of Apache Commons Lang or Javassist recommended way is to download
-		<a href="download/release/1.0/beancp-1.0-sources.jar">bean-cp source code</a> and fire all bean-cp unit tests against versions you would
+		<a href="download/release/1.0/beancp-1.0-sources.jar">bean-cp source code</a> and execute all bean-cp unit tests against versions you would
 		like to use to prove compatibility.</p>
 		
 		<h2 id="first-mapping">First mapping</h2>
@@ -152,7 +152,8 @@ Mapper mapper
 		<p>When you use bean-cp you configure mappings and build mapper from configuration to preform mappings. To configure mappings you need to create
 		instance of <a href="apidocs/release/1.0/com/github/erchu/beancp/MapperBuilder.html"><code>MapperBuilder</code></a> (line 2), add one or mappings (line 3 - 9).
 		To perform mappings you need to call <a href="apidocs/release/1.0/com/github/erchu/beancp/MapperBuilder.html#buildMapper--"><code>buildMapper()</code></a>
-		method to get <a href="apidocs/release/1.0/com/github/erchu/beancp/Mapper.html"><code>Mapper</code></a> instance (line 10) and then use it to map objects.</p>
+		method to get <a href="apidocs/release/1.0/com/github/erchu/beancp/Mapper.html"><code>Mapper</code></a> instance (line 10) and then use it to map objects.
+		Source and destination classes must have default (with no arguments) public or protected constructor. </p>
 		
 		<p>There are three options to add mapping configuration: declarative map, converter and convention. In this section we will focus on declarative maps.
 		They are used to map from one JavaBean to another. To add declarative map call
@@ -161,69 +162,216 @@ Mapper mapper
 		<code>OrderOverviewDto</code>) and map declaration. Map declaration is lambda expression taking three parameters: configuration reference, source object
 		reference and destination object reference (line 6). Finally we define map using series of operations like binding from source member to destination member
 		using <a href="apidocs/release/1.0/com/github/erchu/beancp/DeclarativeMap.html#bind-java.util.function.Supplier-java.util.function.Consumer-com.github.erchu.beancp.BindingOption...-"><code>bind()</code></a>
-		(line 7, 8 and 9). Before we get through all of operators let see how to perform mapping using <a href="apidocs/release/1.0/com/github/erchu/beancp/Mapper.html"><code>Mapper</code></a>.
-		There are two options here. If you already have destination object instance and only want to fill it with data from source object then you write code like this:</p>
+		(line 7, 8 and 9).</p>
+		
+		<p>Let see how to perform mapping using <a href="apidocs/release/1.0/com/github/erchu/beancp/Mapper.html"><code>Mapper</code></a>. There are two options here. If you already have destination object instance and only want to fill it with data from source object then you write code like this:</p>
 		
 <pre class="brush: java">
-	Order source = new Order();
+	Order order = new Order();
 	OrderOverviewDto destination = new OrderOverviewDto();
 	
 	// Some other stuff here
 	
-	mapper.map(source, destination);
+	mapper.map(order, destination);
 </pre>
 
 		<p>Otherwise bean-cp can create destination object instance for you:</p>
 		
 <pre class="brush: java">
-	Order source = new Order();
+	Order order = new Order();
 	
 	// Some other stuff here
 	
-	OrderOverviewDto destination = mapper.map(source, OrderOverviewDto.class);
+	OrderOverviewDto destination = mapper.map(order, OrderOverviewDto.class);
 </pre>
 
 		<p>That's it! First mapping is ready.</p>
 
 		<h2 id="declarative-maps">Declarative maps in deep</h2>
+		
+		<h3 id="bind-constant">Bind constant</h3>
 
-		<p><span class="work-in-progress">Comming soon</span></p>
+		<p>Firstly, there are more binding options. Destination member can be bind to constant using <code>bindConstant</code>. For example
+		<code>bindConstant("", destination::setCustomerFullName)</code> will bind empty string to <code>customerFullName</code> property.</p>
+		
+		<h3 id="calculated-members">Calculated members</h3>
+		
+		<p>Method <code>bind</code> supports also calculated members. For example:</p>
+
+<pre class="brush: java; gutter: false;">
+	bind(
+		() -> source.getTotalAmount().setScale(2, RoundingMode.CEILING),
+		destination::setTotalAmount)
+</pre>
+
+		<p>calculates rounded value of <code>totalAmount</code> value. Note that name of <code>setScale</code> method of <code>BigDecimal</code>
+		class can be misleading, because it do not modifies current instance but returns new one (see
+		<a href="http://docs.oracle.com/javase/7/docs/api/java/math/BigDecimal.html#setScale(int,%20java.math.RoundingMode)">Java Platform API specification</a>).
+		Term "calculated member" is not limited to mathematical calculations &#8211; any expression which returns value of proper type can be used. Those
+		calculation should have no side effects, especially should not modify source object.</p>
+		
+		<h3 id="conditional-mapping">Conditional mapping</h3>
+		
+		<p>Moreover <code>bind</code> and <code>bindConstant</code> methods supports <code>BindingOptions</code>. This allows to perform conditional
+		mappings and null substitution. Conditional mappings defines when to execute mapping. For example following binding code will map only positive
+		values of <code>totalAmount</code> property:</p>
+		
+<pre class="brush: java; gutter: false;">
+	bind(
+		source::getTotalAmount,
+		destination::setTotalAmount,
+		BindingOption.mapWhen(() -> source.getTotalAmount().compareTo(BigDecimal.ZERO) > 0)
+</pre>
+
+		<h3 id="null-substitution">Null substitution</h3>
+
+		<p>Binding options can be also used to substitute <code>null</code> value with specified value. For example following binding declaration will substitute
+		<code>null</code> value with <code>"unknown"</code> string.</p>
+
+<pre class="brush: java; gutter: false;">
+	bind(
+		source.getCustomer()::getFullName,
+		destination::setCustomerFullName,
+		BindingOption.withNullSubstitution("unknown"))
+</pre>
+
+		<h3 id="map-reuse">Map reuse</h3>
+
+		<p><span class="work-in-progress">Coming soon</span></p>
+
+		<h3 id="destination-object-construction">Destination object construction</h3>
+
+		<p>As was already mentioned bean-cp can create destination object during mapping:</p>
+		
+<pre class="brush: java; gutter: false;">
+	OrderOverviewDto destination = mapper.map(order, OrderOverviewDto.class);
+</pre>
+
+		<p>By default objects are constructed using no-argument constructor. This could be changed using <code>constructDestinationObjectUsing</code>
+		declaration. For example suppose that exists <code>OrderOverviewDtoFactory</code> witch should be used to construct <code>OrderOverviewDto</code>
+		objects. Here is how to use <code>constructDestinationObjectUsing</code> in that situation (line 5 - 9):</p>
+		
+<pre class="brush: java">
+	Mapper mapper = new MapperBuilder().addMap(
+		Order.class,
+		OrderOverviewDto.class,
+		(conf, source, destination) -> conf
+				.constructDestinationObjectUsing(() -> {
+					OrderOverviewDto result = OrderOverviewDtoFactory.getOrderOverviewDto();
+
+					return result;
+				})
+				// and so on...
+</pre>
+
+		<p>Be aware that <code>constructDestinationObjectUsing</code> must be first statement before <code>bind</code> and <code>bindConstant</code>
+		statements.</p>
+
+		<h3 id="before-after-map">Before and after map actions</h3>
+
+		<p>There are situations when you need to perform an operation before or after mapping. Here is proper code snipped:</p>
+
+<pre class="brush: java">
+	Mapper mapper = new MapperBuilder().addMap(
+			Order.class,
+			OrderOverviewDto.class,
+			(conf, source, destination) -> conf
+				.beforeMap(() -> Logger.debug(
+					"Starting mapping of Order (id: "
+					+ source.getId() + ")"))
+				
+				// Some other stuff here...
+				
+				.afterMap(() -> Logger.debug(
+					"Finished mapping of Order (id: "
+					+ source.getId() + ")"))
+					
+				// and so on...
+</pre>
+	
+		<p>You can also use reference in "before" and "after" actions:</p>
+	
+<pre class="brush: java">
+	Mapper mapper = new MapperBuilder().addMap(
+			Order.class,
+			OrderOverviewDto.class,
+			(conf, source, destination) -> conf
+				.beforeMap(mapperRef -> Logger.debug(
+					"Starting mapping of Order (id: "
+					+ source.getId()
+					+ ") by mapper "
+					+ mapperRef))
+				
+				// Some other stuff here...
+				
+				.afterMap(mapperRef -> Logger.debug(
+					"Finished mapping of Order (id: "
+					+ source.getId()
+					+ ") by mapper "
+					+ mapperRef))
+					
+				// and so on...
+</pre>
+
+		<h3 id="declarative-map-statement-order">Statement order</h3>
+		
+		<p>Finally, please note that methods must be executed in following order:</p>
+		
+		<ul>
+			<li><code>constructDestinationObjectUsing</code> zero or one time</li>
+			<li><code>beforeMap</code> zero or many times</li>
+			<li><code>useConvention</code> zero or one time (<a href="#user-manual,conventions">conventions are discussed later</a>)</li>
+			<li><code>bind</code> and <code>bindConstant</code> and <code>mapInner</code> methods zero or many times in any order</li>
+			<li><code>afterMap</code> zero or many times</li>
+		</ul>
 
 		<h2 id="converters">Converters</h2>
 
-		<p><span class="work-in-progress">Comming soon</span></p>
+		<p><span class="work-in-progress">Coming soon</span></p>
 
 		<h2 id="conventions">Conventions</h2>
 
-		<p><span class="work-in-progress">Comming soon</span></p>
+		<p><span class="work-in-progress">Coming soon</span></p>
 
 		<h2 id="map-any">Map any convention</h2>
 
-		<p><span class="work-in-progress">Comming soon</span></p>
+		<p><span class="work-in-progress">Coming soon</span></p>
 
 		<h2 id="write-convention">Write your own convention</h2>
 
-		<p><span class="work-in-progress">Comming soon</span></p>
+		<p><span class="work-in-progress">Coming soon</span></p>
 
 		<h2 id="common-converters">Common converters</h2>
 
-		<p><span class="work-in-progress">Comming soon</span></p>
+		<p><span class="work-in-progress">Coming soon</span></p>
 
 		<h2 id="big-example">Put it all together</h2>
 
-		<p><span class="work-in-progress">Comming soon</span></p>
+		<p><span class="work-in-progress">Coming soon</span></p>
 
 		<h2 id="summary">Summary</h2>
 
-		<p><span class="work-in-progress">Comming soon</span></p>
+		<p><span class="work-in-progress">Coming soon</span></p>
 	</section>
-	<section id="user-manual-table-of-contents">
+	<section class="table-of-contents">
 		<div class="table-of-contents">
 			<h1>Table of contents</h1>
 			<ul>
 				<li><a href="#user-manual,setting-up">Setting up environment</a></li>
 				<li><a href="#user-manual,first-mapping">First mapping</a></li>
-				<li><a href="#user-manual,declarative-maps">Declarative maps in deep</a></li>
+				<li>
+					<a href="#user-manual,declarative-maps">Declarative maps in deep</a>
+					<ul>
+						<li><a href="#user-manual,bind-constant">Bind constant</a></li>
+						<li><a href="#user-manual,calculated-members">Calculated members</a></li>
+						<li><a href="#user-manual,conditional-mapping">Conditional mapping</a></li>
+						<li><a href="#user-manual,null-substitution">Null substitution</a></li>
+						<li><a href="#user-manual,map-reuse">Map reuse</a></li>
+						<li><a href="#user-manual,destination-object-construction">Destination object construction</a></li>
+						<li><a href="#user-manual,before-after-map">Before and after map actions</a></li>
+						<li><a href="#user-manual,declarative-map-statement-order">Statement order</a></li>
+					</ul>
+				</li>
 				<li><a href="#user-manual,converters">Converters</a></li>
 				<li><a href="#user-manual,conventions">Conventions</a></li>
 				<li><a href="#user-manual,map-any">Map any convention</a></li>
