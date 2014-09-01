@@ -192,6 +192,14 @@ footer {
 	float: left;
 }
 
+#scroll-to-top {
+	display: block;
+	position: fixed;
+	bottom: 5px;
+	right: 5px;
+	opacity: 0.8;
+}
+
 
 /* Special pages */
 
@@ -238,7 +246,7 @@ section.table-of-contents > div > h1 {
 
 section.table-of-contents > div > ul {
 	list-style-type: square;
-	font-size: 13px;
+	font-size: 12px;
 	color: #ddd;
 	
 	margin-left: 20px;
@@ -251,7 +259,7 @@ section.table-of-contents > div > ul > li > ul {
 }
 
 section.table-of-contents > div > ul > li > ul > li {
-	font-size: 12px;
+	font-size: 11px;
 }
 
 section.table-of-contents > div > ul > li:not(:last-child) {
