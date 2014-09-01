@@ -259,7 +259,7 @@ section.table-of-contents > div > ul > li:not(:last-child) {
 }
 
 section.table-of-contents > div > ul > li > ul > li:not(:last-child) {
-	padding-bottom: 4px;
+	padding-bottom: 3px;
 }
 
 

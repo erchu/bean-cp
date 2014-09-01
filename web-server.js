@@ -1,5 +1,5 @@
 /*
- * This is minimal WebServer for static content only. You need nodejs
+ * This is minimal WebServer for static content only. You need NodeJS
  * to run this script.
  */
 
@@ -24,7 +24,7 @@ var server = http.createServer(function(request, response) {
   
   fs.exists(filePath, function(exists) {
     if (!exists) {
-      response.writeHead(404, {"Content-Type": "text/plain"});
+      response.writeHead(404, { "Content-Type": "text/plain" });
       response.write("404 Not Found\n");
       response.end();
 	  
@@ -37,7 +37,7 @@ var server = http.createServer(function(request, response) {
 
     fs.readFile(filePath, "binary", function(errorInfo, file) {
       if (errorInfo) {        
-        response.writeHead(500, {"Content-Type": "text/plain"});
+        response.writeHead(500, { "Content-Type": "text/plain" });
         response.write(errorInfo + "\n");
         response.end();
 		
@@ -47,7 +47,7 @@ var server = http.createServer(function(request, response) {
 	  var fileExtension = path.extname(filePath).split(".")[1];
 	  var mimeType = mimeTypes[fileExtension];
 
-      response.writeHead(200, {"Content-Type": mimeType});
+      response.writeHead(200, { "Content-Type": mimeType });
       response.write(file, "binary");
       response.end();
     });

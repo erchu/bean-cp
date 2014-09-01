@@ -213,7 +213,7 @@ Mapper mapper
 		<h3 id="conditional-mapping">Conditional mapping</h3>
 		
 		<p>Moreover <code>bind</code> and <code>bindConstant</code> methods supports <code>BindingOptions</code>. This allows to perform conditional
-		mappings and null substitution. Conditional mappings defines when to execute mapping. For example following binding code will map only positive
+		mappings and null substitution. Mapping condition defines when to execute mapping. For example following binding code will map only positive
 		values of <code>totalAmount</code> property:</p>
 		
 <pre class="brush: java; gutter: false;">
@@ -269,7 +269,7 @@ Mapper mapper
 
 		<h3 id="before-after-map">Before and after map actions</h3>
 
-		<p>There are situations when you need to perform an operation before or after mapping. Here is proper code snipped:</p>
+		<p>There are situations when you need to perform an operation before or after mapping. Here is proper code snipped to do that:</p>
 
 <pre class="brush: java">
 	Mapper mapper = new MapperBuilder().addMap(
@@ -289,7 +289,7 @@ Mapper mapper
 				// and so on...
 </pre>
 	
-		<p>You can also use reference in "before" and "after" actions:</p>
+		<p>You can also use mapper reference in "before" and "after" actions:</p>
 	
 <pre class="brush: java">
 	Mapper mapper = new MapperBuilder().addMap(
@@ -315,7 +315,7 @@ Mapper mapper
 
 		<h3 id="declarative-map-statement-order">Statement order</h3>
 		
-		<p>Finally, please note that methods must be executed in following order:</p>
+		<p>Finally, please note that methods must be executed in the following order:</p>
 		
 		<ul>
 			<li><code>constructDestinationObjectUsing</code> zero or one time</li>
