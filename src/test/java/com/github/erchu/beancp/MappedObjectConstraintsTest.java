@@ -17,9 +17,6 @@
  */
 package com.github.erchu.beancp;
 
-import com.github.erchu.beancp.MapperBuilder;
-import com.github.erchu.beancp.MapperConfigurationException;
-import com.github.erchu.beancp.Mapper;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
