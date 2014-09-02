@@ -12,8 +12,8 @@ function getInternetExplorerVersion() {
 	return v > 4 ? v : undef;
 
 };
-	
-if (getInternetExplorerVersion() < 9) {
+
+if (getInternetExplorerVersion() < 8) {
 	window.location.href = "outdated-browser.html";
 } else {
 	$(document).ready(function() {
@@ -108,26 +108,6 @@ if (getInternetExplorerVersion() < 9) {
 					load(this.params['name']);
 				});
 		});
-
-		function loadModuleCssFile(pageName) {
-			var cssLocation = "css/" + pageName + ".css";
-		
-			$.get(cssLocation, function(css) {
-			   $('<style type="text/css"></style>')
-				  .html(css)
-				  .appendTo("head");
-			});
-		}
-
-		function loadAllModuleCssFiles() {
-			var pages = pageList.getPageList();
-			
-			for (i = 0; i < pages.length; i++) {
-				loadModuleCssFile(pages[i]);
-			}
-		}
-		
-		loadAllModuleCssFiles();
 		
 		// start the application
 		app.run('#home');

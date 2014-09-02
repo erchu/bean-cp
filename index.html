@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 
-<html class="no-js">
+<!--[if lt IE 9]>      <html class="old-ie"> <![endif]-->
+<!--[if gt IE 8]><!--> <html> <!--<![endif]-->
     <head>
 		<title>bean-cp &#8211; object to object mapping library for Java 8+</title>
 
@@ -10,19 +11,26 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
 		
 		<link rel="icon" type="image/png" href="favicon.ico"/>
+
+		<!--[if lt IE 9]>
+		<script src="js/vendor/html5shiv.js"></script>
+		<![endif]-->
 		
         <link rel="stylesheet" href="css/vendor/normalize.css" />
         <link rel="stylesheet" href="css/vendor/bootstrap.css" />
 		<link rel="stylesheet" href="css/vendor/syntax/shCore.css" />
 		<link rel="stylesheet" href="css/vendor/syntax/shCoreDefault.css" />
 		<link rel="stylesheet" href="css/vendor/syntax/shThemeEclipse.css" />
+		
         <link rel="stylesheet" href="css/main.css" />
+        <link rel="stylesheet" href="css/home.css" />
+        <link rel="stylesheet" href="css/download.css" />
     </head>
     <body>
 		<div class="page-content">
 		  <header>
 			<div id="page-logo-panel">
-				<a href="#home"><img id="page-logo" src="images/logo.png" alt="bean-cp" /></a>
+				<a href="#home"><img id="page-logo" src="images/logo.png" width="171" height="32" alt="bean-cp" /></a>
 			</div>
 			<div id="page-menu-panel">
 				<nav id="page-menu">
@@ -41,7 +49,7 @@
 		  </div>
 		  <footer>
 			<div id="footer-page-logo-panel">
-				<img id="footer-page-logo" src="images/footer-logo.png" alt="bean-cp" />
+				<img id="footer-page-logo" src="images/footer-logo.png" width="237" height="43" alt="bean-cp" />
 			</div>
 			<div id="footer-page-menu-panel">
 				<nav id="footer-page-menu">
@@ -55,11 +63,15 @@
 		  </footer>
 		</div>
 		
+		<!--[if gt IE 8]><!-->
 		<a id="scroll-to-top" href="#" style="display: none;">
-			<img src="images/scroll-to-top.png" />
+			<img src="images/scroll-to-top.png" width="47" height="38" />
 		</a>
+		<!--<![endif]-->
 	
-		<script src="js/vendor/jquery-1.10.2.js"></script>
+		<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+        <script>window.jQuery || document.write('<script src="jquery-1.11.1.min.js"><\/script>')</script>
+		
 		<script src="js/vendor/jquery-ui.custom.js"></script>
 		<script src="js/vendor/sammy-latest.js"></script>
 		<script src="js/vendor/shCore.js"></script>
@@ -67,7 +79,7 @@
 		<script src="js/vendor/shBrushXml.js"></script>
 		
         <script src="js/page-list.js"></script>
-        <script src="js/main.js"></script>
+        <script src="js/navigation.js"></script>
 
         <script>
 			if (window.location.protocol != "file:") {

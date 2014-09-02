@@ -79,6 +79,10 @@ div.page-content > header {
 	float: right;
 }
 
+html.old-ie #page-menu {
+	filter:progid:DXImageTransform.Microsoft.gradient(startColorstr=#ffffff,endColorstr=#ffffff); 
+}
+	
 #page-menu * {
 	margin: 0;
 	padding: 0;
@@ -196,7 +200,7 @@ footer {
 	display: block;
 	position: fixed;
 	bottom: 5px;
-	right: 5px;
+	right: 15px;
 	opacity: 0.8;
 }
 
@@ -216,6 +220,10 @@ footer {
 
 /* Table of contents */
 
+
+html.old-ie section.table-of-contents {
+	display: none;
+}
 
 section.table-of-contents {
 	padding: 15px 5px 5px 5px !important;
