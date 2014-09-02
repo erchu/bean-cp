@@ -9,8 +9,11 @@ import org.junit.Test;
 import com.github.erchu.beancp.BindingOption;
 import com.github.erchu.beancp.Mapper;
 import com.github.erchu.beancp.MapperBuilder;
+import com.github.erchu.beancp.tutorial.objects1.Customer;
+import com.github.erchu.beancp.tutorial.objects1.Order;
+import com.github.erchu.beancp.tutorial.objects1.OrderOverviewDto;
 
-public class _05_Declarative_maps_in_deep_null_substitution {
+public class _05_Declarative_maps_in_deep_Null_substitution {
 
 	@Test
 	@SuppressWarnings("unchecked")
@@ -35,8 +38,7 @@ public class _05_Declarative_maps_in_deep_null_substitution {
 		order.setCustomer(customer);
 
 		// WHEN
-		OrderOverviewDto destination = mapper
-				.map(order, OrderOverviewDto.class);
+		OrderOverviewDto destination = mapper.map(order, OrderOverviewDto.class);
 
 		// THEN
 		assertEquals("unknown", destination.getCustomerFullName());

@@ -6,8 +6,11 @@ import org.junit.Test;
 
 import com.github.erchu.beancp.Mapper;
 import com.github.erchu.beancp.MapperBuilder;
+import com.github.erchu.beancp.tutorial.objects1.Order;
+import com.github.erchu.beancp.tutorial.objects1.OrderOverviewDto;
+import com.github.erchu.beancp.tutorial.objects1.OrderOverviewDtoFactory;
 
-public class _06_Declarative_maps_in_deep_destination_object_construction {
+public class _08_Declarative_maps_in_deep_Destination_object_construction {
 
 	@Test
 	public void test() {
@@ -25,8 +28,7 @@ public class _06_Declarative_maps_in_deep_destination_object_construction {
 		Order order = new Order();
 
 		// WHEN
-		OrderOverviewDto destination = mapper
-				.map(order, OrderOverviewDto.class);
+		OrderOverviewDto destination = mapper.map(order, OrderOverviewDto.class);
 
 		// THEN
 		assertNotEquals(0, destination.getId());

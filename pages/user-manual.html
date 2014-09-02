@@ -6,6 +6,10 @@
 		have good knowledge of Java programming language including lambda expressions. If you get any trouble please checkout
 		<a href="#support">support</a> page.</p>
 		
+		<p><a href="https://github.com/erchu/bean-cp/tree/gh-pages/sample-source-code/src/com/github/erchu/beancp/tutorial">Examples source code
+		is available on GitHub</a>. Apart of user manual you may also find helpful to read unit tests source code included in
+		<a href="download/release/1.0/beancp-1.0-sources.jar">beancp-1.0-sources.jar</a>.</p>
+		
 		<h2 id="setting-up">Setting up environment</h2>
 		
 		<p>Firstly, bean-cp requires Java version 8 or later. If you don't have one please download it from
@@ -149,22 +153,26 @@ Mapper mapper
 	.buildMapper();
 </pre>
 		
-		<p>When you use bean-cp you configure mappings and build mapper from configuration to preform mappings. To configure mappings you need to create
-		instance of <a href="apidocs/release/1.0/com/github/erchu/beancp/MapperBuilder.html"><code>MapperBuilder</code></a> (line 2), add one or mappings (line 3 - 9).
-		To perform mappings you need to call <a href="apidocs/release/1.0/com/github/erchu/beancp/MapperBuilder.html#buildMapper--"><code>buildMapper()</code></a>
-		method to get <a href="apidocs/release/1.0/com/github/erchu/beancp/Mapper.html"><code>Mapper</code></a> instance (line 10) and then use it to map objects.
+		<p>When you use bean-cp you configure mappings and build mapper from configuration to preform mappings. To configure mappings you need
+		to create instance of <a href="apidocs/release/1.0/com/github/erchu/beancp/MapperBuilder.html"><code>MapperBuilder</code></a> (line 2),
+		add one or mappings (line 3 - 9). To perform mappings you need to call
+		<a href="apidocs/release/1.0/com/github/erchu/beancp/MapperBuilder.html#buildMapper--"><code>buildMapper()</code></a> method to get
+		<a href="apidocs/release/1.0/com/github/erchu/beancp/Mapper.html"><code>Mapper</code></a> instance (line 10) and then use it to map objects.
 		Source and destination classes must have default (with no arguments) public or protected constructor. </p>
 		
-		<p>There are three options to add mapping configuration: declarative map, converter and convention. In this section we will focus on declarative maps.
-		They are used to map from one JavaBean to another. To add declarative map call
+		<p>There are three options to add mapping configuration: declarative map, converter and convention. In this section we will focus on
+		declarative maps. They are used to map from one JavaBean to another. To add declarative map call
 		<a href="apidocs/release/1.0/com/github/erchu/beancp/MapperBuilder.html#addMap-java.lang.Class-java.lang.Class-com.github.erchu.beancp.DeclarativeMapSetup-"><code>addMap()</code></a>
 		method (line 3). This method takes three parameters: source class (in our example: <code>Order</code>), destination class (in our example:
-		<code>OrderOverviewDto</code>) and map declaration. Map declaration is lambda expression taking three parameters: configuration reference, source object
-		reference and destination object reference (line 6). Finally we define map using series of operations like binding from source member to destination member
-		using <a href="apidocs/release/1.0/com/github/erchu/beancp/DeclarativeMap.html#bind-java.util.function.Supplier-java.util.function.Consumer-com.github.erchu.beancp.BindingOption...-"><code>bind()</code></a>
+		<code>OrderOverviewDto</code>) and map declaration. Map declaration is lambda expression taking three parameters: configuration reference,
+		source object reference and destination object reference (line 6). Finally we define map using series of operations like binding from source
+		member to destination member using
+		<a href="apidocs/release/1.0/com/github/erchu/beancp/DeclarativeMap.html#bind-java.util.function.Supplier-java.util.function.Consumer-com.github.erchu.beancp.BindingOption...-"><code>bind()</code></a>
 		(line 7, 8 and 9).</p>
 		
-		<p>Let see how to perform mapping using <a href="apidocs/release/1.0/com/github/erchu/beancp/Mapper.html"><code>Mapper</code></a>. There are two options here. If you already have destination object instance and only want to fill it with data from source object then you write code like this:</p>
+		<p>Let see how to perform mapping using <a href="apidocs/release/1.0/com/github/erchu/beancp/Mapper.html"><code>Mapper</code></a>. There are
+		two options here. If you already have destination object instance and only want to fill it with data from source object then you write code
+		like this:</p>
 		
 <pre class="brush: java">
 	Order order = new Order();
@@ -235,9 +243,39 @@ Mapper mapper
 		BindingOption.withNullSubstitution("unknown"))
 </pre>
 
-		<h3 id="map-reuse">Map reuse</h3>
+		<h3 id="map-inner-objects">Map inner objects</h3>
 
-		<p><span class="work-in-progress">Coming soon</span></p>
+		<p>Suppose we have in your application classes presented on below diagram:</p>
+		
+		<img src="sample-source-code/diagrams/_06_Declarative_maps_in_deep_Map_inner.png" width="679" height="171" />
+		
+		<p>Now suppose you want to map <code>Line</code> to this model:</p>
+		
+		<img src="sample-source-code/diagrams/_06_Declarative_maps_in_deep_Map_inner_Dto.png" width="479" height="162" />
+		
+		<p>What is new about this situation (comparing to previous examples) is need for map inner object. <code>LineDto</code> do not references
+		<code>Point</code>, but references <code>PointDto</code>. This means that we need to map in first step <code>Point</code> to <code>PointDto</code>
+		and then map <code>Line</code> to <code>LineDto</code>. Our map configuration should look like this:</p>
+
+<pre class="brush: java;">
+	Mapper mapper = new MapperBuilder()
+		.addMap(Point.class, PointDto.class, (conf, source, destination) -> conf
+			.bind(source::getX, destination::setX)
+			.bind(source::getY, destination::setY))
+		.addMap(Line.class, LineDto.class, (conf, source, destination) -> conf
+			.mapInner(source::getStart, destination::setStart, PointDto.class)
+			.mapInner(source::getEnd, destination::setEnd, PointDto.class))
+		.buildMapper();
+</pre>
+
+		<p>In line 6 and 7 <code>mapInner</code> operation is used to map <code>Point</code> to <code>PointDto</code> and then assign it to proper
+		<code>LineDto</code>'s property. If you do not want to always create new <code>PointDto</code> but map to existing one you will need to
+		additionally provide destination's member getter:</p>
+
+<pre class="brush: java; gutter: false;">
+	.mapInner(source::getStart, destination::setStart, destination::getStart, PointDto.class)
+	.mapInner(source::getEnd, destination::setEnd, destination::getEnd, PointDto.class))
+</pre>
 
 		<h3 id="destination-object-construction">Destination object construction</h3>
 
@@ -312,6 +350,13 @@ Mapper mapper
 					
 				// and so on...
 </pre>
+		<h3 id="field-binding">Field binding</h3>
+
+		<p>In case you need to bind some fields (in example: <code>sourceMember</code> field to <code>destinationMember</code> field):</p>
+		
+<pre class="brush: java; gutter: false;">
+	.bind(() -> { return source.sourceMember; }, v -> { destination.destinationMember = v; })
+</pre>
 
 		<h3 id="declarative-map-statement-order">Statement order</h3>
 		
@@ -366,9 +411,10 @@ Mapper mapper
 						<li><a href="#user-manual,calculated-members">Calculated members</a></li>
 						<li><a href="#user-manual,conditional-mapping">Conditional mapping</a></li>
 						<li><a href="#user-manual,null-substitution">Null substitution</a></li>
-						<li><a href="#user-manual,map-reuse">Map reuse</a></li>
+						<li><a href="#user-manual,map-inner-objects">Map inner objects</a></li>
 						<li><a href="#user-manual,destination-object-construction">Destination object construction</a></li>
 						<li><a href="#user-manual,before-after-map">Before and after map actions</a></li>
+						<li><a href="#user-manual,field-binding">Field binding</a></li>
 						<li><a href="#user-manual,declarative-map-statement-order">Statement order</a></li>
 					</ul>
 				</li>

@@ -1,12 +1,12 @@
-package com.github.erchu.beancp.tutorial;
+package com.github.erchu.beancp.tutorial.objects1;
 
 import java.math.BigDecimal;
 
-public class Order {
+public class OrderOverviewDto {
     
    private long id;
     
-   private Customer customer;
+   private String customerFullName;
     
    private BigDecimal totalAmount;
 
@@ -18,12 +18,12 @@ public class Order {
        this.id = id;
    }
 
-   public Customer getCustomer() {
-       return customer;
+   public String getCustomerFullName() {
+       return customerFullName;
    }
 
-   public void setCustomer(Customer customer) {
-       this.customer = customer;
+   public void setCustomerFullName(String customerFullName) {
+       this.customerFullName = customerFullName;
    }
 
    public BigDecimal getTotalAmount() {

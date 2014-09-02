@@ -4,8 +4,11 @@ import org.junit.Test;
 
 import com.github.erchu.beancp.Mapper;
 import com.github.erchu.beancp.MapperBuilder;
+import com.github.erchu.beancp.tutorial.objects1.Logger;
+import com.github.erchu.beancp.tutorial.objects1.Order;
+import com.github.erchu.beancp.tutorial.objects1.OrderOverviewDto;
 
-public class _08_Declarative_maps_in_deep_before_and_after_map_plus_mapper_reference {
+public class _09_Declarative_maps_in_deep_Before_and_after_map {
 
 	@Test
 	public void test() {
@@ -14,9 +17,9 @@ public class _08_Declarative_maps_in_deep_before_and_after_map_plus_mapper_refer
 				Order.class,
 				OrderOverviewDto.class,
 				(conf, source, destination) -> conf
-					.beforeMap(mapperRef -> Logger.debug("Starting mapping of Order (id: " + source.getId() + ") by mapper " + mapperRef))
+					.beforeMap(() -> Logger.debug("Starting mapping of Order (id: " + source.getId() + ")"))
 					// Some other stuff here...
-					.afterMap(mapperRef -> Logger.debug("Finished mapping of Order (id: " + source.getId() + ") by mapper " + mapperRef))
+					.afterMap(() -> Logger.debug("Finished mapping of Order (id: " + source.getId() + ")"))
 					).buildMapper();
 
 		Order order = new Order();

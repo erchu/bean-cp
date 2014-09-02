@@ -1,4 +1,4 @@
-package com.github.erchu.beancp.tutorial;
+package com.github.erchu.beancp.tutorial.objects1;
 
 public class Customer {
 	

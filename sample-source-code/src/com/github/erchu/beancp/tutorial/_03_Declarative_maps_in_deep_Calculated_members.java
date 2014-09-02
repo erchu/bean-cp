@@ -9,8 +9,11 @@ import org.junit.Test;
 
 import com.github.erchu.beancp.Mapper;
 import com.github.erchu.beancp.MapperBuilder;
+import com.github.erchu.beancp.tutorial.objects1.Customer;
+import com.github.erchu.beancp.tutorial.objects1.Order;
+import com.github.erchu.beancp.tutorial.objects1.OrderOverviewDto;
 
-public class _03_Declarative_maps_in_deep_calculated_members {
+public class _03_Declarative_maps_in_deep_Calculated_members {
 
 	@Test
 	@SuppressWarnings("unchecked")
