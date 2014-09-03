@@ -1,14 +1,11 @@
 package com.github.erchu.beancp.tutorial;
 
-import org.junit.Test;
-
 import static org.junit.Assert.assertEquals;
+
+import org.junit.Test;
 
 import com.github.erchu.beancp.Mapper;
 import com.github.erchu.beancp.MapperBuilder;
-import com.github.erchu.beancp.tutorial.objects1.Logger;
-import com.github.erchu.beancp.tutorial.objects1.Order;
-import com.github.erchu.beancp.tutorial.objects1.OrderOverviewDto;
 import com.github.erchu.beancp.tutorial.objects3.SampleDestination;
 import com.github.erchu.beancp.tutorial.objects3.SampleSource;
 

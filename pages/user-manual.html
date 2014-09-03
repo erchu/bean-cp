@@ -371,22 +371,94 @@ Mapper mapper
 		</ul>
 
 		<h2 id="converters">Converters</h2>
+		
+		<h3 id="when-and-how-to-create-converters">When and how to create converter?</h3>
 
-		<p><span class="work-in-progress">Coming soon</span></p>
+		<p>Time to time you will need to map from or to object which is not JavaBean. There are also situations when object do not have
+		default public or protected constructor. For those kind of objects you will need to write <code>converter</code>. Then converters
+		can be used to map inner objects just like we did in "<a href="#user-manual,map-inner-objects">Map inner objects" section</a>.
+		Good example of valid converter usage is conversion to <a href="http://docs.oracle.com/javase/8/docs/api/java/time/LocalDate.html">LocalDate</a>.
+		LocalDate is <a href="http://docs.oracle.com/javase/8/docs/api/java/lang/doc-files/ValueBased.html">value-based</a> class, so it is
+		immutable, do not have accessible constructors, but are instead instantiated through factory methods... and it is <strong>not</strong>
+		JavaBean.</p>
+		
+		<p>When you use converter you generally need to write conversion code by your self. For example this code converts
+		<a href="http://docs.oracle.com/javase/8/docs/api/java/util/Date.html">Date</a> to
+		<a href="http://docs.oracle.com/javase/8/docs/api/java/time/LocalDate.html">LocalDate</a>.</p>
+
+<pre class="brush: java; gutter: false;">
+	Date input = // ...
+	Instant instant = source.toInstant();
+	ZonedDateTime zonedDateTime = instant.atZone(ZoneId.systemDefault());
+	LocalDate result = zonedDateTime.toLocalDate();
+</pre>
+
+		<p>Here is example how to make and register converter from this code:</p>
+
+<pre class="brush: java; gutter: false;">
+	Mapper mapper = new MapperBuilder()
+		.addConverter(Date.class, LocalDate.class, source -> {
+			Instant instant = source.toInstant();
+			ZonedDateTime zonedDateTime = instant.atZone(ZoneId.systemDefault());
+			LocalDate result = zonedDateTime.toLocalDate();
+
+			return result;
+		}).buildMapper();
+</pre>
+
+		<p>There are few other <code>addConverter</code> methods, but idea is generally similar. For details please have a look at
+		<a href="http://localhost:8888/apidocs/release/1.0/com/github/erchu/beancp/MapperBuilder.html">MapperBuilder API specification</a>.</p>
+
+		<h3 id="common-converters">Common converters</h3>
+
+		<p>There are two sets of converters provided with bean-cp: <code>CollectionConverters</code> and <code>NumberConverters</code>. Let the
+		code speak for itself.</p>
+		
+		<p>Conversion from array to collection:</p>
+		
+<pre class="brush: java;">
+	Mapper mapper = new MapperBuilder()
+		.addConverter(CollectionConverters.getArrayToCollection(long.class))
+		.buildMapper();
+
+	Collection&lt;?&gt; result = mapper.map(new long[] { 1, 2, 3 }, Collection.class);
+</pre>
+		
+		<p>Conversion from collection to array:</p>
+		
+<pre class="brush: java;">
+	Mapper mapper = new MapperBuilder()
+		.addConverter(CollectionConverters.getCollectionToArray(String.class))
+		.buildMapper();
+
+	Collection&lt;String&gt; collectionInstance = // ...
+
+	String[] result = mapper.map(collectionInstance, String[].class);
+</pre>
+		
+		<p>Number conversion:</p>
+
+<pre class="brush: java;">
+	Mapper mapper = new MapperBuilder()
+		.addConverter(NumberConverters.get())
+		.buildMapper();
+
+	Double result = mapper.map(1l, Double.class);
+</pre>
 
 		<h2 id="conventions">Conventions</h2>
 
 		<p><span class="work-in-progress">Coming soon</span></p>
 
-		<h2 id="map-any">Map any convention</h2>
+		<h3 id="write-convention">Name-based convention</h3>
 
 		<p><span class="work-in-progress">Coming soon</span></p>
 
-		<h2 id="write-convention">Write your own convention</h2>
+		<h3 id="map-any">Map any convention</h3>
 
 		<p><span class="work-in-progress">Coming soon</span></p>
 
-		<h2 id="common-converters">Common converters</h2>
+		<h3 id="write-convention">Write your own convention</h3>
 
 		<p><span class="work-in-progress">Coming soon</span></p>
 
@@ -400,7 +472,6 @@ Mapper mapper
 	</section>
 	<section class="table-of-contents">
 		<div class="table-of-contents">
-			<h1>Table of contents</h1>
 			<ul>
 				<li><a href="#user-manual,setting-up">Setting up environment</a></li>
 				<li><a href="#user-manual,first-mapping">First mapping</a></li>
@@ -418,11 +489,21 @@ Mapper mapper
 						<li><a href="#user-manual,declarative-map-statement-order">Statement order</a></li>
 					</ul>
 				</li>
-				<li><a href="#user-manual,converters">Converters</a></li>
-				<li><a href="#user-manual,conventions">Conventions</a></li>
-				<li><a href="#user-manual,map-any">Map any convention</a></li>
-				<li><a href="#user-manual,write-convention">Write your own convention</a></li>
-				<li><a href="#user-manual,common-converters">Common converters</a></li>
+				<li>
+					<a href="#user-manual,converters">Converters</a>
+					<ul>
+						<li><a href="#user-manual,when-and-how-to-create-converters">When and how to create converter?</a></li>
+						<li><a href="#user-manual,common-converters">Common converters</a></li>
+					</ul>
+				</li>
+				<li>
+					<a href="#user-manual,conventions">Conventions</a>
+					<ul>
+						<li><a href="#user-manual,name-based-convention">Name-based convention</a></li>
+						<li><a href="#user-manual,map-any">Map any convention</a></li>
+						<li><a href="#user-manual,write-convention">Write your own convention</a></li>
+					</ul>
+				</li>
 				<li><a href="#user-manual,big-example">Put it all together</a></li>
 				<li><a href="#user-manual,summary">Summary</a></li>
 			</ul>
