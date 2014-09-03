@@ -28,7 +28,8 @@
 	&lt;groupId&gt;com.github.erchu&lt;/groupId&gt;
 	&lt;artifactId&gt;beancp&lt;/artifactId&gt;
 	&lt;version&gt;1.0&lt;/version&gt;
-&lt;/dependency&gt;</pre>
+&lt;/dependency&gt;
+</pre>
 
 	<h1>Why bean-cp?</h1>
 
@@ -36,7 +37,7 @@
 	
 	<p>Lambda expressions and fluent API comes to play...</p>
 
-<pre class="brush: java">
+<pre class="brush: java; gutter: false;">
 Mapper mapper = new MapperBuilder()
     .addMap(Order.class, OrderOverviewDto.class, (conf, source, destination) -> conf
         .bind(source::getDate, destination::setDate)
@@ -44,35 +45,39 @@ Mapper mapper = new MapperBuilder()
         .bind(source::getStatus, destination::setStatus)
         .bind(source::getTotal, destination::setTotal)
         .bind(source.getCustomer()::getName, destination::setCustomerName))
-    .buildMapper();</pre>
+    .buildMapper();
+</pre>
 	
 	<h2>Saves your time</h2>
 
 	<p>Conventions feature lets you define mapping quickly. Above example can be fully replaced by convention:</p>
 
-<pre class="brush: java">
+<pre class="brush: java; gutter: false;">
 Mapper mapper = new MapperBuilder()
     .addMap(Order.class, OrderOverviewDto.class, (conf, source, destination) -> conf
         .useConvention(NameBasedMapConvention.get().enableFlattening()))
-    .buildMapper();</pre>
+    .buildMapper();
+</pre>
 	
 	<p>Both mechanism can be mixed:</p>
 	
-<pre class="brush: java">
+<pre class="brush: java; gutter: false;">
 Mapper mapper = new MapperBuilder()
     .addMap(Order.class, OrderOverviewDto.class, (conf, source, destination) -> conf
         .useConvention(NameBasedMapConvention.get().enableFlattening())
         .bind(() -&gt; source.getStatus() == OrderStatus.OVERDUE, destination::isOverdue))
-    .buildMapper();</pre>
+    .buildMapper();
+</pre>
 	
 	<h2>Map anything</h2>
 
 	<p>When you face non standard situation converters comes to rescue:</p>
 	
-<pre class="brush: java">
+<pre class="brush: java; gutter: false;">
 Mapper mapper = new MapperBuilder()
-  .addConverter(int.class, Range.class, source -> Range.of(source, Integer.MAX_VALUE))
-  .buildMapper();</pre>
+	.addConverter(int.class, Range.class, source -> Range.of(source, Integer.MAX_VALUE))
+	.buildMapper();
+</pre>
 	
 	<h2>Extensibility</h2>
 
@@ -81,7 +86,7 @@ Mapper mapper = new MapperBuilder()
 	interface. In fact <a href="apidocs/release/1.0/com/github/erchu/beancp/commons/NameBasedMapConvention.html">
 	<code>NameBasedMapConvention</code></a> is provided as implementation of this interface with no extra magic.</p>
 	
-	<pre class="brush: java">
+	<pre class="brush: java; gutter: false;">
 public interface MapConvention {
 
   /**
@@ -97,7 +102,8 @@ public interface MapConvention {
       final MappingInfo mappingsInfo,
       final Class sourceClass,
       final Class destinationClass);
-}</pre>
+}
+</pre>
 	
 	<h2>There is more</h2>
 	

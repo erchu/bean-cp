@@ -254,7 +254,7 @@ section.table-of-contents > div > h1 {
 
 section.table-of-contents > div > ul {
 	list-style-type: square;
-	font-size: 12px;
+	font-size: 13px;
 	color: #ddd;
 	
 	margin-left: 20px;
@@ -267,15 +267,19 @@ section.table-of-contents > div > ul > li > ul {
 }
 
 section.table-of-contents > div > ul > li > ul > li {
-	font-size: 11px;
+	font-size: 12px;
 }
 
 section.table-of-contents > div > ul > li:not(:last-child) {
-	padding-bottom: 8px;
+	padding-bottom: 3px;
+}
+
+section.table-of-contents > div > ul > li > ul {
+	margin: 2px 0 0 0;
 }
 
 section.table-of-contents > div > ul > li > ul > li:not(:last-child) {
-	padding-bottom: 3px;
+	padding-bottom: 2px;
 }
 
 
@@ -326,6 +330,7 @@ code, pre {
 .syntaxhighlighter {
   padding: 8px 15px;
   margin-left: 15px;
+  border: 1px dashed #ccc;
 }
 
 .work-in-progress {

@@ -174,7 +174,7 @@ Mapper mapper
 		two options here. If you already have destination object instance and only want to fill it with data from source object then you write code
 		like this:</p>
 		
-<pre class="brush: java">
+<pre class="brush: java; gutter: false;">
 	Order order = new Order();
 	OrderOverviewDto destination = new OrderOverviewDto();
 	
@@ -185,7 +185,7 @@ Mapper mapper
 
 		<p>Otherwise bean-cp can create destination object instance for you:</p>
 		
-<pre class="brush: java">
+<pre class="brush: java; gutter: false;">
 	Order order = new Order();
 	
 	// Some other stuff here
@@ -309,7 +309,7 @@ Mapper mapper
 
 		<p>There are situations when you need to perform an operation before or after mapping. Here is proper code snipped to do that:</p>
 
-<pre class="brush: java">
+<pre class="brush: java; gutter: false;">
 	Mapper mapper = new MapperBuilder().addMap(
 			Order.class,
 			OrderOverviewDto.class,
@@ -329,7 +329,7 @@ Mapper mapper
 	
 		<p>You can also use mapper reference in "before" and "after" actions:</p>
 	
-<pre class="brush: java">
+<pre class="brush: java; gutter: false;">
 	Mapper mapper = new MapperBuilder().addMap(
 			Order.class,
 			OrderOverviewDto.class,
@@ -416,7 +416,7 @@ Mapper mapper
 		
 		<p>Conversion from array to collection:</p>
 		
-<pre class="brush: java;">
+<pre class="brush: java; gutter: false;">
 	Mapper mapper = new MapperBuilder()
 		.addConverter(CollectionConverters.getArrayToCollection(long.class))
 		.buildMapper();
@@ -426,7 +426,7 @@ Mapper mapper
 		
 		<p>Conversion from collection to array:</p>
 		
-<pre class="brush: java;">
+<pre class="brush: java; gutter: false;">
 	Mapper mapper = new MapperBuilder()
 		.addConverter(CollectionConverters.getCollectionToArray(String.class))
 		.buildMapper();
@@ -438,7 +438,7 @@ Mapper mapper
 		
 		<p>Number conversion:</p>
 
-<pre class="brush: java;">
+<pre class="brush: java; gutter: false;">
 	Mapper mapper = new MapperBuilder()
 		.addConverter(NumberConverters.get())
 		.buildMapper();
@@ -448,9 +448,42 @@ Mapper mapper
 
 		<h2 id="conventions">Conventions</h2>
 
+		<p>If you plan to use bean-cp then your application probably contain more than one object model of the same real-life objects.
+		If those models are similar this could result in sequence of "dummy code" like this:</p>
+
+<pre class="brush: java; gutter: false;">
+Mapper mapper
+	= new MapperBuilder()
+	.addMap(
+		UserDto.class,
+		User.class,
+		(conf, source, destination) -> conf
+			.bind(source::getId, destination::setId)
+			.bind(source::getFirstName, destination::setFirstName)
+			.bind(source::getSecondName, destination::setSecondName)
+			.bind(source::getPassword, destination::setPassword)
+			.bind(source::getPhoneNumber, destination::setPhoneNumber)
+			.bind(source::getEmailAddress, destination::setEmailAddress))
+	.buildMapper();
+</pre>
+
+		<p>In this case it is easy to find out that there is general pattern for matching source and destination properties: bind properties
+		of the same name. In bean-cp component generating bindings according to some patterns is named <strong>convention</strong>. In other
+		words convention analyse source and destination class structure and generates list of bindings. Currently bean-cp provides one
+		<a href="#user-manual,name-based-convention">name-based convention</a> which matches properties and fields by name. You could also
+		<a href="#user-manual,write-convention">write your own convention</a>.</p>
+		
+		<p>Conventions are probably the most important feature of bean-cp because they lets you speed up your development effort.
+		However there is drawback of this approach. Your refactoring tools are not aware of convention. In above example if you change
+		<code>setEmailAddress</code> to <code>setEmail</code> and then e-mail address become unmapped. For large applications this
+		could be a problem. See <a href="#user-manual,conventions-save-for-refactoring">later discussion in this section</a> how to
+		handle this.</p>
+		
+		<h3 id="name-based-convention">Name-based convention</h3>
+
 		<p><span class="work-in-progress">Coming soon</span></p>
 
-		<h3 id="write-convention">Name-based convention</h3>
+		<h3 id="conventions-save-for-refactoring">How to make conventions ready for refactoring?</h3>
 
 		<p><span class="work-in-progress">Coming soon</span></p>
 
@@ -500,6 +533,7 @@ Mapper mapper
 					<a href="#user-manual,conventions">Conventions</a>
 					<ul>
 						<li><a href="#user-manual,name-based-convention">Name-based convention</a></li>
+						<li><a href="#user-manual,conventions-save-for-refactoring">How to make conventions ready for refactoring?</a></li>
 						<li><a href="#user-manual,map-any">Map any convention</a></li>
 						<li><a href="#user-manual,write-convention">Write your own convention</a></li>
 					</ul>
