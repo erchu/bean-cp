@@ -1,6 +1,6 @@
 package com.github.erchu.beancp.tutorial.objects4;
 
-public class User {
+public class UserDto {
 
 	private long id;
 	
@@ -13,6 +13,8 @@ public class User {
 	private String phoneNumber;
 	
 	private String emailAddress;
+	
+	private String fullName;
 
 	public long getId() {
 		return id;
@@ -60,5 +62,13 @@ public class User {
 
 	public void setEmailAddress(String emailAddress) {
 		this.emailAddress = emailAddress;
+	}
+
+	public String getFullName() {
+		return fullName;
+	}
+
+	public void setFullName(String fullName) {
+		this.fullName = fullName;
 	}
 }

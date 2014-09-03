@@ -7,8 +7,7 @@
 		<a href="#support">support</a> page.</p>
 		
 		<p><a href="https://github.com/erchu/bean-cp/tree/gh-pages/sample-source-code/src/com/github/erchu/beancp/tutorial">Examples source code
-		is available on GitHub</a>. Apart of user manual you may also find helpful to read unit tests source code included in
-		<a href="download/release/1.0/beancp-1.0-sources.jar">beancp-1.0-sources.jar</a>.</p>
+		is available on GitHub</a>.</p>
 		
 		<h2 id="setting-up">Setting up environment</h2>
 		
@@ -40,7 +39,7 @@
 		
 		<h2 id="first-mapping">First mapping</h2>
 		
-		<p>There are few mapping scenarios supported. We will start with declarative map used to map from one
+		<p>There are few mapping scenarios supported. We will start with <strong>declarative map</strong> used to map from one
 		<a href="http://en.wikipedia.org/wiki/JavaBeans">JavaBean</a> to another JavaBean.</p>
 
 		<p>Let's start with simple example. Suppose we have following two classes in our domain model:</p>
@@ -375,7 +374,7 @@ Mapper mapper
 		<h3 id="when-and-how-to-create-converters">When and how to create converter?</h3>
 
 		<p>Time to time you will need to map from or to object which is not JavaBean. There are also situations when object do not have
-		default public or protected constructor. For those kind of objects you will need to write <code>converter</code>. Then converters
+		default public or protected constructor. For those kind of objects you will need to write <strong>converter</strong>. Then converters
 		can be used to map inner objects just like we did in "<a href="#user-manual,map-inner-objects">Map inner objects" section</a>.
 		Good example of valid converter usage is conversion to <a href="http://docs.oracle.com/javase/8/docs/api/java/time/LocalDate.html">LocalDate</a>.
 		LocalDate is <a href="http://docs.oracle.com/javase/8/docs/api/java/lang/doc-files/ValueBased.html">value-based</a> class, so it is
@@ -460,7 +459,7 @@ Mapper mapper
 		(conf, source, destination) -> conf
 			.bind(source::getId, destination::setId)
 			.bind(source::getFirstName, destination::setFirstName)
-			.bind(source::getSecondName, destination::setSecondName)
+			.bind(source::getLastName, destination::setLastName)
 			.bind(source::getPassword, destination::setPassword)
 			.bind(source::getPhoneNumber, destination::setPhoneNumber)
 			.bind(source::getEmailAddress, destination::setEmailAddress))
@@ -469,39 +468,427 @@ Mapper mapper
 
 		<p>In this case it is easy to find out that there is general pattern for matching source and destination properties: bind properties
 		of the same name. In bean-cp component generating bindings according to some patterns is named <strong>convention</strong>. In other
-		words convention analyse source and destination class structure and generates list of bindings. Currently bean-cp provides one
-		<a href="#user-manual,name-based-convention">name-based convention</a> which matches properties and fields by name. You could also
-		<a href="#user-manual,write-convention">write your own convention</a>.</p>
+		words convention analyse source and destination class structure and generates list of bindings.</p>
+		
+		<h3 id="name-based-convention">Name-based convention</h3>
+		
+		<p>Currently bean-cp provides one <strong>name-based convention</strong> which matches properties and fields by name (you could also
+		write your own convention <a href="#user-manual,write-convention">as discussed later</a>).</p>
+		
+		<p>OK... so how to replace series of <code>bind</code> operations from last code listing with convention? Use
+		<code>useConvention(NameBasedMapConvention.get())</code> method. Full example:</p>
+		
+<pre class="brush: java; gutter: false;">
+Mapper mapper = new MapperBuilder()
+	.addMap(User.class, UserDto.class, (conf, source, destination) -> conf
+		.useConvention(NameBasedMapConvention.get()))
+	.buildMapper();
+</pre>
+
+		<p>If some property is of different type at source than at destination convention will try to map this inner type in first step. For
+		example if <code>source::getEmailAddress</code> returns <code>EmailAddress</code> class instance and you registered converter from
+		<code>EmailAddress</code> to <code>String</code> and <code>destination::setEmailAddress</code> accepts <code>String</code> then
+		convention will convert instance of <code>EmailAddress</code> to <code>String</code> in first step and then assign result of
+		this conversion to <code>emailAddress</code> property at destination.</p>
+		
+		<p><strong>Flattening feature.</strong> Name-based convention has few options. One of them is flattening feature. Lets consider
+		following <code>bind</code> instruction.</p>
+
+<pre class="brush: java; gutter: false;">
+.bind(source.getPrimaryCustomer()::getName, destination::setPrimaryCustomerName)
+</pre>
+
+		<p>Above we bind <code>name</code> property to <code>primaryCustomerName</code>. Properties' names are different, but if we take into
+		consideration full "path" then we notice that <code>"primaryCustomer" + "name" = "primaryCustomerName"</code> (ignoring case). To recognize
+		such patterns we need to enable flattening feature:</p>
+		
+<pre class="brush: java; gutter: false;">
+.useConvention(NameBasedMapConvention.get().enableFlattening())
+</pre>
+		
+		<p><strong>Mix convention with declarative map.</strong> Conventions can be mixed with regular <code>bind</code>, <code>bindConstant</code>
+		and <code>mapInner</code> instructions. For example:</p>
+		
+<pre class="brush: java; gutter: false;">
+Mapper mapper = new MapperBuilder()
+	.addMap(User.class, UserDto.class, (conf, source, destination) -> conf
+		.useConvention(NameBasedMapConvention.get())
+		.bind(
+			() -> source.getFirstName() + ' ' + source.getLastName(),
+			destination::setFullName))
+	.buildMapper();
+</pre>
+
+		<p><strong>Controlling field/properties mapped by convention.</strong> There is option to control which fields and properties should be mapped
+		by convention:</p>
+		
+		<ul>
+			<li><code>includeDestinationMembers</code> &#8211 sets list of destination members which will be included to matching. Each entry must be
+			regular expression matching field name or bean property name (according to beans specification). If not specified (empty array) all members
+			are subject to map by convention. If specified (not empty array) only members with names matching any of members could be mapped by convention
+			ignoring case. This list has lower priority that exclude list specified by <code>excludeDestinationMembers</code> method. Note that when you
+			put some member on list then it is not guaranteed that it will be mapped — it still have to have matching source's member according to convention
+			configuration.</li>
+			<li><code>excludeDestinationMembers</code> &#8211 sets list of destination members which will be excluded (ignored) by convention. Each entry
+			must be regular expression matching field name or bean property name (according to beans specification). This list has higher priority that
+			include list specified by <code>includeDestinationMembers</code> method.</li>
+		</ul>
+
+		<h3 id="conventions-save-for-refactoring">How to make conventions ready for refactoring?</h3>
 		
 		<p>Conventions are probably the most important feature of bean-cp because they lets you speed up your development effort.
 		However there is drawback of this approach. Your refactoring tools are not aware of convention. In above example if you change
 		<code>setEmailAddress</code> to <code>setEmail</code> and then e-mail address become unmapped. For large applications this
-		could be a problem. See <a href="#user-manual,conventions-save-for-refactoring">later discussion in this section</a> how to
-		handle this.</p>
+		could be a problem. Here are few tips how to deal with this problem:</p>
 		
-		<h3 id="name-based-convention">Name-based convention</h3>
+		<ol>
+			<li>Use conventions only at prototype stage and then replace them with regular declarative maps.</li>
+			<li>Write unit tests for your mappings. This is somehow controversial because you speed up development of mapping code, but you spend
+			time at writing low priority unit tests. If the only reason to write such tests is use of convention you probably should not use convention
+			at all.</li>
+			<li>
+				Check if all properties are mapped using <code>failIfNotAllDestinationMembersMapped</code> or <code>failIfNotAllSourceMembersMapped</code>
+				depending on situation. If some properties are mapped by <code>bind</code>, <code>bindConstant</code> or <code>mapInner</code> instructions
+				you need to exclude it explicitly by convention. Then write simple unit test checking if mapping configuration is valid.
+			
+<pre class="brush: java; gutter: false;">
+public class MapperProvider {
 
-		<p><span class="work-in-progress">Coming soon</span></p>
+	@SuppressWarnings("unchecked")
+	public Mapper getMapper() {
+		return new MapperBuilder()
+		.addMap(User.class, UserDto.class, (conf, source, destination) -> conf
+			.useConvention(NameBasedMapConvention.get()
+				.excludeDestinationMembers("FullName")
+				.failIfNotAllDestinationMembersMapped())
+			.bind(
+				() -> source.getFirstName() + ' ' + source.getLastName(),
+				destination::setFullName))
+		.buildMapper();
+	}
+}
 
-		<h3 id="conventions-save-for-refactoring">How to make conventions ready for refactoring?</h3>
+public class MapperProviderTest {
 
-		<p><span class="work-in-progress">Coming soon</span></p>
+	@Test
+	public void mapper_configuration_is_valid() {
+		// This test only check if getMapper() will not throw any exception
+		new MapperProvider().getMapper();
+	}
+}
+</pre>
+
+			</li>
+		</ol>
 
 		<h3 id="map-any">Map any convention</h3>
 
-		<p><span class="work-in-progress">Coming soon</span></p>
+		<p>What is more you can define (one or more) conventions used only if no specific mapping from type any A to B is defined:</p>
 
+<pre class="brush: java; gutter: false;">
+Mapper mapper = new MapperBuilder()
+	.addMapAnyByConvention(NameBasedMapConvention.get())
+	.buildMapper();
+</pre>
+		
 		<h3 id="write-convention">Write your own convention</h3>
 
-		<p><span class="work-in-progress">Coming soon</span></p>
+		<p>It is really easy. You need to only implement <code>MapConvention</code> interface:</p>
+
+<pre class="brush: java; gutter: false;">
+public interface MapConvention {
+ 
+  /**
+   * Returns list of bindings for specified source and destination classes. Must
+   * be thread-safe.
+   *
+   * @param mappingsInfo current mapping information.
+   * @param sourceClass source class.
+   * @param destinationClass destination class.
+   * @return found bindings.
+   */
+  List&lt;Binding&gt; getBindings(
+      final MappingInfo mappingsInfo,
+      final Class sourceClass,
+      final Class destinationClass);
+}
+</pre>
+
+		<p>Implementation must be thread-safe. Be aware that <code>Binding</code> class has two subclasses available
+		<code>BindingWithValueConversion</code>, <code>BindingWithValueMap</code> and you can write your own if you need to.</p>
 
 		<h2 id="big-example">Put it all together</h2>
 
-		<p><span class="work-in-progress">Coming soon</span></p>
+		<p>Where are almost done. What I like to show you to sum up is bigger example combining features already described in this user
+		manual. If you are not interested in such example please skip this section, but not forget to read
+		<a href="#user-manual,summary">summary</a> section.</p>
+
+<pre class="brush: java; gutter: false;">
+package com.github.erchu.beancp.tutorial;
+
+import java.util.Collection;
+import java.util.Date;
+import java.util.LinkedList;
+import java.util.Random;
+import java.util.concurrent.ExecutionException;
+
+import org.junit.Test;
+
+import com.github.erchu.beancp.Mapper;
+import com.github.erchu.beancp.MapperBuilder;
+import com.github.erchu.beancp.commons.CollectionConverters;
+import com.github.erchu.beancp.commons.NameBasedMapConvention;
+import com.github.erchu.beancp.commons.NumberConverters;
+
+public class _21_Conventions_Put_it_all_together {
+
+    public static class AuditLog {  // Test addMapAnyByConvention
+
+        private Date createdOn;
+
+        private Date updatedOn;
+
+        public Date getCreatedOn() {
+            return createdOn;
+        }
+
+        public void setCreatedOn(Date createdOn) {
+            this.createdOn = createdOn;
+        }
+
+        public Date getUpdatedOn() {
+            return updatedOn;
+        }
+
+        public void setUpdatedOn(Date updatedOn) {
+            this.updatedOn = updatedOn;
+        }
+    }
+
+    public static class AuthorInfo {    // Test converter (to String)
+
+        private String name;
+
+        public static AuthorInfo getFromName(final String name) {
+            AuthorInfo result = new AuthorInfo();
+            result.name = name;
+
+            return result;
+        }
+
+        public String getName() {
+            return name;
+        }
+    }
+
+    public static class PointExtension {    // Test flattening
+
+        private Long z;     // Test NumberConverter
+
+        private final Collection&lt;Integer&gt; otherDimensions;  // Test CollectionConverters
+
+        public PointExtension() {
+            this.otherDimensions = new LinkedList&lt;&gt;();
+        }
+
+        public Collection&lt;Integer&gt; getOtherDimensions() {
+            return otherDimensions;
+        }
+
+        public Long getZ() {
+            return z;
+        }
+
+        public void setZ(Long z) {
+            this.z = z;
+        }
+    }
+
+    public static class Point {     // Test NameBasedConvention, including
+        							// failIfNotAllDestinationMembersMapped option
+
+        private int x;  // Test DeclarativeMap.bind()
+
+        public int y;  // Test DeclarativeMap.bind()
+
+        private AuthorInfo author;
+
+        private AuditLog audit;
+
+        private PointExtension extension;
+
+        public AuditLog getAudit() {
+            return audit;
+        }
+
+        public void setAudit(AuditLog audit) {
+            this.audit = audit;
+        }
+
+        public int getX() {
+            return x;
+        }
+
+        public void setX(int x) {
+            this.x = x;
+        }
+
+        public PointExtension getExtension() {
+            return extension;
+        }
+
+        public void setExtension(PointExtension extension) {
+            this.extension = extension;
+        }
+
+        public AuthorInfo getAuthor() {
+            return author;
+        }
+
+        public void setAuthor(AuthorInfo author) {
+            this.author = author;
+        }
+    }
+
+    public static class PointInfo {
+
+        private int metric;
+
+        private int extensionZ;
+
+        private int[] extensionOtherDimensions;
+
+        private String author;
+
+        private AuditLogInfo audit;
+
+        public AuditLogInfo getAudit() {
+            return audit;
+        }
+
+        public void setAudit(AuditLogInfo audit) {
+            this.audit = audit;
+        }
+
+        public String getAuthor() {
+            return author;
+        }
+
+        public void setAuthor(String author) {
+            this.author = author;
+        }
+
+        public int getMetric() {
+            return metric;
+        }
+
+        public void setMetric(int metric) {
+            this.metric = metric;
+        }
+
+        public int getExtensionZ() {
+            return extensionZ;
+        }
+
+        public void setExtensionZ(int extensionZ) {
+            this.extensionZ = extensionZ;
+        }
+
+        public int[] getExtensionOtherDimensions() {
+            return extensionOtherDimensions;
+        }
+
+        public void setExtensionOtherDimensions(int[] extensionOtherDimensions) {
+            this.extensionOtherDimensions = extensionOtherDimensions;
+        }
+    }
+
+    public static class AuditLogInfo {
+
+        private Date createdOn;
+
+        private Date updatedOn;
+
+        public Date getCreatedOn() {
+            return createdOn;
+        }
+
+        public void setCreatedOn(Date createdOn) {
+            this.createdOn = createdOn;
+        }
+
+        public Date getUpdatedOn() {
+            return updatedOn;
+        }
+
+        public void setUpdatedOn(Date updatedOn) {
+            this.updatedOn = updatedOn;
+        }
+    }
+
+    private final Random random = new Random();
+
+	@Test
+    @SuppressWarnings("unchecked")
+    public void mapper_should_map_objects_in_parallel_threads()
+            throws InterruptedException, ExecutionException {
+        // Configure mapper
+        Mapper mapper = new MapperBuilder()
+                .addMapAnyByConvention(NameBasedMapConvention.get())
+                .addConverter(AuthorInfo.class, String.class, source -&gt; {
+                    return source.getName();
+                })
+                .addConverter(CollectionConverters.getCollectionToArray(int.class))
+                .addConverter(NumberConverters.get())
+                .addMap(
+                        Point.class,
+                        PointInfo.class,
+                        (config, source, destination) -&gt; config
+                        .useConvention(NameBasedMapConvention.get()
+                                .enableFlattening()
+                                .excludeDestinationMembers("metric")
+                                .failIfNotAllDestinationMembersMapped())
+                        .bind(() -&gt; source.getX() + source.y, destination::setMetric))
+                .buildMapper();
+        
+        // Sample data
+
+        PointExtension pointExtension = new PointExtension();
+        pointExtension.setZ((long) random.nextInt());
+
+        int otherDimensionNumber = random.nextInt(10);
+
+        for (int i = 0 ; i &lt; otherDimensionNumber ; i++) {
+            pointExtension.getOtherDimensions().add(i);
+        }
+
+        Point source = new Point();
+        source.setX(random.nextInt());
+        source.y = random.nextInt();
+        source.setExtension(pointExtension);
+        source.setAuthor(AuthorInfo.getFromName("U" + random.nextInt()));
+
+        AuditLog auditLog = new AuditLog();
+        auditLog.setCreatedOn(new Date());
+        auditLog.setUpdatedOn(new Date());
+
+        source.setAudit(auditLog);
+
+        // Map
+        @SuppressWarnings("unused")
+        PointInfo result = mapper.map(source, PointInfo.class);
+    }
+}
+</pre>
 
 		<h2 id="summary">Summary</h2>
 
-		<p><span class="work-in-progress">Coming soon</span></p>
+		<p>bean-cp is relatively need library, so your freedback and any other contribution is welcome. If you have any thoughts
+		about bean-cp please share them with us on <a href="https://groups.google.com/forum/#!forum/beancp">bean-cp
+		project forum</a> on <a href="https://groups.google.com/forum/#!topic/beancp/l47g0x5gOPg">What do you think about bean-cp?</a> thread.</p>
+		
+		<p>One more thing. Apart of user manual you may also find helpful to read unit tests source code included in
+		<a href="download/release/1.0/beancp-1.0-sources.jar">beancp-1.0-sources.jar</a></p>
 	</section>
 	<section class="table-of-contents">
 		<div class="table-of-contents">
@@ -543,4 +930,6 @@ Mapper mapper
 			</ul>
 		</div>
 	</section>
+	
+    <script src="js/user-manual.js"></script>
 </div>
