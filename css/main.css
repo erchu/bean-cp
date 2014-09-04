@@ -331,10 +331,25 @@ pre {
 	background-color: #fff;
 }
 
+iframe {
+	width: 100%;
+}
+
 .syntaxhighlighter, pre {
   padding: 8px 15px;
   margin-left: 15px;
   border: 1px dashed #ccc;
+}
+
+
+li > .syntaxhighlighter, li > pre {
+	margin-left: 0;
+	margin-top: 10px;
+	margin-bottom: 10px;
+}
+
+section > img {
+	margin-left: 20px;
 }
 
 .work-in-progress {
