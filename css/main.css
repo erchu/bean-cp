@@ -322,12 +322,16 @@ p, ul, ol {
 }
 
 code, pre {
-  font-family: Monaco, Bitstream Vera Sans Mono, Lucida Console, Terminal;
-  color: #333;
-  font-size: 12px;
+	font-family: Consolas, 'Bitstream Vera Sans Mono', 'Courier New', Courier, monospace;
+	color: #000;
+	font-size: 12px;
 }
 
-.syntaxhighlighter {
+pre {
+	background-color: #fff;
+}
+
+.syntaxhighlighter, pre {
   padding: 8px 15px;
   margin-left: 15px;
   border: 1px dashed #ccc;

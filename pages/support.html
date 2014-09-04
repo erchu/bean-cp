@@ -4,32 +4,145 @@
 		
 		<h2 id="how-get-help">How to get help?</h2>
 		
-		<p><span class="work-in-progress">Coming soon</span></p>
-		
-		<h2 id="issue-tracking">Issues tracking</h2>
-		
-		<p>Bugs, new features and other project issues are tracked using <a href="https://beancp.atlassian.net/secure/Dashboard.jspa">beancp.atlassian.net</a> website.
-		If you want to have insight into current project status, report a bug or request for a new feature you have to use this site.</p>
-		
-		<p>You can browse project's issues without account, but to report new issue you need to <a href="https://beancp.atlassian.net/admin/users/sign-up">sign up</a>.</p>
+		<p>Use <a href="https://groups.google.com/forum/#!forum/beancp">bean-cp project forum</a>.</p>
 		
 		<h2 id="how-to-report-bug">How to report a bug?</h2>
 		
-		<p><span class="work-in-progress">Coming soon</span></p>
+		<p>Bugs, new features and other project issues are tracked using <a href="https://beancp.atlassian.net/secure/Dashboard.jspa">beancp.atlassian.net</a> website.
+		If you want to have insight into current project status or report a bug you have to use this site.</p>
+		
+		<p>You can browse project's issues without account, but to report new issue you need to <a href="https://beancp.atlassian.net/admin/users/sign-up">sign up</a>.</p>
+		
+		<p>When you wan't to report bug please <strong>always</strong> include:</p>
+		
+		<ul>
+			<li>Summary &#8211 quick overview of the problem</li>
+			<li>Priority &#8211 choose minor or major</li>
+			<li>Attach unit tests based on JUnit which proves bug as exactly one <code>.java</code> file (may include inner classes). Bug reports
+			without unit test attached will be rejected. Please try follow style of following sample test:
+			
+<pre class="brush: java; gutter: false;">
+package com.github.erchu.beancp;
+
+import org.junit.Test;
+import static org.junit.Assert.*;
+
+public class BindConstantTest {
+
+    public static class Source {
+
+        private String x;
+
+        private String y;
+
+        public String getX() {
+            return x;
+        }
+
+        public void setX(String x) {
+            this.x = x;
+        }
+
+        public String getY() {
+            return y;
+        }
+
+        public void setY(String y) {
+            this.y = y;
+        }
+    }
+
+    public static class Destination {
+
+        private String a;
+
+        private String b;
+
+        public String getA() {
+            return a;
+        }
+
+        public void setA(String a) {
+            this.a = a;
+        }
+
+        public String getB() {
+            return b;
+        }
+
+        public void setB(String b) {
+            this.b = b;
+        }
+    }
+
+    @Test
+    public void mapper_should_bind_constants() {
+        // GIVEN
+        Source sampleSource = new Source();
+        sampleSource.setX("xval");
+        sampleSource.setY("yval");
+
+        Mapper mapper = new MapperBuilder()
+                .addMap(Source.class, Destination.class,
+                        (config, source, destination) -> config
+                        .bindConstant("const", destination::setA))
+                .buildMapper();
+
+        // WHEN
+        Destination result = mapper.map(sampleSource, Destination.class);
+
+        // THEN
+        assertEquals(
+			"Destination property 'a' is not mapped correctly.",
+			"const",
+			result.getA());
+			
+        assertNull(
+			"Destination property 'b' is not mapped correctly.",
+			result.getB());
+    }
+}
+</pre>
+			</li>
+			<li>Description</li>
+			<li>Affected version &#8211 version of bean-cp</li>
+			<li>Environment &#8211 operating system name and version, JRE version information and optionally Java application server name and version. For example:
+<pre>
+Windows 7 Professional Service Pack 1
+
+java version "1.8.0_20"
+Java(TM) SE Runtime Environment (build 1.8.0_20-b26)
+Java HotSpot(TM) 64-Bit Server VM (build 25.20-b23, mixed mode)
+
+Java application server: Apache TomEE WebProfile 1.7.0
+</pre>
+			</li>
+		</ul>
+		
+		<p>Bug workflow diagram:</p>
+		
+		<img src="images/bug-workflow-diagram.png" width="179" height="381" />
+		
+		<p>Transitions made by reporter:</p>
+		
+		<ul>
+			<li><strong>&#8594; Open</strong></li>
+			<li><strong>Valid fix: Resolved &#8594; Ready for release</strong> if fix is ready and reporter agree that is valid</li>
+			<li><strong>Open: Resolved &#8594; Open</strong> if fix is ready, but reporter disagree that is valid</li>
+		</ul>
 		
 		<h2 id="how-to-request-feature">How to request for a new feature?</h2>
-		
-		<p><span class="work-in-progress">Coming soon</span></p>
+
+		<p>Please describe your idea and post it on <a href="https://groups.google.com/forum/#!topic/beancp/l47g0x5gOPg">What do you think about bean-cp?</a>
+		thread on project forum.</p>
 	</section>
 	<section class="table-of-contents">
 		<div class="table-of-contents">
-			<h1>Table of contents</h1>
 			<ul>
 				<li><a href="#support,how-get-help">How to get help?</a></li>
 				<li><a href="#support,issue-tracking">Issues tracking</a></li>
 				<li><a href="#support,how-to-report-bug">How to report a bug?</a></li>
 				<li><a href="#support,how-to-request-feature">How to request for a new feature?</a></li>
-				<li><a href="#support,sample">Sample</a></li>
 			</ul>
 		</div>
 	</section>
