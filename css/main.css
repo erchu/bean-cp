@@ -255,7 +255,6 @@ section.table-of-contents > div > h1 {
 section.table-of-contents > div > ul {
 	list-style-type: square;
 	font-size: 13px;
-	color: #ddd;
 	
 	margin-left: 20px;
 	padding-left: 0;
@@ -280,6 +279,23 @@ section.table-of-contents > div > ul > li > ul {
 
 section.table-of-contents > div > ul > li > ul > li:not(:last-child) {
 	padding-bottom: 2px;
+}
+
+section.table-of-contents li.selected {
+	color: #ff0000;
+}
+
+section.table-of-contents > div > ul,
+section.table-of-contents li.selected li {	/* sub list items of selected item */
+	color: #ddd;
+}
+
+section.table-of-contents > div > ul > li > ul {
+	display: none;
+}
+
+section.table-of-contents > div > ul > li.selected-first-level > ul {
+	display: block;
 }
 
 
