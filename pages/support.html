@@ -8,17 +8,20 @@
 		
 		<h2 id="how-to-report-bug">How to report a bug?</h2>
 		
-		<p>Bugs, new features and other project issues are tracked using <a href="https://beancp.atlassian.net/secure/Dashboard.jspa">beancp.atlassian.net</a> website.
+		<p>Bugs, new features and other issues are tracked using <a href="https://beancp.atlassian.net/secure/Dashboard.jspa">beancp.atlassian.net</a> website.
 		If you want to have insight into current project status or report a bug you have to use this site. You can browse project's
-		issues without account, but to report new issue you need to <a href="https://beancp.atlassian.net/admin/users/sign-up">sign up</a>.</p>
+		issues without account, but to report a bug you need to <a href="https://beancp.atlassian.net/admin/users/sign-up">sign up</a>.</p>
 		
 		<p>When you want to report a bug please <strong>always</strong> include in bug report:</p>
 		
 		<ul>
 			<li>Summary &#8211 quick overview of the problem</li>
-			<li>Priority &#8211 choose minor (usually for documentation) or major (significant code bugs)</li>
-			<li>Attach exactly one <code>.java</code> file (may include inner classes) with unit test based on JUnit which proves bug. Bug reports
-			without unit test attached will be rejected. Please try to follow style of below sample test:
+			<li>Priority &#8211 choose minor (usually for documentation) or major (significant implementation bugs)</li>
+			<li>For implementation bugs attach exactly one <code>.java</code> file (may include inner classes) with unit test (or tests). This test must
+			prove that bug exists. JUnit is the only allowed testing framework. If it is possible then unit test should have no external dependencies. If not
+			then attach proper <code>pom.xml</code> (if you are not familiar with <code>pom.xml</code> then read
+			"<a href="http://maven.apache.org/guides/introduction/introduction-to-the-pom.html">Introduction to the POM</a>"). All declared dependencies
+			must be available in public Maven repositories. Finally, please try to follow style of below test:
 			
 <pre class="brush: java; gutter: false;">
 package com.github.erchu.beancp;
@@ -105,7 +108,9 @@ public class BindConstantTest {
 			</li>
 			<li>Description</li>
 			<li>Affected version &#8211 version of bean-cp</li>
-			<li>Environment &#8211 operating system name and version, JRE version information and optionally Java application server name and version. For example:
+			<li>Environment &#8211 operating system name and version, JRE version information (output from <code>java -v</code> command) and optionally
+			Java application server name and version. For example:
+			
 <pre>
 Windows 7 Professional Service Pack 1
 
@@ -125,15 +130,15 @@ Java application server: Apache TomEE WebProfile 1.7.0
 		<p>Transitions to made by reporter:</p>
 		
 		<ul>
-			<li><strong>&#8594; Open</strong></li>
+			<li><strong>&#8594; Open</strong> (bug registration)</li>
 			<li><strong>Valid fix: Resolved &#8594; Ready for release</strong> if fix is ready and reporter agree that is valid</li>
 			<li><strong>Open: Resolved &#8594; Open</strong> if fix is ready, but reporter disagree that is valid</li>
 		</ul>
 		
 		<h2 id="how-to-request-feature">How to request for a new feature?</h2>
 
-		<p>Please describe your idea and post it on <a href="https://groups.google.com/forum/#!topic/beancp/l47g0x5gOPg">What do you think about bean-cp?</a>
-		thread on project forum.</p>
+		<p>Please post any feedback, ideas, etc. on "<a href="https://groups.google.com/forum/#!topic/beancp/l47g0x5gOPg">What do you think about bean-cp?</a>"
+		(thread on project forum).</p>
 	</section>
 	<section class="table-of-contents">
 		<div class="table-of-contents">
