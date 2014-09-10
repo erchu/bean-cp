@@ -160,8 +160,9 @@ Mapper mapper
 				To configure mapper you need to create instance of <a href="apidocs/release/1.0/com/github/erchu/beancp/MapperBuilder.html">MapperBuilder</a>
 				(line 2) and add one or mapping configurations (line 3 - 9). Each mapping configuration declares source and destination class (<code>Order</code> and
 				<code>OrderOverviewDto</code> in our example). Source and destination classes must have default (with no arguments) public
-				or protected constructor. There are three options to add mapping configuration: declarative map, converter and convention. In
-				this section we will focus on declarative maps. They are used to map from one JavaBean to another. To add declarative map call
+				or protected constructor, must have not been final and cannot be inner non-static classes. There are three options to add mapping configuration:
+				declarative map, converter and convention. In this section we will focus on declarative maps. They are used to map from one JavaBean to another.
+				To add declarative map call
 				<a href="apidocs/release/1.0/com/github/erchu/beancp/MapperBuilder.html#addMap-java.lang.Class-java.lang.Class-com.github.erchu.beancp.DeclarativeMapSetup-"><code>addMap()</code></a>
 				method (line 3). This method takes three parameters: source class (in our example: <code>Order</code>), destination class (in our example:
 				<code>OrderOverviewDto</code>) and map declaration. Map declaration is lambda expression taking three parameters: configuration reference,
