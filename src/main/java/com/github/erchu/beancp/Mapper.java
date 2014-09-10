@@ -84,8 +84,8 @@ public interface Mapper extends MappingInfo {
      *
      * <p>
      * When there is more than one mapper of the same priority then is used the first one added to
-     * {@link MapperBuilder}. If no mapper available then will return {@code}false{code}, otherwise
-     * return {@code}true{code}.
+     * {@link MapperBuilder}. If no mapper available then will return false, otherwise
+     * return true.
      *
      * <p>
      * Circular references will result in stack overflow.
@@ -95,7 +95,7 @@ public interface Mapper extends MappingInfo {
      * @param <D> destination object class.
      * @param source source object.
      * @param destination destination object.
-     * @return {@code}false{code} if no mapper available, otherwise {@code}true{code}.
+     * @return false if no mapper available, otherwise true.
      */
     <S, D> boolean mapIfMapperAvailable(S source, D destination) throws MappingException;
 

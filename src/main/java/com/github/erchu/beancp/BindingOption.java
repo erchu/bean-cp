@@ -55,8 +55,8 @@ public final class BindingOption<S, D, T> {
     }
 
     /**
-     * Property mapping will be performed when condition lambda will return true. This option is
-     * evaluated first and when evaluates to false no other options are evaluated.
+     * Property mapping will be performed if condition will return true. This option is evaluated
+     * first and when evaluates to false no other options are evaluated.
      *
      * @param <S> source object type.
      * @param <D> destination object type.
@@ -72,7 +72,7 @@ public final class BindingOption<S, D, T> {
     }
 
     /**
-     * If from source value getter will return null then value will be substituted with result from
+     * If source value getter will return null then null value will be substituted with result from
      * nullSubstitution lambda.
      *
      * @param <S> source object type.

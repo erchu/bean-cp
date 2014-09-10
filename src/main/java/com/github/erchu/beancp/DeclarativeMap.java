@@ -21,8 +21,17 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 /**
- * Defines mapping between source and destination class. Source and destination classes must have
- * default public or private constructor. Interface methods must be executed in following order:
+ * Defines mapping between source and destination class. Both {@code source} and {@code destination}
+ * classes:
+ * <ul>
+ * <li>Must have default (no argument) public or protected constructor. This requirement is valid
+ * even if destination object builder is provided by
+ * {@link DeclarativeMap#constructDestinationObjectUsing(java.util.function.Supplier)} method.</li>
+ * <li>Cannot be final</li>
+ * <li>Cannot be inner non-static classes.</li>
+ * </ul>
+ *
+ * Interface methods must be executed in the following order:
  *
  * <ol>
  * <li>{@link #constructDestinationObjectUsing(java.util.function.Supplier)} zero or one time</li>
@@ -51,7 +60,7 @@ public interface DeclarativeMap<S, D> {
     DeclarativeMap<S, D> constructDestinationObjectUsing(final Supplier<D> destinationObjectBuilder);
 
     /**
-     * Action to be performed after mappings. Must be thread-safe.
+     * Action to be performed before declared mappings. Must be thread-safe.
      *
      * @param action action to be executed after mappings, must be thread-safe.
      *
@@ -60,7 +69,7 @@ public interface DeclarativeMap<S, D> {
     DeclarativeMap<S, D> beforeMap(final Action action);
 
     /**
-     * Action to be performed after mappings. Must be thread-safe.
+     * Action to be performed before declared mappings. Must be thread-safe.
      *
      * @param action action to be executed after mappings, must be thread-safe.
      *
@@ -150,7 +159,7 @@ public interface DeclarativeMap<S, D> {
             final BindingOption<S, D, DI>... options);
 
     /**
-     * Action to be performed before mappings. Must be thread-safe.
+     * Action to be performed after declared mappings. Must be thread-safe.
      *
      * @param action action to be executed before mappings, must be thread-safe.
      *
@@ -159,7 +168,7 @@ public interface DeclarativeMap<S, D> {
     DeclarativeMap<S, D> afterMap(final Action action);
 
     /**
-     * Action to be performed before mappings. Must be thread-safe.
+     * Action to be performed after declared mappings. Must be thread-safe.
      *
      * @param action action to be executed before mappings, must be thread-safe.
      *

@@ -27,7 +27,7 @@ import java.util.stream.Collectors;
 import static org.apache.commons.lang3.Validate.*;
 
 /**
- * Builds mapper implementation. This class do not guarantee to be thread-safe.
+ * Builds mapper implementation. This class is not thread-safe.
  */
 public final class MapperBuilder implements MappingInfo {
 
@@ -42,10 +42,11 @@ public final class MapperBuilder implements MappingInfo {
     /**
      * Adds new mapping defined by map. Both {@code source} and {@code destination} classes must:
      * <ul>
-     * <li>Must have default public constructor or have not been final and have default protected
-     * constructor. This requirement is valid even if destination object builder is provided by
+     * <li>Must have default (no argument) public or protected constructor. This
+     * requirement is valid even if destination object builder is provided by
      * {@link DeclarativeMap#constructDestinationObjectUsing(java.util.function.Supplier)}
      * method.</li>
+     * <li>Cannot be final</li>
      * <li>Cannot be inner non-static classes.</li>
      * </ul>
      *
@@ -70,7 +71,7 @@ public final class MapperBuilder implements MappingInfo {
     }
 
     /**
-     * Adds new mapping implemented by converter.
+     * Adds new mappings implemented by converter.
      *
      * @param <S> source object class.
      * @param <D> destination object class.
@@ -115,7 +116,7 @@ public final class MapperBuilder implements MappingInfo {
     }
 
     /**
-     * Adds new mapping implemented by converters.
+     * Adds new mappings implemented by converters.
      *
      * @param converters converters to add.
      *
@@ -135,8 +136,8 @@ public final class MapperBuilder implements MappingInfo {
 
     /**
      * If two data types has no mapping defined by
-     * {@link #addMap(java.lang.Class, java.lang.Class, com.github.erchu.beancp.DeclarativeMapSetup)} or any of
-     * {@code addConverter} methods then this convention will be used.
+     * {@link #addMap(java.lang.Class, java.lang.Class, com.github.erchu.beancp.DeclarativeMapSetup)}
+     * or any of {@code addConverter} methods then this convention will be used.
      *
      * @param conventions convention to add.
      *

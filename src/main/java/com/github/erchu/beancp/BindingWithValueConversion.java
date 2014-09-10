@@ -1,17 +1,17 @@
 /*
  * bean-cp
  * Copyright (c) 2014, Rafal Chojnacki, All rights reserved.
- * 
+ *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 3.0 of the License, or (at your option) any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library.
  */
@@ -20,13 +20,14 @@ package com.github.erchu.beancp;
 import static org.apache.commons.lang3.Validate.*;
 
 /**
- * Binding with additional source value conversion using {@link Converter} before it is assigned to
- * destination member.
+ * Binding with additional source value conversion using {@link Converter} (before it is set to
+ * destination).
  */
 public class BindingWithValueConversion extends Binding {
 
     /**
-     * Creates binding from series of bindings from source to destination member.
+     * Creates binding from from source path (series of bindings from source where n+1 binding
+     * returns member of object returned by n-th binding) to destination member.
      *
      * @param sourcePath series of bindings from source where n+1 binding returns member of object
      * returned by n-th binding.

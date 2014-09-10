@@ -1,17 +1,17 @@
 /*
  * bean-cp
  * Copyright (c) 2014, Rafal Chojnacki, All rights reserved.
- * 
+ *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 3.0 of the License, or (at your option) any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library.
  */
@@ -67,13 +67,13 @@ public class NameBasedMapConvention implements MapConvention {
     private boolean _failIfNotAllSourceMembersMapped;
 
     /**
-     * Constructs instance.
+     * Constructs new instance.
      */
     protected NameBasedMapConvention() {
     }
 
     /**
-     * Returns mapping convention with following configuration
+     * Returns mapping convention with the following configuration:
      *
      * <ul>
      * <li>No destination members excluded</li>
@@ -97,18 +97,16 @@ public class NameBasedMapConvention implements MapConvention {
     }
 
     /**
-     * Sets list of destination members which will be included to matching. Each entry must be
-     * regular expression matching field name or bean property name (according to beans
-     * specification). If <b>not specified</b> (empty array) all members are subject to map by
-     * convention. If <b>specified</b> (not empty array) only members with names matching any of
-     * {@code members} could be mapped by convention ignoring case. This list has lower priority
-     * that exclude list specified by {@link #excludeDestinationMembers(java.lang.String...)}
-     * method.
+     * Sets list of destination members which will be included by convention. Each entry must be
+     * regular expression matching field name or bean property name (according to
+     * <a href="http://www.oracle.com/technetwork/java/javase/documentation/spec-136004.html">beans
+     * specification</a>). If not specified (empty array) all members are subject to map by
+     * convention. If specified (not empty array) only selected members could be mapped by
+     * convention. This list has lower priority that exclude list specified by
      *
-     * <p>
-     * Note that when you put some member on list then it is not guaranteed that it will be mapped
-     * &#8212; it still have to have matching source's member according to convention configuration.
-     * </p>
+     * {@link #excludeDestinationMembers(java.lang.String...) } method. Note that when you put some
+     * member on list then it is not guaranteed that it will be mapped &#8212; it still have to have
+     * matching source's member according to convention configuration.
      *
      * @param members members to include
      *
@@ -124,14 +122,10 @@ public class NameBasedMapConvention implements MapConvention {
 
     /**
      * Sets list of destination members which will be excluded (ignored) by convention. Each entry
-     * must be regular expression matching field name or bean property name (according to beans
-     * specification). This list has higher priority that include list specified by
+     * must be regular expression matching field name or bean property name (according to
+     * <a href="http://www.oracle.com/technetwork/java/javase/documentation/spec-136004.html">beans
+     * specification</a>). This list has higher priority that include list specified by
      * {@link #includeDestinationMembers(java.lang.String...)} method.
-     *
-     * <p>
-     * Note that when you put some member on list then it is not guaranteed that it will be mapped
-     * &#8212; it still have to have matching source's member according to convention configuration.
-     * </p>
      *
      * @param members members to ignore
      *
@@ -149,7 +143,8 @@ public class NameBasedMapConvention implements MapConvention {
      * Enables flattening feature. This feature will try to match members from nested classes only
      * if no direct member can be matched. This is useful if you have complex model to be mapped to
      * simpler one. Destination member will be matched to source nested class member if destination
-     * member's name parts match path to source member. For example: for below classes
+     * member's name match path to source member including nested classes (if flattening feature is
+     * disabled then nested classes are ignored). For example: for below classes
      * {@code setCustomerName} will be matched to {@code getCustomer().getName()} because
      * {@code CustomerName} property can be interpreted as path to {@code Customer} and then to
      * {@code Name} property.
@@ -215,7 +210,7 @@ public class NameBasedMapConvention implements MapConvention {
     /**
      * Convention will fail during map building (see
      * {@link #getBindings(com.github.erchu.beancp.MappingInfo, java.lang.Class, java.lang.Class)}
-     * method) if not all destination properties are mapped.
+     * method) if not all destination members are mapped.
      *
      * @return this (for method chaining)
      */
@@ -228,7 +223,7 @@ public class NameBasedMapConvention implements MapConvention {
     /**
      * Convention will fail during map building (see
      * {@link #getBindings(com.github.erchu.beancp.MappingInfo, java.lang.Class, java.lang.Class)}
-     * method) if not all source properties are mapped.
+     * method) if not all source members are mapped.
      *
      * @return this (for method chaining)
      */
