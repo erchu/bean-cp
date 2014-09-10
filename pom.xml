@@ -10,7 +10,7 @@
     <name>bean-cp</name>
     <description>Object to object mapping library for Java 8+</description>
     <url>https://github.com/erchu/bean-cp</url>
-    
+
     <licenses>
         <license>
             <name>
@@ -21,7 +21,7 @@
             <distribution>repo</distribution>
         </license>
     </licenses>
-    
+
     <scm>
         <url>https://github.com/erchu/bean-cp.git</url>
         <connection>scm:git:https://github.com/erchu/bean-cp.git</connection>
@@ -41,7 +41,7 @@
             </plugin>
         </plugins>
     </build>
-    
+
     <reporting>
         <plugins>
             <plugin>
@@ -70,19 +70,19 @@
             <artifactId>javassist</artifactId>
             <groupId>org.javassist</groupId>
             <type>jar</type>
-            <version>3.18.1-GA</version>
+            <version>3.18.2-GA</version>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
-            <version>3.1</version>
+            <version>3.3.2</version>
         </dependency>
     </dependencies>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
-    
+
     <profiles>
         <profile>
             <id>release</id>
@@ -114,7 +114,7 @@
             </build>
         </profile>
     </profiles>
-    
+
     <developers>
         <developer>
             <id>erchu</id>
