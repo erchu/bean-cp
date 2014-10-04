@@ -38,6 +38,5 @@ public class _20_Conventions_Map_any {
 		assertEquals(user.getPassword(), result.getPassword());
 		assertEquals(user.getPhoneNumber(), result.getPhoneNumber());
 		assertEquals(user.getEmailAddress(), result.getEmailAddress());
-		assertEquals("firstName1 lastName1", result.getFullName());
 	}
 }

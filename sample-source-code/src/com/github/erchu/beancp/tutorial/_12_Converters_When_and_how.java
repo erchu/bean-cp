@@ -36,6 +36,6 @@ public class _12_Converters_When_and_how {
 		// THEN
 		assertEquals(now.getYear() + 1900, destination.getYear());
 		assertEquals(now.getMonth() + 1, destination.getMonthValue());
-		assertEquals(now.getDay(), destination.getDayOfMonth());
+		assertEquals(now.getDate(), destination.getDayOfMonth());
 	}
 }
