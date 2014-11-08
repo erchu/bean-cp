@@ -290,6 +290,7 @@ section.table-of-contents li.selected li {	/* sub list items of selected item */
 	color: #ddd;
 }
 
+/*
 section.table-of-contents > div > ul > li > ul {
 	display: none;
 }
@@ -297,6 +298,7 @@ section.table-of-contents > div > ul > li > ul {
 section.table-of-contents > div > ul > li.selected-first-level > ul {
 	display: block;
 }
+*/
 
 
 /* Content */

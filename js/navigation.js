@@ -97,7 +97,7 @@ if (getInternetExplorerVersion() < 8) {
 					}
 				}
 				
-				_markTableOfContentsSelectedItem(documentScrollTop);
+				//_markTableOfContentsSelectedItem(documentScrollTop);
 			});
 		}
 		
@@ -188,7 +188,7 @@ if (getInternetExplorerVersion() < 8) {
 			_generateTableOfContentsItems();
 			
 			currentTableOfContentsSelectedItem = null;
-			_markTableOfContentsSelectedItem(window.pageYOffset);
+			//_markTableOfContentsSelectedItem(window.pageYOffset);
 		}
 		
 		function _setupScrollTopLink() {
