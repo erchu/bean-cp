@@ -1,100 +1,141 @@
-<!DOCTYPE html>
+---
+layout: default
+---
 
-<!--[if lt IE 9]>      <html class="old-ie"> <![endif]-->
-<!--[if gt IE 8]><!--> <html> <!--<![endif]-->
-    <head>
-		<title>bean-cp &#8211; object to object mapping library for Java 8+</title>
-
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-
-        <meta name="description" content="bean-cp is object to object mapping library for Java 8+">
-		<meta name="author" content="Rafał Chojnacki">
-		<meta name="keywords" content="object mapping, object mapper, java, lambda, library, framework, convention, converter, complex type, recursive, collection, Java Bean, POJO, plain old java object, DTO, data transfer object, VO, value object, DDD, domain object, web services, meta">
+<div id="page-main-content">
+  		
+  <script src="https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js"></script>
+  
+  <section id="main-content-section">
+	<h1>What is bean-cp?</h1>
 	
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-		
-		<link rel="icon" type="image/png" href="favicon.ico"/>
+	<p>
+		Today modern applications usually contain more than one object model of the same real-life objects. The reason behind that
+		approach is need for model optimization for specific use or system modularization. For example,
+		<a href="http://en.wikipedia.org/wiki/Domain_model">domain model</a> could be used to organize your application logic and is mapped to
+		<a href="http://en.wikipedia.org/wiki/Model_View_ViewModel">view models</a> optimized for UI layer</li>. Another example are
+		<a href="http://en.wikipedia.org/wiki/Data_transfer_object">data transfer objects</a> &#8211; optimized model for transferring data over
+		network and integration between systems using technologies like WebServices.
+	</p>
 
-		<!--[if lt IE 9]>
-		<script src="js/vendor/html5shiv.js"></script>
-		<![endif]-->
-		
-        <link rel="stylesheet" href="css/vendor/normalize.css" />
-        <link rel="stylesheet" href="css/vendor/bootstrap.css" />
-		<link rel="stylesheet" href="css/vendor/syntax/shCore.css" />
-		<link rel="stylesheet" href="css/vendor/syntax/shCoreDefault.css" />
-		<link rel="stylesheet" href="css/vendor/syntax/shThemeEclipse.css" />
-		
-        <link rel="stylesheet" href="css/main.css" />
-        <link rel="stylesheet" href="css/home.css" />
-        <link rel="stylesheet" href="css/download.css" />
-    </head>
-    <body>
-		<div class="page-content">
-		  <header>
-			<div id="page-logo-panel">
-				<a href="#home"><img id="page-logo" src="images/logo.png" width="171" height="32" alt="bean-cp" /></a>
-			</div>
-			<div id="page-menu-panel">
-				<nav id="page-menu">
-					<div><a href="#home" class="selected"><img src="images/menu/home.png" alt="Home" /></a></div>
-					<div><a href="#download"><img src="images/menu/download.png" alt="Download" /></a></div>
-					<div><a href="#user-manual"><img src="images/menu/user-manual.png" alt="User manual" /></a></div>
-					<div><a href="apidocs/release/1.0.1/index.html"><img src="images/menu/api-specs.png" alt="API specs" /></a></div>
-					<div><a href="#support"><img src="images/menu/support.png" alt="Support" /></a></div>
-				</nav>
-			</div>
-		  </header>
-		  <div id="page-main" class="clearfix">
-			<div id="page-main-content" class="page-main-info-message">
-				Loading content...
-			</div>
-		  </div>
-		  <footer>
-			<div id="footer-page-logo-panel">
-				<img id="footer-page-logo" src="images/footer-logo.png" width="237" height="43" alt="bean-cp" />
-			</div>
-			<div id="footer-page-menu-panel">
-				<nav id="footer-page-menu">
-					<div><a href="#home">home</a></div>
-					<div><a href="#download">download</a></div>
-					<div><a href="#user-manual">user manual</a></div>
-					<div><a href="apidocs/release/1.0.1/index.html" target="_blank">api specs</a></div>
-					<div><a href="#support">support</a></div>
-				</nav>
-			</div>
-		  </footer>
-		</div>
-		
-		<!--[if gt IE 8]><!-->
-		<a id="scroll-to-top" href="#" style="display: none;">
-			<img src="images/scroll-to-top.png" width="47" height="38" />
-		</a>
-		<!--<![endif]-->
+	<p>The drawback of this approach is need for extra mapping code to map data between models. In fact those models are usually similar,
+	so writing mapping code could be really boring. This is why mapping frameworks were invented.</p>
 	
-		<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
-        <script>window.jQuery || document.write('<script src="js/vendor/jquery-1.11.1.min.js"><\/script>')</script>
-		
-		<script src="js/vendor/jquery-ui.custom.js"></script>
-		<script src="js/vendor/sammy-latest.js"></script>
-		<script src="js/vendor/shCore.js"></script>
-		<script src="js/vendor/shBrushJava.js"></script>
-		<script src="js/vendor/shBrushXml.js"></script>
-		
-        <script src="js/page-list.js"></script>
-        <script src="js/navigation.js"></script>
+	<h2>Bean-cp is object to object mapping framework for Java</h2>
+	
+	<p>Library is targeted for Java version 8 to bring the power of lambda expressions to object mapping.</p>
 
-        <script>
-			if (window.location.protocol != "file:") {
-				(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-				  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-				  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-				  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+	<p>Release 1.0.1 is <a href="#download">available for download</a> and in Maven's central repository:</p>
 
-				  ga('create', 'UA-51309403-3', 'auto');
-				  ga('send', 'pageview');
-			}
-		</script>
-    </body>
-</html>
+	<pre class="brush: xml; gutter: false;">
+&lt;dependency&gt;
+	&lt;groupId&gt;com.github.erchu&lt;/groupId&gt;
+	&lt;artifactId&gt;beancp&lt;/artifactId&gt;
+	&lt;version&gt;1.0.1&lt;/version&gt;
+&lt;/dependency&gt;
+</pre>
+
+	<h1>Why bean-cp?</h1>
+
+	<h2>Easy to read and standardized mapping code</h2>
+	
+	<p>Lambda expressions and fluent API comes to play...</p>
+
+<pre class="brush: java; gutter: false;">
+Mapper mapper = new MapperBuilder()
+    .addMap(Order.class, OrderOverviewDto.class, (conf, source, destination) -> conf
+        .bind(source::getDate, destination::setDate)
+        .bind(source::getPaymentDueDay, destination::setPaymentDueDay)
+        .bind(source::getStatus, destination::setStatus)
+        .bind(source::getTotal, destination::setTotal)
+        .bind(source.getCustomer()::getName, destination::setCustomerName))
+    .buildMapper();
+</pre>
+	
+	<h2>Saves your time</h2>
+
+	<p>Conventions feature lets you define mapping quickly. Above example can be fully replaced by convention:</p>
+
+<pre class="brush: java; gutter: false;">
+Mapper mapper = new MapperBuilder()
+    .addMap(Order.class, OrderOverviewDto.class, (conf, source, destination) -> conf
+        .useConvention(NameBasedMapConvention.get().enableFlattening()))
+    .buildMapper();
+</pre>
+	
+	<p>Both mechanism can be mixed:</p>
+	
+<pre class="brush: java; gutter: false;">
+Mapper mapper = new MapperBuilder()
+    .addMap(Order.class, OrderOverviewDto.class, (conf, source, destination) -> conf
+        .useConvention(NameBasedMapConvention.get().enableFlattening())
+        .bind(() -&gt; source.getStatus() == OrderStatus.OVERDUE, destination::isOverdue))
+    .buildMapper();
+</pre>
+	
+	<h2>Map anything</h2>
+
+	<p>When you face non standard situation converters comes to rescue:</p>
+	
+<pre class="brush: java; gutter: false;">
+Mapper mapper = new MapperBuilder()
+	.addConverter(int.class, Range.class, source -> Range.of(source, Integer.MAX_VALUE))
+	.buildMapper();
+</pre>
+	
+	<h2>Extensibility</h2>
+
+	<p>If you need something different than name-based convention you can implement your own mapping convention. See
+	<a href="apidocs/release/1.0/com/github/erchu/beancp/MapConvention.html"><code>MapConvention</code></a>
+	interface. In fact <a href="apidocs/release/1.0/com/github/erchu/beancp/commons/NameBasedMapConvention.html">
+	<code>NameBasedMapConvention</code></a> is provided as implementation of this interface with no extra magic.</p>
+	
+	<pre class="brush: java; gutter: false;">
+public interface MapConvention {
+
+  /**
+   * Returns list of bindings for specified source and destination classes. Must
+   * be thread-safe.
+   *
+   * @param mappingsInfo current mapping information.
+   * @param sourceClass source class.
+   * @param destinationClass destination class.
+   * @return found bindings.
+   */
+  List&lt;Binding&gt; getBindings(
+      final MappingInfo mappingsInfo,
+      final Class sourceClass,
+      final Class destinationClass);
+}
+</pre>
+	
+	<h2>There is more</h2>
+	
+	<p>Bean-cp gives to you some useful utilities like common collections mapping or null substitution.</p>
+	
+	<h2>It is free for any use with source code publicly available</h2>
+
+	<p>Bean-cp is licensed under LGPL 3.0, so you can use it for free both, for open source and commercial projects. Source code publicly
+	available on GitHub and you are welcome to contribute to the project or create own fork.</p>
+	
+	<h1>License</h1>
+
+	<p>Copyright (&copy;) 2014, Rafał Chojnacki, All rights reserved.</p>
+
+	<p>This library is free software; you can redistribute it and/or modify it under the terms of the <a href="https://www.gnu.org/licenses/lgpl-3.0.html">
+	GNU Lesser General Public License as published by the Free Software Foundation; either version 3.0 of the License</a>, or (at your option) any later
+	version.</p>
+
+	<p>This library is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+	FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details.</p>
+  </section>
+  <section id="right-content-section">
+	<div id="quick-step-panel">
+		<a href="download/release/1.0.1/beancp-1.0.1-all.zip">Download</a>
+		<a href="#user-manual">Get started with user manual</a>
+	</div>
+	<div id="project-maintenance-info">
+		<p><a href="https://github.com/erchu/bean-cp/">View the Project on GitHub</a></p>
+	</div>
+  </section>
+</div>

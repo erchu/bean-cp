@@ -1,0 +1,15 @@
+# Site settings
+title: bean-cp &#8211; object to object mapping library for Java 8+
+description: >
+  Need to map your domain object to view model or data transfer object or...
+  something else? Your project is written in Java? You are ready to use power
+  of lambda expressions? Would you like to define your mappings quickly using
+  conventions? If you answered 'yes' to those questions then bean-cp is right
+  project for you.
+baseurl: "/bean-cp"
+url: "http://erchu.github.io/"
+github_username:  rach
+
+# Build settings
+markdown: kramdown
+
