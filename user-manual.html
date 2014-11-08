@@ -8,7 +8,7 @@ layout: default
 		
 		<p>This user manual describes how to set up and use bean-cp library. It covers all available features. Before you start you have to
 		have good knowledge of Java programming language version 8 including lambda expressions. If you get any trouble please checkout
-		<a href="#support">support</a> page.</p>
+		<a href="support.html">support</a> page.</p>
 		
 		<p>Source code of examples from this tutorial is
 		<a href="https://github.com/erchu/bean-cp/tree/gh-pages/sample-source-code/src/com/github/erchu/beancp/tutorial">available on GitHub</a>
@@ -377,7 +377,7 @@ Mapper mapper
 		<ul>
 			<li><code>constructDestinationObjectUsing</code> zero or one time</li>
 			<li><code>beforeMap</code> zero or many times</li>
-			<li><code>useConvention</code> zero or one time (<a href="#user-manual,conventions">conventions are discussed later</a>)</li>
+			<li><code>useConvention</code> zero or one time (<a href="#conventions">conventions are discussed later</a>)</li>
 			<li><code>bind</code> and <code>bindConstant</code> and <code>mapInner</code> methods zero or many times in any order</li>
 			<li><code>afterMap</code> zero or many times</li>
 		</ul>
@@ -388,7 +388,7 @@ Mapper mapper
 
 		<p>Time to time you will need to map from or to object which is not JavaBean. There are also situations when object do not have
 		default public or protected constructor. For those kind of objects you will need to write <strong>converter</strong>. Then converters
-		can be used to map inner objects just like we did in "<a href="#user-manual,map-inner-objects">Map inner objects" section</a>.
+		can be used to map inner objects just like we did in "<a href="#map-inner-objects">Map inner objects" section</a>.
 		Good example of valid converter usage is conversion to <a href="http://docs.oracle.com/javase/8/docs/api/java/time/LocalDate.html">LocalDate</a>.
 		LocalDate is <a href="http://docs.oracle.com/javase/8/docs/api/java/lang/doc-files/ValueBased.html">value-based</a> class, so it is
 		immutable, do not have accessible constructors, and instances are instead instantiated through factory methods. It is <strong>not</strong>
@@ -485,7 +485,7 @@ Mapper mapper
 		<h3 id="name-based-convention">Name-based convention</h3>
 		
 		<p>Currently bean-cp provides one <strong>name-based convention</strong> which matches properties and fields by name (you could also
-		write your own convention &#8211; see "<a href="#user-manual,write-convention">Write your own convention</a>").</p>
+		write your own convention &#8211; see "<a href="#write-convention">Write your own convention</a>").</p>
 		
 		<p>OK... so how to replace series of <code>bind</code> operations from last code listing with convention? Use
 		<code>useConvention(NameBasedMapConvention.get())</code> method. Full example:</p>
@@ -635,7 +635,7 @@ public interface MapConvention {
 
 		<p>Where are almost done. What I like to show you to sum up is bigger example combining features already described in this user
 		manual. If you are not interested in such example please skip this section, but do not forget to read
-		<a href="#user-manual,summary">summary</a> section.</p>
+		<a href="#summary">summary</a> section.</p>
 
 <pre class="brush: java; gutter: false;">
 package com.github.erchu.beancp.tutorial;
