@@ -4,4 +4,4 @@ REM Installation instructions: https://help.github.com/articles/using-jekyll-wit
 
 IF EXIST Gemfile.lock del Gemfile.lock
 
-bundle exec jekyll serve --watch
+bundle exec jekyll serve --watch --force_polling
