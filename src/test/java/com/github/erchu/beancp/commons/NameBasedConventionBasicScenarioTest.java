@@ -19,8 +19,8 @@ package com.github.erchu.beancp.commons;
 
 import com.github.erchu.beancp.Mapper;
 import com.github.erchu.beancp.MapperBuilder;
-import org.junit.Test;
 import static org.junit.Assert.*;
+import org.junit.Test;
 
 public class NameBasedConventionBasicScenarioTest {
 
@@ -246,6 +246,74 @@ public class NameBasedConventionBasicScenarioTest {
             this.x = x;
         }
     }
+    
+    public static class SourceWithStaticField {
+
+        private int x;
+        
+        public static long y;
+        
+        public final long z = 1;
+        
+        public static final long serialVersionUID = 1L;
+
+        public int getX() {
+            return x;
+        }
+
+        public void setX(int x) {
+            this.x = x;
+        }
+    }
+    
+    public static class SourceWithoutStaticField {
+
+        private int x;
+        
+        public long y;
+
+        public int getX() {
+            return x;
+        }
+
+        public void setX(int x) {
+            this.x = x;
+        }
+    }
+    
+    public static class DestinationWithStaticField {
+
+        private int x;
+        
+        public static long y;
+        
+        public final long z = 2;
+        
+        private static final long serialVersionUID = 2L;
+
+        public int getX() {
+            return x;
+        }
+
+        public void setX(int x) {
+            this.x = x;
+        }
+    }
+    
+    public static class DestinationWithoutStaticField {
+
+        private int x;
+        
+        public long y;
+
+        public int getX() {
+            return x;
+        }
+
+        public void setX(int x) {
+            this.x = x;
+        }
+    }
 
     @Test
     public void when_source_and_destination_classes_has_properties_of_the_same_name_and_type_then_should_be_mapped() {
@@ -430,5 +498,93 @@ public class NameBasedConventionBasicScenarioTest {
         assertEquals("Invalid b value", sourceInstance.b, result.b);
         assertEquals("Invalid x value", sourceInstance.getX(), result.getX());
         assertEquals("Invalid y value", sourceInstance.y, result.y);
+    }
+
+    @Test
+    public void static_nor_final_field_cannot_be_mapped() {
+        // GIVEN
+        SourceWithStaticField sourceInstance = new SourceWithStaticField();
+        sourceInstance.setX(123);
+        
+        final int initialYValueAtSource = 234;
+        SourceWithStaticField.y = initialYValueAtSource;
+        
+        final int initialYValueAtDestination = -initialYValueAtSource;
+        DestinationWithStaticField.y = initialYValueAtDestination;
+
+        // WHEN
+        Mapper mapper = new MapperBuilder()
+                .addMap(SourceWithStaticField.class, DestinationWithStaticField.class,
+                        (config, source, destination)
+                        -> config.useConvention(NameBasedMapConvention.get())
+                ).buildMapper();
+
+        DestinationWithStaticField result = mapper.map(sourceInstance, DestinationWithStaticField.class);
+
+        // THEN
+        // 'x' should be mapped by convention
+        assertEquals("Invalid 'x' property value.", sourceInstance.getX(), result.getX());
+        
+        // 'y' is static, so cannot be mapped
+        assertEquals("Invalid 'y' property value.", initialYValueAtDestination, result.y);
+    }
+
+    @Test
+    public void static_field_at_source_cannot_be_mapped() {
+        // GIVEN
+        SourceWithoutStaticField sourceInstance = new SourceWithoutStaticField();
+        sourceInstance.setX(123);
+        
+        final int initialYValueAtSource = 234;
+        sourceInstance.y = initialYValueAtSource;
+        
+        final int initialYValueAtDestination = -initialYValueAtSource;
+        DestinationWithStaticField.y = initialYValueAtDestination;
+
+        // WHEN
+        Mapper mapper = new MapperBuilder()
+                .addMap(SourceWithoutStaticField.class, DestinationWithStaticField.class,
+                        (config, source, destination)
+                        -> config.useConvention(NameBasedMapConvention.get())
+                ).buildMapper();
+
+        DestinationWithStaticField result = mapper.map(sourceInstance, DestinationWithStaticField.class);
+
+        // THEN
+        // 'x' should be mapped by convention
+        assertEquals("Invalid 'x' property value.", sourceInstance.getX(), result.getX());
+        
+        // 'y' is static, so cannot be mapped
+        assertEquals("Invalid 'y' property value.", initialYValueAtDestination, result.y);
+    }
+
+    @Test
+    public void static_field_at_destination_cannot_be_mapped() {
+        // GIVEN
+        SourceWithStaticField sourceInstance = new SourceWithStaticField();
+        sourceInstance.setX(123);
+        
+        final int initialYValueAtSource = 234;
+        SourceWithStaticField.y = initialYValueAtSource;
+        
+        final int initialYValueAtDestination = -initialYValueAtSource;
+        DestinationWithoutStaticField result = new DestinationWithoutStaticField();
+        result.y = initialYValueAtDestination;
+
+        // WHEN
+        Mapper mapper = new MapperBuilder()
+                .addMap(SourceWithStaticField.class, DestinationWithoutStaticField.class,
+                        (config, source, destination)
+                        -> config.useConvention(NameBasedMapConvention.get())
+                ).buildMapper();
+
+        mapper.map(sourceInstance, result);
+
+        // THEN
+        // 'x' should be mapped by convention
+        assertEquals("Invalid 'x' property value.", sourceInstance.getX(), result.getX());
+        
+        // 'y' is static, so cannot be mapped
+        assertEquals("Invalid 'y' property value.", initialYValueAtDestination, result.y);
     }
 }

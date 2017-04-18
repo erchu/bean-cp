@@ -44,6 +44,7 @@ import static org.apache.commons.lang3.ObjectUtils.*;
 import org.apache.commons.lang3.StringUtils;
 import static org.apache.commons.lang3.Validate.*;
 import com.github.erchu.beancp.MapperConfigurationException;
+import java.lang.reflect.Modifier;
 
 /**
  * Convention matches fields by name.
@@ -292,7 +293,11 @@ public class NameBasedMapConvention implements MapConvention {
             }
         }
 
-        for (Field destinationMember : destinationClass.getFields()) {
+        for (Field destinationMember : getInstanceFields(destinationClass)) {
+            if (Modifier.isFinal(destinationMember.getModifiers())) {
+                continue;
+            }
+            
             BindingSide destinationBindingSide = new FieldBindingSide(destinationMember);
 
             if (isDestinationMemberExpectedToBind(destinationBindingSide) == false) {
@@ -304,7 +309,6 @@ public class NameBasedMapConvention implements MapConvention {
                             destinationMember.getName(), MemberAccessType.FIELD);
 
             if (sourceBindingSide != null) {
-
                 BindingSide[] sourceBindingSideArray
                         = sourceBindingSide.stream().toArray(BindingSide[]::new);
 
@@ -353,7 +357,7 @@ public class NameBasedMapConvention implements MapConvention {
 
             // if all properties are mapped we still need to check fields
             if (allSourceMembersMapped) {
-                for (Field sourceMember : sourceClass.getFields()) {
+                for (Field sourceMember : getInstanceFields(sourceClass)) {
                     if (sourceMember.getDeclaringClass().equals(Object.class)) {
                         continue;
                     }
@@ -475,7 +479,7 @@ public class NameBasedMapConvention implements MapConvention {
             final String atDestinationName,
             final MemberAccessType destinationMemberAccessType) {
         Optional<Field> exactMatchResult
-                = Arrays.stream(sourceClass.getFields())
+                = getInstanceFields(sourceClass).stream()
                 .filter(i -> i.getName().equalsIgnoreCase(atDestinationName))
                 .findFirst();
 
@@ -488,7 +492,7 @@ public class NameBasedMapConvention implements MapConvention {
 
         if (_flateningEnabled) {
             Optional<Field> partiallyMatchResult
-                    = Arrays.stream(sourceClass.getFields())
+                    = getInstanceFields(sourceClass).stream()
                     .filter(i -> StringUtils.startsWithIgnoreCase(atDestinationName, i.getName()))
                     .sorted((x, y) -> y.getName().length() - x.getName().length())
                     .findFirst();
@@ -508,6 +512,12 @@ public class NameBasedMapConvention implements MapConvention {
         }
 
         return null;
+    }
+
+    private List<Field> getInstanceFields(final Class sourceClass) throws SecurityException {
+        return Arrays.stream(sourceClass.getFields())
+                .filter(i -> Modifier.isStatic(i.getModifiers()) == false)
+                .collect(Collectors.toList());
     }
 
     private List<BindingSide> getInnerMatchingSourceMemberByName(
